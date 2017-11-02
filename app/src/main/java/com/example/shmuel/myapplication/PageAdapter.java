@@ -30,16 +30,16 @@ public class PageAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch(position){
             case 0:
-                CarsTabFragment tab1=new CarsTabFragment();
+                CarsTabFragment tab1=TabFragments.tab1;
                 return tab1;
             case 1:
-                CarModelsFragment tab2=new CarModelsFragment();
+                CarModelsFragment tab2=TabFragments.tab2;
                 return tab2;
             case 2:
-                BranchesFragment tab3 =new BranchesFragment();
+                BranchesFragment tab3 =TabFragments.tab3;
                 return tab3;
             case 3:
-                ClientTabFragment tab4 =new ClientTabFragment();
+                ClientTabFragment tab4 =TabFragments.tab4;
                 return tab4;
             default:
                 return null;

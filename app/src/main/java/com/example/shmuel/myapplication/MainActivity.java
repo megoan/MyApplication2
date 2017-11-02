@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     boolean check=true;
     SearchView searchView;
 
+
     //filtering companies
     String[] carCompanies;
     boolean[] carCompaniesChecked;
@@ -91,9 +93,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TabFragments tabFragments=new TabFragments();
+
         ListDataSource listDataSource=new ListDataSource();
 
         setContentView(R.layout.activity_main);
+
 
         if (savedInstanceState!=null) {
             updatedTab=savedInstanceState.getInt("CHILD");
@@ -114,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(pageAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -639,6 +645,10 @@ public class MainActivity extends AppCompatActivity {
             branchesCitiesChecked[i]=true;
 
         }
+    }
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
 }
