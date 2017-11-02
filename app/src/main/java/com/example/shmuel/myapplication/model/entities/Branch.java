@@ -11,17 +11,19 @@ public class Branch {
     private String imgURL;
     private double branchRevenue;
     private MyDate establishedDate;
+    private boolean inUse;
 
     public Branch() {
     }
 
-    public Branch(Address address, int parkingSpotsNum, int branchNum, String imgURL, double branchRevenue, MyDate establishedDate) {
+    public Branch(Address address, int parkingSpotsNum, int branchNum, String imgURL, double branchRevenue, MyDate establishedDate, boolean inUse) {
         this.address = address;
         this.parkingSpotsNum = parkingSpotsNum;
         this.branchNum = branchNum;
         this.imgURL=imgURL;
         this.branchRevenue=branchRevenue;
         this.establishedDate=new MyDate(establishedDate);
+        this.inUse=inUse;
     }
 
     public Branch(Branch other) {
@@ -31,6 +33,7 @@ public class Branch {
         this.imgURL=other.imgURL;
         this.branchRevenue=other.branchRevenue;
         this.establishedDate=new MyDate(other.establishedDate);
+        this.inUse=other.inUse;
     }
 
     public Address getAddress() {
@@ -79,5 +82,13 @@ public class Branch {
 
     public void setEstablishedDate(MyDate establishedDate) {
         this.establishedDate = new MyDate(establishedDate);
+    }
+
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
     }
 }

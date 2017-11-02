@@ -51,16 +51,15 @@
             android:layout_width="169dp"
             android:layout_height="1dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginTop="3dp"
             android:background="#c0c0c0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/established"
+            app:layout_constraintTop_toBottomOf="@+id/cardBranchCity"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
@@ -149,57 +148,12 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/established"
-            android:layout_width="56dp"
-            android:layout_height="13dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:ems="10"
-            android:gravity="center|left"
-            android:inputType="textPersonName"
-            android:text="Established:"
-            android:textSize="9sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toRightOf="@+id/imageView2"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardBranchCity"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/cardBranchDate"
-            android:layout_width="108dp"
-            android:layout_height="13dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:ems="10"
-            android:gravity="center|left"
-            android:inputType="textPersonName"
-            android:text="December 18, 2055"
-            android:textSize="9sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toRightOf="@+id/established"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardBranchCity"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
             android:id="@+id/text1"
             android:layout_width="99dp"
             android:layout_height="17dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
             android:ems="10"
             android:inputType="textPersonName"
@@ -208,7 +162,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/established"
+            app:layout_constraintTop_toTopOf="@+id/line1"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
@@ -216,10 +170,8 @@
             android:layout_width="90dp"
             android:layout_height="18dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="3dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="8dp"
-            android:layout_marginStart="3dp"
             android:layout_marginTop="2dp"
             android:ems="10"
             android:inputType="textPersonName"
@@ -229,7 +181,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/text1"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/established"
+            app:layout_constraintTop_toBottomOf="@+id/line1"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
@@ -282,7 +234,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="8dp"
             android:ems="10"
             android:inputType="textPersonName"
 
@@ -302,7 +254,7 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="8dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="#567657"
@@ -325,28 +277,28 @@
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.985"
+            app:layout_constraintHorizontal_bias="0.976"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="0.888"
             app:srcCompat="@drawable/ic_delete_car" />
 
         <ImageButton
-            android:id="@+id/imageButton4"
+            android:id="@+id/cardBranchInUse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="0dp"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/cardBranchDelete"
-            app:layout_constraintTop_toBottomOf="@+id/cardBranchDelete"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ic_gps_position" />
+            app:srcCompat="@drawable/ic_in_use" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

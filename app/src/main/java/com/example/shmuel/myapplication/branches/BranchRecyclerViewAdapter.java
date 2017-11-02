@@ -2,6 +2,7 @@ package com.example.shmuel.myapplication.branches;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -54,9 +55,17 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         holder.branchAddressNumber.setText(branch.getAddress().getNumber());
         holder.revenue.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(branch.getBranchRevenue())));
         holder.numberOfCars.setText(String.valueOf(branch.getParkingSpotsNum()));
-        holder.establishedDate.setText(branch.getEstablishedDate().toString());
         holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
         holder.imageView.setImageDrawable(drawable);
+
+        if(!branch.isInUse())
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use, mContext.getTheme()));
+            } else {
+                holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use));
+            }
+        }
 
     }
 
@@ -72,9 +81,8 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         ImageView imageView;
         TextView revenue;
         TextView numberOfCars;
-        TextView establishedDate;
         TextView branchNumber;
-
+        ImageButton inUse;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -83,9 +91,9 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             numberOfCars=(TextView)itemView.findViewById(R.id.cardBranchCarNum);
             branchStreet=(TextView)itemView.findViewById(R.id.cardBranchStreet);
             branchNumber=(TextView)itemView.findViewById(R.id.cardBranchNumber);
-            establishedDate=(TextView)itemView.findViewById(R.id.cardBranchDate);
             branchAddressNumber=(TextView)itemView.findViewById(R.id.cardBranchAddressNumber);
             imageView=(ImageView)itemView.findViewById(R.id.imageView2);
+            inUse=(ImageButton)itemView.findViewById(R.id.cardBranchInUse);
 
         }
     }
