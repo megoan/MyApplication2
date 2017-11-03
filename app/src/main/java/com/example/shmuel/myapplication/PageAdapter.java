@@ -18,28 +18,24 @@ import java.util.Map;
  */
 
 public class PageAdapter extends FragmentStatePagerAdapter {
-    FragmentManager fm;
-    private Map<Integer,String> mFragmentsTags;
     public PageAdapter(FragmentManager fm) {
         super(fm);
-        this.fm=fm;
-        mFragmentsTags=new HashMap<>();
     }
 
     @Override
     public Fragment getItem(int position) {
         switch(position){
             case 0:
-                CarsTabFragment tab1=TabFragments.tab1;
+                CarsTabFragment tab1= /*new CarsTabFragment();*/TabFragments.tab1;
                 return tab1;
             case 1:
-                CarModelsFragment tab2=TabFragments.tab2;
+                CarModelsFragment tab2=/*new CarModelsFragment();*/ TabFragments.tab2;
                 return tab2;
             case 2:
-                BranchesFragment tab3 =TabFragments.tab3;
+                BranchesFragment tab3 =/*new BranchesFragment();*/  TabFragments.tab3;
                 return tab3;
             case 3:
-                ClientTabFragment tab4 =TabFragments.tab4;
+                ClientTabFragment tab4 =/* new ClientTabFragment();*/  TabFragments.tab4;
                 return tab4;
             default:
                 return null;
@@ -68,7 +64,6 @@ public class PageAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        if(object instanceof BranchesFragment) return POSITION_NONE;
         return super.getItemPosition(object);
     }
 }

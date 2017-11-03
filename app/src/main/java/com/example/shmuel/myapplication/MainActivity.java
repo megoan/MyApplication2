@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(pageAdapter);
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
@@ -511,43 +510,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(),
                          "No information to filter", Toast.LENGTH_SHORT).show();
-                /*final ClientTabFragment clientTabFragment=(ClientTabFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("filter by:");
-
-                // add a radio button list
-                String[] options = {"first name", "last name", "id"};
-                int checkedItem = 0; // cow
-                builder.setSingleChoiceItems(options, checkedItem, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // user checked an item
-                    }
-                });
-                // add OK and Cancel buttons
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ListView lw = ((AlertDialog)dialog).getListView();
-                        Object checkedItem = lw.getAdapter().getItem(lw.getCheckedItemPosition());
-                        if (checkedItem=="first name")
-                        {
-                            clientTabFragment.filterByName("shmuel");
-                        }
-                        else if(checkedItem=="last name")
-                        {
-                            clientTabFragment.filterByLastName("soibelman");
-                        }
-                        else
-                        {
-                            clientTabFragment.SortCliantById();
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancel", null);
-                // create and show the alert dialog
-                AlertDialog dialog = builder.create();
-                dialog.show();*/
                 break;
             }
         }
