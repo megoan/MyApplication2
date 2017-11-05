@@ -25,6 +25,11 @@ public interface BackEndFunc {
     public void updateCar(Car car);
     public void updateBranch(Branch branch);
 
+    public void deleteClient(int clientID);
+    public void deleteCarModel(int carModelID);
+    public void deleteCar(int carID);
+    public void deleteBranch(int branchID);
+
     public Client getClient(int id);
     public CarModel getCarModel(int carModelNumber);
     public Car getCar(int carNumber);

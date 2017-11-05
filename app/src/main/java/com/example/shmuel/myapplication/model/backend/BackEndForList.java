@@ -65,6 +65,51 @@ public class BackEndForList implements BackEndFunc {
     }
 
     @Override
+    public void deleteClient(int clientID) {
+        for (Client client: ListDataSource.clientList
+             ) {
+            if(client.getId()==clientID){
+            ListDataSource.clientList.remove(client);
+            return;}
+        }
+
+    }
+
+    @Override
+    public void deleteCarModel(int carModelID) {
+        for (CarModel carModel: ListDataSource.carModelList
+                ) {
+            if(carModel.getCarModelCode()==carModelID){
+            ListDataSource.carModelList.remove(carModel);
+            return;}
+        }
+    }
+
+    @Override
+    public void deleteCar(int carID) {
+        for (Car car: ListDataSource.carList
+                ) {
+            if(car.getCarNum()==carID){
+
+            ListDataSource.carList.remove(car);
+            return;
+            }
+        }
+    }
+
+    @Override
+    public void deleteBranch(int branchID) {
+        for (Branch branch: ListDataSource.branchList
+                ) {
+            if(branch.getBranchNum()==branchID){
+
+            ListDataSource.branchList.remove(branch);
+            return;
+            }
+        }
+    }
+
+    @Override
     public Client getClient(int id) {
         for (Client client: ListDataSource.clientList
                 ) {

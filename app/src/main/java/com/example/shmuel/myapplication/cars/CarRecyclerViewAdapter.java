@@ -1,18 +1,26 @@
 package com.example.shmuel.myapplication.cars;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.shmuel.myapplication.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
@@ -29,12 +37,16 @@ import java.util.ArrayList;
 
 public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerViewAdapter.ViewHolder> {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    CarRecyclerViewAdapter.ViewHolder mHolder;
     private ArrayList<Car> objects;
     private Context mContext;
-
+    int carId;
+    private ActionMode actionMode;
+    private int selectedPosition=-1;
     public CarRecyclerViewAdapter(ArrayList<Car> objects, Context context) {
         this.objects=objects;
         this.mContext=context;
+
     }
 
     @Override
@@ -45,7 +57,40 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
     }
 
     @Override
-    public void onBindViewHolder(CarRecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final CarRecyclerViewAdapter.ViewHolder holder, final int position) {
+        this.mHolder=holder;
+        if(selectedPosition==position){
+            if(((MainActivity)mContext).is_in_action_mode==true){
+                holder.itemView.setBackgroundColor(Color.parseColor("#a3a3a3"));}
+        }
+        else
+            {
+                holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
+            }
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                MyActionModeCallbackCar callback=new MyActionModeCallbackCar();
+                actionMode=((Activity)mContext).startActionMode(callback);
+                actionMode.setTitle("delete car");
+                Toast.makeText(mContext,
+                        "long click", Toast.LENGTH_SHORT).show();
+                selectedPosition=position;
+                ((MainActivity)mContext).is_in_action_mode=true;
+                notifyDataSetChanged();
+                return true;
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                notifyItemChanged(selectedPosition);
+                actionMode.finish();
+                selectedPosition=-1;
+            }
+        });
+
         Car car = objects.get(position);
         Address carAddress=backEndFunc.getBranch(car.getBranchNum()).getAddress();
         CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
@@ -90,6 +135,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+        int carID;
         TextView companyName;
         //TextView carModel;
         //TextView carNumber;
@@ -129,4 +175,55 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             inUse=(ImageButton)itemView.findViewById(R.id.carCardInUdeButton);
         }
     }
+    public class MyActionModeCallbackCar implements ActionMode.Callback{
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.context,menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId())
+            {
+                case R.id.carDelete:{
+                    Toast.makeText(mContext,
+                            "it works!!!", Toast.LENGTH_SHORT).show();
+                    backEndFunc.deleteCar(objects.get(selectedPosition).getCarNum());
+                    notifyDataSetChanged();
+
+                    selectedPosition=-1;
+                    notifyItemChanged(selectedPosition);
+                    actionMode.finish();
+                }
+                case android.R.id.closeButton:
+                {
+                    selectedPosition=-1;
+                }
+            }
+            return true;
+        }
+
+
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            int i=0;
+            selectedPosition=-1;
+            notifyItemChanged(selectedPosition);
+            ((MainActivity)mContext).is_in_action_mode=false;
+            notifyDataSetChanged();
+            i++;
+
+        }
+
+    }
+
+
 }

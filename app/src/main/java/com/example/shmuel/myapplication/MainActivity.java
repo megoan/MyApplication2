@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,8 +41,12 @@ import com.example.shmuel.myapplication.dialogs.sort.SortBranchesDialogFragment;
 import com.example.shmuel.myapplication.dialogs.sort.SortCarDialogFragment;
 import com.example.shmuel.myapplication.dialogs.sort.SortCarModelDialogFragment;
 import com.example.shmuel.myapplication.dialogs.sort.SortClientDialogFragment;
+import com.example.shmuel.myapplication.model.backend.BackEndForList;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
+import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
+import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 
 import java.util.ArrayList;
@@ -70,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     int updatedTab=0;
     boolean check=true;
     SearchView searchView;
+    public boolean is_in_action_mode=false;
 
 
     //filtering companies
@@ -124,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        searchView=(SearchView)findViewById(R.id.search);
 
+
+
+        searchView=(SearchView)findViewById(R.id.search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -564,9 +572,6 @@ public class MainActivity extends AppCompatActivity {
             carCompaniesChecked[i]=true;
         }
 
-
-
-
         for (CarModel carmodel:ListDataSource.carModelList
                 ) {
             carModelCompanySet.add(carmodel.getCompanyName());
@@ -608,9 +613,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
+
+
 
 }
