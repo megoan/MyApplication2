@@ -17,7 +17,7 @@ import java.util.Map;
  * Created by shmuel on 22/10/2017.
  */
 
-public class PageAdapter extends FragmentStatePagerAdapter {
+public class PageAdapter extends FragmentPagerAdapter {
     public PageAdapter(FragmentManager fm) {
         super(fm);
     }

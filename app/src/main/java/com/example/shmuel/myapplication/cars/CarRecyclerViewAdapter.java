@@ -54,17 +54,17 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
         Drawable drawable= ContextCompat.getDrawable(mContext, defaultImage);
         holder.imageView.setImageDrawable(drawable);
         holder.branch.setText("Branch: "+carAddress.getStreet()+", "+carAddress.getCity());
-        holder.carNumber.setText("#"+String.valueOf(car.getCarNum()));
+        //holder.carNumber.setText("#"+String.valueOf(car.getCarNum()));
 
         holder.carYear.setText(String.valueOf(car.getYear()));
 
         //holder.city.setText(carAddress.getCity());
-        holder.carModel.setText(carModel.getCarModelName());
-        holder.companyName.setText(carModel.getCompanyName());
+        //holder.carModel.setText(carModel.getCarModelName());
+        holder.companyName.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
 
         //holder.street.setText(carAddress.getStreet());
 
-        holder.milage.setText(String.valueOf(car.getMileage()));
+        //holder.milage.setText(String.valueOf(car.getMileage()));
         holder.dailyPrice.setText("USD "+String.valueOf(car.getOneDayCost()));
         holder.milePrice.setText("USD "+String.valueOf(car.getOneKilometerCost()));
 
@@ -91,12 +91,12 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView companyName;
-        TextView carModel;
-        TextView carNumber;
+        //TextView carModel;
+        //TextView carNumber;
         TextView carYear;
         TextView city;
         TextView street;
-        TextView milage;
+        //TextView milage;
         TextView dailyPrice;
         TextView milePrice;
         ImageView imageView;
@@ -112,13 +112,13 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             imageView=(ImageView)itemView.findViewById(R.id.carModelCardImage);
 
             companyName=(TextView)itemView.findViewById(R.id.carModelCardCompany);
-            carModel=(TextView)itemView.findViewById(R.id.carModelCardModelName);
-            carNumber=(TextView)itemView.findViewById(R.id.carCardId);
+            //carModel=(TextView)itemView.findViewById(R.id.carModelCardModelName);
+            //carNumber=(TextView)itemView.findViewById(R.id.carCardId);
             branch=(TextView)itemView.findViewById(R.id.carCardBranch);
             carYear=(TextView)itemView.findViewById(R.id.carCardYear);
             //city=(TextView)itemView.findViewById(R.id.carCardCity);
            // street=(TextView)itemView.findViewById(R.id.carCardStreet);
-            milage=(TextView)itemView.findViewById(R.id.carCardMilage);
+            //milage=(TextView)itemView.findViewById(R.id.carCardMilage);
             dailyPrice=(TextView)itemView.findViewById(R.id.carCardDayPrice);
             milePrice=(TextView)itemView.findViewById(R.id.carCardMilePrice);
 
