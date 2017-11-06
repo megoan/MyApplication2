@@ -28,7 +28,7 @@ import java.util.Comparator;
 public class CarsTabFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    CarRecyclerViewAdapter mAdapter;
+    public CarRecyclerViewAdapter mAdapter;
     ArrayList<Car>cars;
     BackEndFunc backEndFunc;
 
@@ -173,5 +173,23 @@ public class CarsTabFragment extends Fragment {
         }
         cars.removeAll(tmp);
         updateView();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(mAdapter.actionMode!=null)
+        {
+            mAdapter.actionMode.finish();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mAdapter.actionMode!=null)
+        {
+            mAdapter.actionMode.finish();
+        }
     }
 }

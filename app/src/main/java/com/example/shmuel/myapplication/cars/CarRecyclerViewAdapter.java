@@ -41,7 +41,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
     private ArrayList<Car> objects;
     private Context mContext;
     int carId;
-    private ActionMode actionMode;
+    public ActionMode actionMode;
     private int selectedPosition=-1;
     public CarRecyclerViewAdapter(ArrayList<Car> objects, Context context) {
         this.objects=objects;
@@ -86,7 +86,9 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             @Override
             public void onClick(View v) {
                 notifyItemChanged(selectedPosition);
-                actionMode.finish();
+                if (actionMode!=null) {
+                    actionMode.finish();
+                }
                 selectedPosition=-1;
             }
         });
