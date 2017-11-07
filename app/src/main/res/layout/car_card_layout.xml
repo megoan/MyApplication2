@@ -9,6 +9,8 @@
     app:cardCornerRadius="6dp"
     android:layout_margin="10dp"
     app:cardPreventCornerOverlap="false"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
     >
 
     <android.support.constraint.ConstraintLayout
@@ -16,7 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:padding="0dp">
+        android:padding="0dp"
+        android:background="?android:attr/selectableItemBackground"
+        >
 
         <ImageView
             android:id="@+id/carModelCardImage"
@@ -29,7 +33,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:clickable="false"/>
 
 
         <TextView
@@ -48,7 +53,9 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardImage"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <ImageButton
             android:id="@+id/carCardInUdeButton"
@@ -67,7 +74,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardImage"
-            app:layout_constraintVertical_bias="0.028" />
+            app:layout_constraintVertical_bias="0.028"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/carCardBranch"
@@ -86,7 +94,9 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardCompany"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <View
             android:id="@+id/line1"
@@ -100,7 +110,9 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carCardBranch"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -133,7 +145,9 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                android:longClickable="false"
+                android:clickable="false"/>
 
             <TextView
                 android:id="@+id/textView6"
@@ -151,7 +165,9 @@
                 app:layout_constraintLeft_toRightOf="@+id/spinner"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                android:longClickable="false"
+                android:clickable="false"/>
 
             <TextView
                 android:id="@+id/carCardMilePrice"
@@ -169,7 +185,9 @@
                 app:layout_constraintLeft_toLeftOf="@+id/textView6"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView6"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                android:longClickable="false"
+                android:clickable="false"/>
 
             <TextView
                 android:id="@+id/carCardDayPrice"
@@ -189,7 +207,9 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spinner"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                android:longClickable="false"
+                android:clickable="false"/>
 
             <TextView
                 android:id="@+id/textView9"
@@ -206,7 +226,9 @@
                 app:layout_constraintLeft_toRightOf="@+id/textView6"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                android:longClickable="false"
+                android:clickable="false"/>
 
 
 
@@ -225,7 +247,9 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="@+id/textView9"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9" />
+                app:layout_constraintTop_toBottomOf="@+id/textView9"
+                android:longClickable="false"
+                android:clickable="false"/>
 
 
 
@@ -241,7 +265,9 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout2"
@@ -276,7 +302,9 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                android:longClickable="false"
+                />
 
             <TextView
                 android:id="@+id/carCardRating"
@@ -295,7 +323,9 @@
                 app:layout_constraintLeft_toRightOf="@+id/carCardratingBar"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                android:longClickable="false"
+                android:clickable="false"/>
 
             <TextView
                 android:id="@+id/carCardNumberOfRatings"
@@ -313,41 +343,11 @@
                 app:layout_constraintLeft_toRightOf="@+id/carCardRating"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                android:longClickable="false"
+                android:clickable="false"/>
 
-            <!-- <TextView
-                android:id="@+id/carCardTextId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:text="ID:"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/carCardratingBar"
-                app:layout_constraintVertical_bias="1.0" />
 
-            <TextView
-                android:id="@+id/carCardId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:text="#51-567-87"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toRightOf="@+id/carCardTextId"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/carCardratingBar"
-                app:layout_constraintVertical_bias="1.0" />-->
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>

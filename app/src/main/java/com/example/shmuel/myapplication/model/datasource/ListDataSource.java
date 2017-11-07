@@ -58,8 +58,8 @@ public class ListDataSource {
         branchList.add(new Branch(new Address("Hifa","alenbyz","12a"),15,15,"@drawable/rental",15000,new MyDate(2,"july",2055),true));
         clientList.add(new Client("avi","golo",315,"999","s@e.com","111"));
 
-        carModelList.add(new CarModel(16,"Audi","R8",32.1, Transmission.MANUAL,3,3,false,"@drawable/ferrari_812",true));
-        carList.add(new Car(16,16,50,6,2.5,33,70,70,"@drawable/car",1894,false));
+        carModelList.add(new CarModel(16,"Delete","D",32.1, Transmission.MANUAL,3,3,false,"@drawable/ferrari_812",false));
+        carList.add(new Car(16,15,50,6,2.5,33,70,70,"@drawable/car",1894,false));
         branchList.add(new Branch(new Address("Hifa","alenbyf","12a"),16,16,"@drawable/rental",15000,new MyDate(2,"july",2055),false));
         clientList.add(new Client("lambde","melon",316,"999","s@e.com","111"));
     }

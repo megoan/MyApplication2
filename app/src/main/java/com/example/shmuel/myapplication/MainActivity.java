@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
     boolean check=true;
     SearchView searchView;
     public boolean is_in_action_mode=false;
+    public boolean client_is_in_action_mode=false;
+    public boolean car_model_is_in_action_mode=false;
+    public boolean branch_is_in_action_mode=false;
 
 
     //filtering companies
@@ -135,6 +138,18 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (TabFragments.tab1!=null && TabFragments.tab1.mAdapter!=null && TabFragments.tab1.mAdapter.actionMode!=null) {
                     TabFragments.tab1.mAdapter.actionMode.finish();
+                }
+                else if(TabFragments.tab4!=null && TabFragments.tab4.mAdapter!=null && TabFragments.tab4.mAdapter.actionMode!=null)
+                {
+                    TabFragments.tab4.mAdapter.actionMode.finish();
+                }
+                else if(TabFragments.tab2!=null && TabFragments.tab2.mAdapter!=null && TabFragments.tab2.mAdapter.actionMode!=null)
+                {
+                    TabFragments.tab2.mAdapter.actionMode.finish();
+                }
+                else if(TabFragments.tab3!=null && TabFragments.tab3.mAdapter!=null && TabFragments.tab3.mAdapter.actionMode!=null)
+                {
+                    TabFragments.tab3.mAdapter.actionMode.finish();
                 }
             }
 

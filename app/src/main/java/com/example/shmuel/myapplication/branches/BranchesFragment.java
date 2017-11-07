@@ -30,7 +30,7 @@ import javax.sql.DataSource;
 
 public class BranchesFragment extends Fragment {
     private RecyclerView recyclerView;
-    BranchRecyclerViewAdapter mAdapter;
+    public BranchRecyclerViewAdapter mAdapter;
     BackEndFunc backEndFunc;
     ArrayList<Branch>branches;
     @Override

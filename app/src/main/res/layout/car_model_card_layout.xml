@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:padding="0dp">
+        android:padding="0dp"
+        android:background="?android:attr/selectableItemBackground">
 
         <ImageView
             android:id="@+id/carModelCardImage"
@@ -27,7 +28,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardCompany"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:clickable="false"/>
 
 
         <TextView
@@ -46,7 +48,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/carModelCardModelName"
@@ -64,7 +67,8 @@
             app:layout_constraintLeft_toRightOf="@+id/carModelCardCompany"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:clickable="false"/>
 
         <ImageButton
             android:id="@+id/carModelCardInUseButton"
@@ -81,7 +85,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:clickable="false"/>
 
         <View
             android:id="@+id/line1"
@@ -97,23 +102,8 @@
             android:layout_marginRight="10dp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardModelName"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <ImageButton
-            android:id="@+id/carModelCardDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_delete_car"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.946"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/carModelCardImage" />
+            app:layout_constraintVertical_bias="0.0"
+            android:clickable="false"/>
 
         <RelativeLayout
             android:id="@+id/person_layout1"
@@ -152,7 +142,8 @@
                     app:layout_constraintStart_toStartOf="parent"
 
                     app:layout_constraintVertical_bias="0.0"
-                    app:srcCompat="@drawable/ic_person" />
+                    app:srcCompat="@drawable/ic_person"
+                    android:clickable="false"/>
             </RelativeLayout>
 
             <TextView
@@ -164,7 +155,8 @@
                 android:text="+2"
                 android:textColor="#FFF"
                 android:textSize="10sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:clickable="false"/>
         </RelativeLayout>
 
 
@@ -207,7 +199,8 @@
                     app:layout_constraintStart_toStartOf="parent"
 
                     app:layout_constraintVertical_bias="0.0"
-                    app:srcCompat="@drawable/ic_luggage" />
+                    app:srcCompat="@drawable/ic_luggage"
+                    android:clickable="false"/>
             </RelativeLayout>
 
             <TextView
@@ -219,7 +212,8 @@
                 android:text="+1"
                 android:textColor="#FFF"
                 android:textSize="10sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:clickable="false"/>
         </RelativeLayout>
 
         <ImageButton
@@ -238,7 +232,8 @@
             app:layout_constraintHorizontal_bias="0.01"
             app:layout_constraintStart_toEndOf="@+id/luggage_layout1"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardImage"
-            app:srcCompat="@drawable/ic_auto" />
+            app:srcCompat="@drawable/ic_auto"
+            android:clickable="false"/>
 
         <ImageButton
             android:id="@+id/carModelCardAc"
@@ -254,7 +249,8 @@
             app:layout_constraintHorizontal_bias="0.013"
             app:layout_constraintStart_toEndOf="@+id/carModelCardAuto"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardImage"
-            app:srcCompat="@drawable/ic_ac" />
+            app:srcCompat="@drawable/ic_ac"
+            android:clickable="false"/>
 
 
     </android.support.constraint.ConstraintLayout>

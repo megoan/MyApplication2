@@ -30,7 +30,7 @@ import java.util.Comparator;
 public class CarModelsFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    CarCompaniesInnerRecyclerViewAdapter mAdapter;
+    public CarCompaniesInnerRecyclerViewAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
     ArrayList<CarModel> carModels;
     private BackEndFunc backEndFunc;
@@ -40,10 +40,10 @@ public class CarModelsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-        carModels=new ArrayList<>(backEndFunc.getAllCarModels());
+        //carModels=new ArrayList<>(backEndFunc.getAllCarModels());
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
-        mAdapter=new CarCompaniesInnerRecyclerViewAdapter(carModels,getActivity());
+        mAdapter=new CarCompaniesInnerRecyclerViewAdapter(backEndFunc.getAllCarModels(),getActivity());
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));

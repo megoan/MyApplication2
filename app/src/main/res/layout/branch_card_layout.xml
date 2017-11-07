@@ -10,7 +10,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground">
 
         <ImageView
             android:id="@+id/imageView2"
@@ -26,7 +27,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/rental" />
+            app:srcCompat="@drawable/rental"
+            android:clickable="false"/>
 
         <View
             android:id="@+id/line2"
@@ -44,7 +46,9 @@
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text2"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <View
             android:id="@+id/line1"
@@ -60,7 +64,9 @@
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardBranchCity"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/cardBranchStreet"
@@ -80,7 +86,9 @@
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/st"
@@ -102,7 +110,9 @@
             app:layout_constraintLeft_toRightOf="@+id/cardBranchStreet"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/cardBranchAddressNumber"
@@ -124,7 +134,9 @@
             app:layout_constraintLeft_toRightOf="@+id/st"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/cardBranchCity"
@@ -145,7 +157,9 @@
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardBranchStreet"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/text1"
@@ -163,7 +177,9 @@
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/line1"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/cardBranchRevenue"
@@ -182,7 +198,9 @@
             app:layout_constraintLeft_toRightOf="@+id/text1"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/line1"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/text2"
@@ -202,7 +220,9 @@
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text1"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/cardBranchCarNum"
@@ -224,7 +244,9 @@
             app:layout_constraintLeft_toRightOf="@+id/text2"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardBranchRevenue"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/cardBranchN"
@@ -243,7 +265,9 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/imageView2"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/line2" />
+            app:layout_constraintTop_toBottomOf="@+id/line2"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <TextView
             android:id="@+id/cardBranchNumber"
@@ -264,24 +288,9 @@
             app:layout_constraintLeft_toRightOf="@+id/cardBranchN"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/line2"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <ImageButton
-            android:id="@+id/cardBranchDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/transparent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.976"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.888"
-            app:srcCompat="@drawable/ic_delete_car" />
+            app:layout_constraintVertical_bias="0.0"
+            android:longClickable="false"
+            android:clickable="false"/>
 
         <ImageButton
             android:id="@+id/cardBranchInUse"
@@ -294,8 +303,6 @@
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/cardBranchDelete"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_in_use" />

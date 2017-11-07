@@ -30,7 +30,7 @@ public class ClientTabFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private BackEndFunc backEndFunc;
-    ClientRecyclerViewAdapter mAdapter;
+    public ClientRecyclerViewAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
     ArrayList<Client> clients;
 
