@@ -1,6 +1,7 @@
 package com.example.shmuel.myapplication.controller;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
@@ -120,50 +121,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        //mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(pageAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (TabFragments.tab1!=null && TabFragments.tab1.mAdapter!=null && TabFragments.tab1.mAdapter.actionMode!=null) {
-                    TabFragments.tab1.mAdapter.actionMode.finish();
-                }
-                else if(TabFragments.tab4!=null && TabFragments.tab4.mAdapter!=null && TabFragments.tab4.mAdapter.actionMode!=null)
-                {
-                    TabFragments.tab4.mAdapter.actionMode.finish();
-                }
-                else if(TabFragments.tab2!=null && TabFragments.tab2.mAdapter!=null && TabFragments.tab2.mAdapter.actionMode!=null)
-                {
-                    TabFragments.tab2.mAdapter.actionMode.finish();
-                }
-                else if(TabFragments.tab3!=null && TabFragments.tab3.mAdapter!=null && TabFragments.tab3.mAdapter.actionMode!=null)
-                {
-                    TabFragments.tab3.mAdapter.actionMode.finish();
-                }
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                switch (state){
-                    case ViewPager.SCROLL_STATE_IDLE:
-                        fab.show();
-                        break;
-                    case ViewPager.SCROLL_STATE_DRAGGING:
-                    case ViewPager.SCROLL_STATE_SETTLING:
-                        fab.hide();
-                        break;
-                }
-            }
-        });
-
 
         searchView=(SearchView)findViewById(R.id.search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -205,6 +166,21 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (TabFragments.tab1!=null && TabFragments.tab1.mAdapter!=null && TabFragments.tab1.mAdapter.actionMode!=null) {
+                    TabFragments.tab1.mAdapter.actionMode.finish();
+                }
+                else if(TabFragments.tab4!=null && TabFragments.tab4.mAdapter!=null && TabFragments.tab4.mAdapter.actionMode!=null)
+                {
+                    TabFragments.tab4.mAdapter.actionMode.finish();
+                }
+                else if(TabFragments.tab2!=null && TabFragments.tab2.mAdapter!=null && TabFragments.tab2.mAdapter.actionMode!=null)
+                {
+                    TabFragments.tab2.mAdapter.actionMode.finish();
+                }
+                else if(TabFragments.tab3!=null && TabFragments.tab3.mAdapter!=null && TabFragments.tab3.mAdapter.actionMode!=null)
+                {
+                    TabFragments.tab3.mAdapter.actionMode.finish();
+                }
             }
             @Override
             public void onPageSelected(int position) {
@@ -245,7 +221,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                    /*switch (state){
+                    case ViewPager.SCROLL_STATE_IDLE:
+                        fab.show();
+                        break;
+                    case ViewPager.SCROLL_STATE_DRAGGING:
+                    case ViewPager.SCROLL_STATE_SETTLING:
+                        fab.hide();
+                        break;
+                }*/
             }
         });
 
@@ -648,5 +632,45 @@ public class MainActivity extends AppCompatActivity {
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        switch (tabsType)
+        {
+            case CARS:{
+                if(TabFragments.tab1.mAdapter!=null)
+                {
+                    TabFragments.tab1.mAdapter.notifyDataSetChanged();
+                }
+                break;
+            }
+            case CAR_MODELS:
+            {
+                if(TabFragments.tab2.mAdapter!=null)
+                {
+                    TabFragments.tab2.mAdapter.notifyDataSetChanged();
+                }
+                break;
+            }
+            case BRANCHES:
+            {
+                if(TabFragments.tab3.mAdapter!=null)
+                {
+                    TabFragments.tab3.mAdapter.notifyDataSetChanged();
+                }
+                break;
+            }
+            case CLIENTS:
+            {
+                if(TabFragments.tab4.mAdapter!=null)
+                {
+                    TabFragments.tab4.mAdapter.notifyDataSetChanged();
+                }
+                break;
+            }
+        }
+
     }
 }

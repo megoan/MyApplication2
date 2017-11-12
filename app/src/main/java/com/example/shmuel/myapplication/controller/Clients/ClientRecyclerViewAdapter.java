@@ -3,6 +3,7 @@ package com.example.shmuel.myapplication.controller.Clients;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -49,7 +50,7 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
 
     @Override
     public void onBindViewHolder(ClientRecyclerViewAdapter.ViewHolder holder,final int position) {
-        Client client = objects.get(position);
+        final Client client = objects.get(position);
         if(selectedPosition==position){
             if(((MainActivity)mContext).client_is_in_action_mode==true){
                 holder.itemView.setBackgroundColor(Color.parseColor("#a3a3a3"));
@@ -77,6 +78,16 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
             @Override
             public void onClick(View v) {
                 notifyItemChanged(selectedPosition);
+
+                if(((MainActivity)mContext).client_is_in_action_mode==false){
+                    Intent intent=new Intent(mContext,ClientActivity.class);
+                    Client client1=objects.get(position);
+                    intent.putExtra("name",client.getName());
+                    intent.putExtra("lastName",client.getLastName());
+                    intent.putExtra("id",client.getId());
+                    ((Activity)mContext).startActivity(intent);
+                }
+
                 if (actionMode!=null) {
                     actionMode.finish();
                 }

@@ -33,6 +33,21 @@ public class ListDataSource {
     }
     public void initialize()
     {
+        carModelList.add(new CarModel(111,"Audi","R8",32.1, Transmission.AUTOMATIC,2,2,true,"@drawable/audi8_model",true));
+        carModelList.add(new CarModel(112,"Ford","Fusion Sedan",32.1, Transmission.AUTOMATIC,4,3,true,"@drawable/ford_2018",false));
+        carModelList.add(new CarModel(113,"Jeep","Compass",32.1, Transmission.MANUAL,5,4,true,"@drawable/jeep_compass",true));
+        carModelList.add(new CarModel(114,"lamborghini","aventador",32.1, Transmission.MANUAL,2,1,true,"@drawable/lambergini_aventador",true));
+        carModelList.add(new CarModel(115,"Mazda","2",32.1, Transmission.AUTOMATIC,4,2,true,"@drawable/mazda2",true));
+        carModelList.add(new CarModel(116,"Mazda","3 Sedan",32.1, Transmission.AUTOMATIC,5,2,true,"@drawable/mazda3_sedan",true));
+        carModelList.add(new CarModel(117,"Mazda","CX5",32.1, Transmission.AUTOMATIC,4,2,true,"@drawable/mazda_cx5_2017",true));
+        carModelList.add(new CarModel(118,"Mazda","MPV",32.1, Transmission.AUTOMATIC,7,5,true,"@drawable/mazda_mpv",true));
+        carModelList.add(new CarModel(119,"Mitsubishi","Montero Sport",32.1, Transmission.MANUAL,5,2,true,"@drawable/mitsubishi_montero_sport",true));
+        carModelList.add(new CarModel(120,"Skoda","Superb",32.1, Transmission.MANUAL,4,2,true,"@drawable/skoda_supberb",true));
+        carModelList.add(new CarModel(121,"Toyota","Corolla",32.1, Transmission.AUTOMATIC,5,2,true,"@drawable/toyota_corola",true));
+
+
+
+
         carModelList.add(new CarModel(11,"Audi","R8",32.1, Transmission.AUTOMATIC,1,4,true,"@drawable/ferrari_812",true));
         carList.add(new Car(11,11,50,1,3.5,30,74,35,"@drawable/audi8",1997,false));
         branchList.add(new Branch(new Address("Hifa","sanhedria","12a"),12,11,"@drawable/rental",15000,new MyDate(2,"july",2055),true));
