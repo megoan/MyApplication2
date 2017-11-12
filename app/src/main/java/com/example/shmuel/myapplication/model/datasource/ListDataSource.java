@@ -43,7 +43,7 @@ public class ListDataSource {
         carModelList.add(new CarModel(118,"Mazda","MPV",32.1, Transmission.AUTOMATIC,7,5,true,"@drawable/mazda_mpv",true));
         carModelList.add(new CarModel(119,"Mitsubishi","Montero Sport",32.1, Transmission.MANUAL,5,2,true,"@drawable/mitsubishi_montero_sport",true));
         carModelList.add(new CarModel(120,"Skoda","Superb",32.1, Transmission.MANUAL,4,2,true,"@drawable/skoda_supberb",true));
-        carModelList.add(new CarModel(121,"Toyota","Corolla",32.1, Transmission.AUTOMATIC,5,2,true,"@drawable/toyota_corola",true));
+        carModelList.add(new CarModel(121,"Toyota","Corolla",32.1, Transmission.AUTOMATIC,5,2,true,"@drawable/toyota_corola_2017",true));
 
 
 
