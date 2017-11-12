@@ -2,10 +2,12 @@ package com.example.shmuel.myapplication.controller.branches;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -111,8 +113,6 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 selectedPosition=position;
                 ((MainActivity)mContext).branch_is_in_action_mode=true;
                 notifyDataSetChanged();
-                Toast.makeText(mContext,
-                        "long click", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -204,14 +204,37 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                     }
                     else
                     {
-                        backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
-                        notifyDataSetChanged();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
-                        selectedPosition=-1;
-                        notifyItemChanged(selectedPosition);
-                        actionMode.finish();
-                        Toast.makeText(mContext,
-                                "branch deleted", Toast.LENGTH_SHORT).show();
+                        builder.setTitle("Delete Branch");
+
+                        builder.setMessage("are you sure?");
+
+                        builder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
+                                notifyDataSetChanged();
+                                Toast.makeText(mContext,
+                                        "branch deleted", Toast.LENGTH_SHORT).show();
+
+                                selectedPosition=-1;
+                                notifyItemChanged(selectedPosition);
+                                actionMode.finish();
+                            }
+                        });
+
+                        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
                     }
 
                 }

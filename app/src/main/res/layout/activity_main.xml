@@ -125,7 +125,7 @@
         app:elevation="3dp"
         app:layout_anchor="@+id/container"
         app:layout_anchorGravity="bottom|right|center_vertical|end"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/ic_madd" />
 
 
 </android.support.design.widget.CoordinatorLayout>

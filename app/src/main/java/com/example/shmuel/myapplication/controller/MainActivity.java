@@ -1,6 +1,8 @@
 package com.example.shmuel.myapplication.controller;
 
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private PageAdapter pageAdapter;
     int updatedTab=0;
     boolean check=true;
+    FloatingActionButton fab;
     SearchView searchView;
     public boolean is_in_action_mode=false;
     public boolean client_is_in_action_mode=false;
@@ -88,6 +91,15 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_blue)));
 
         if (savedInstanceState!=null) {
             updatedTab=savedInstanceState.getInt("CHILD");
@@ -140,7 +152,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                switch (state){
+                    case ViewPager.SCROLL_STATE_IDLE:
+                        fab.show();
+                        break;
+                    case ViewPager.SCROLL_STATE_DRAGGING:
+                    case ViewPager.SCROLL_STATE_SETTLING:
+                        fab.hide();
+                        break;
+                }
             }
         });
 
@@ -195,21 +215,29 @@ public class MainActivity extends AppCompatActivity {
                     case 0:{
                         tabsType=TabsType.CARS;
                         searchView.setQueryHint("cars");
+                        fab.setImageResource(R.drawable.ic_madd);
+                        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_blue)));
                         break;
                     }
                     case 1:{
                         tabsType=TabsType.CAR_MODELS;
                         searchView.setQueryHint("car models");
+                        fab.setImageResource(R.drawable.ic_madd);
+                        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkorange)));
                         break;
                     }
                     case 2:{
                         tabsType=TabsType.BRANCHES;
                         searchView.setQueryHint("branches");
+                        fab.setImageResource(R.drawable.ic_add_branch);
+                        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkgreen)));
                         break;
                     }
                     case 3:{
                         tabsType=TabsType.CLIENTS;
                         searchView.setQueryHint("clients");
+                        fab.setImageResource(R.drawable.ic_add_client);
+                        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkred)));
                         break;
                     }
                 }
@@ -221,14 +249,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
     }
     public void onClickSort(View view)

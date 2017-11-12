@@ -2,7 +2,9 @@ package com.example.shmuel.myapplication.controller.Clients;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -122,18 +124,36 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
             {
                 case R.id.delete_item:{
 
-                    backEndFunc.deleteClient(objects.get(selectedPosition).getId());
-                    notifyDataSetChanged();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
-                    selectedPosition=-1;
-                    notifyItemChanged(selectedPosition);
-                    actionMode.finish();
-                    Toast.makeText(mContext,
-                            "client deleted", Toast.LENGTH_SHORT).show();
-                }
-                case android.R.id.closeButton:
-                {
-                    selectedPosition=-1;
+                    builder.setTitle("Delete Client");
+
+                    builder.setMessage("are you sure?");
+
+                    builder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // TODO Auto-generated method stub
+                            backEndFunc.deleteClient(objects.get(selectedPosition).getId());
+                            notifyDataSetChanged();
+                            Toast.makeText(mContext,
+                                    "client deleted", Toast.LENGTH_SHORT).show();
+
+                            selectedPosition=-1;
+                            notifyItemChanged(selectedPosition);
+                            actionMode.finish();
+                        }
+                    });
+
+                    builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
                 }
             }
             return true;

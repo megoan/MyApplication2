@@ -2,11 +2,13 @@ package com.example.shmuel.myapplication.controller.carmodels;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -34,9 +36,9 @@ import java.util.ArrayList;
  */
 
 public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<CarCompaniesInnerRecyclerViewAdapter.ViewHolder> {
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
     private ArrayList<CarModel> objects;
     private Context mContext;
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
     public ActionMode actionMode;
     private int selectedPosition=-1;
 
@@ -102,11 +104,9 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                CarCompaniesInnerRecyclerViewAdapter.MyActionModeCallbackCarModel callback=new CarCompaniesInnerRecyclerViewAdapter.MyActionModeCallbackCarModel();
+                MyActionModeCallbackCarModel callback=new MyActionModeCallbackCarModel();
                 actionMode=((Activity)mContext).startActionMode(callback);
                 actionMode.setTitle("delete car model");
-                Toast.makeText(mContext,
-                        "long click", Toast.LENGTH_SHORT).show();
                 selectedPosition=position;
                 ((MainActivity)mContext).car_model_is_in_action_mode=true;
                 notifyDataSetChanged();
@@ -216,20 +216,39 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                         return false;
                     }
                    else{
-                        backEndFunc.deleteCarModel(objects.get(selectedPosition).getCarModelCode());
-                        notifyDataSetChanged();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
-                        selectedPosition=-1;
-                        notifyItemChanged(selectedPosition);
-                        actionMode.finish();
-                        Toast.makeText(mContext,
-                                "car model deleted", Toast.LENGTH_SHORT).show();
+                        builder.setTitle("Delete Car Model");
+
+                        builder.setMessage("are you sure?");
+
+                        builder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                backEndFunc.deleteCarModel(objects.get(selectedPosition).getCarModelCode());
+                                notifyDataSetChanged();
+                                Toast.makeText(mContext,
+                                        "car model deleted", Toast.LENGTH_SHORT).show();
+
+                                selectedPosition=-1;
+                                notifyItemChanged(selectedPosition);
+                                actionMode.finish();
+                            }
+                        });
+
+                        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
                     }
 
-                }
-                case android.R.id.closeButton:
-                {
-                    selectedPosition=-1;
                 }
             }
             return true;
@@ -239,13 +258,10 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            int i=0;
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             ((MainActivity)mContext).car_model_is_in_action_mode=false;
             notifyDataSetChanged();
-            i++;
-
         }
 
     }

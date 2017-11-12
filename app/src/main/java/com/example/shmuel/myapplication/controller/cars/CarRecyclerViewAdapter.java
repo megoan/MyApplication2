@@ -2,10 +2,12 @@ package com.example.shmuel.myapplication.controller.cars;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -38,9 +40,9 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
     private ArrayList<Car> objects;
     private Context mContext;
-    int carId;
     public ActionMode actionMode;
     private int selectedPosition=-1;
+
 
     public CarRecyclerViewAdapter(ArrayList<Car> objects, Context context) {
         this.objects=objects;
@@ -106,12 +108,9 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                 MyActionModeCallbackCar callback=new MyActionModeCallbackCar();
                 actionMode=((Activity)mContext).startActionMode(callback);
                 actionMode.setTitle("delete car");
-
                 selectedPosition=position;
                 ((MainActivity)mContext).is_in_action_mode=true;
                 notifyDataSetChanged();
-                Toast.makeText(mContext,
-                        "long click", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -217,16 +216,38 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                     }
                     else
                     {
-                        backEndFunc.deleteCar(objects.get(selectedPosition).getCarNum());
-                        notifyDataSetChanged();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
-                        selectedPosition=-1;
-                        notifyItemChanged(selectedPosition);
-                        actionMode.finish();
-                        Toast.makeText(mContext,
-                                "car deleted", Toast.LENGTH_SHORT).show();
+                        builder.setTitle("Delete Car");
+
+                        builder.setMessage("are you sure?");
+
+                        builder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                backEndFunc.deleteCar(objects.get(selectedPosition).getCarNum());
+                                notifyDataSetChanged();
+                                Toast.makeText(mContext,
+                                        "car deleted", Toast.LENGTH_SHORT).show();
+
+                                selectedPosition=-1;
+                                notifyItemChanged(selectedPosition);
+                                actionMode.finish();
+                            }
+                        });
+
+                        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
                     }
-
                 }
             }
             return true;
@@ -236,13 +257,10 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            int i=0;
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             ((MainActivity)mContext).is_in_action_mode=false;
             notifyDataSetChanged();
-            i++;
-
         }
 
     }
