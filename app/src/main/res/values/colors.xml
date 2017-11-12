@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3f51b5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#00547e</color>
+    <color name="colorPrimaryDark">#003854</color>
+    <color name="colorAccent">#00ccd7</color>
     <color name="white">#FFFF</color>
     <color name="black">#000000</color>
     <color name="buttonClickedLightBlue">#99DDFF</color>
@@ -12,4 +12,5 @@
     <color name="fab_darkorange">#563800</color>
     <color name="fab_darkgreen">#005622</color>
     <color name="fab_darkred">#560000</color>
+    <color name="background_material_light">#2c2c2c</color>
 </resources>
