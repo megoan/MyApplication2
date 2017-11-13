@@ -85,6 +85,8 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
                     intent.putExtra("name",client.getName());
                     intent.putExtra("lastName",client.getLastName());
                     intent.putExtra("id",client.getId());
+                    intent.putExtra("phone",client.getPhoneNum());
+                    intent.putExtra("email",client.getEmailAddress());
                     ((Activity)mContext).startActivity(intent);
                 }
 

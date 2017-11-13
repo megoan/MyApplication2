@@ -33,15 +33,21 @@ public class ClientActivity extends AppCompatActivity {
         Intent intent =getIntent();
         String name=intent.getStringExtra("name");
         String lastName=intent.getStringExtra("lastName");
+        String phone=intent.getStringExtra("phone");
+        String email=intent.getStringExtra("email");
         id=intent.getIntExtra("id",-1);
 
         TextView nameclient =(TextView)findViewById(R.id.nameclient);
         TextView lastnameclient =(TextView)findViewById(R.id.last_name_client);
         TextView idclient =(TextView)findViewById(R.id.id_client);
+        TextView phoneclient =(TextView)findViewById(R.id.phoneClient);
+        TextView emailclient =(TextView)findViewById(R.id.emailClient);
 
         nameclient.setText(name);
         lastnameclient.setText(lastName);
         idclient.setText("#"+String.valueOf(id));
+        phoneclient.setText(phone);
+        emailclient.setText(email);
         actionMode.setTitle(name+" "+lastName);
     }
     public class MyActionModeCallbackClient implements ActionMode.Callback{
