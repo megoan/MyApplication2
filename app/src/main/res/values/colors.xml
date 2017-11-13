@@ -8,10 +8,10 @@
     <color name="buttonClickedLightBlue">#99DDFF</color>
     <color name="darkblue">#032356</color>
     <color name="lightblue">#bfe9ff</color>
-    <color name="fab_blue">#0c5d70</color>
-    <color name="fab_darkorange">#563800</color>
-    <color name="fab_darkgreen">#005622</color>
-    <color name="fab_darkred">#560000</color>
+    <color name="fab_blue">#0055ff</color>
+    <color name="fab_darkorange">#00b7ff</color>
+    <color name="fab_darkgreen">#00d126</color>
+    <color name="fab_darkred">#ff7700</color>
     <color name="background_material_light">#2c2c2c</color>
     <color name="darkText">#003639</color>
 </resources>
