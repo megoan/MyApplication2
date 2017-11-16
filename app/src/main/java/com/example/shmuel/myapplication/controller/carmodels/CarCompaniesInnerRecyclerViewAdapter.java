@@ -227,6 +227,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
                                 backEndFunc.deleteCarModel(objects.get(selectedPosition).getCarModelCode());
+                                objects.remove(selectedPosition);
                                 notifyDataSetChanged();
                                 Toast.makeText(mContext,
                                         "car model deleted", Toast.LENGTH_SHORT).show();

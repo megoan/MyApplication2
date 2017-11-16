@@ -88,6 +88,7 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
                     intent.putExtra("phone",client.getPhoneNum());
                     intent.putExtra("email",client.getEmailAddress());
                     intent.putExtra("credit",client.getCreditCardNum());
+
                     ((Activity)mContext).startActivity(intent);
                 }
 
@@ -149,6 +150,7 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
                             backEndFunc.deleteClient(objects.get(selectedPosition).getId());
+                            objects.remove(selectedPosition);
                             notifyDataSetChanged();
                             Toast.makeText(mContext,
                                     "client deleted", Toast.LENGTH_SHORT).show();
@@ -177,13 +179,10 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            int i=0;
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             ((MainActivity)mContext).client_is_in_action_mode=false;
             notifyDataSetChanged();
-            i++;
-
         }
 
     }

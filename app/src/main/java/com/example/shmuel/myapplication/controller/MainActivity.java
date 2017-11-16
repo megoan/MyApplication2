@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean client_is_in_action_mode=false;
     public boolean car_model_is_in_action_mode=false;
     public boolean branch_is_in_action_mode=false;
+    boolean searchClicked=false;
 
 
     //filtering companies
@@ -85,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        int i=0;
+        i++;
+        searchClicked=false;
         super.onCreate(savedInstanceState);
         TabFragments tabFragments=new TabFragments();
 
@@ -109,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
+
             check=true;
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -127,6 +132,13 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         searchView=(SearchView)findViewById(R.id.search);
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchClicked=true;
+                return false;
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -135,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(check) {
+                if(searchClicked && check) {
                     switch (tabsType) {
                         case CARS: {
                             CarsTabFragment carsTabFragment = (CarsTabFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
@@ -166,54 +178,42 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (TabFragments.tab1!=null && TabFragments.tab1.mAdapter!=null && TabFragments.tab1.mAdapter.actionMode!=null) {
-                    TabFragments.tab1.mAdapter.actionMode.finish();
-                }
-                else if(TabFragments.tab4!=null && TabFragments.tab4.mAdapter!=null && TabFragments.tab4.mAdapter.actionMode!=null)
-                {
-                    TabFragments.tab4.mAdapter.actionMode.finish();
-                }
-                else if(TabFragments.tab2!=null && TabFragments.tab2.mAdapter!=null && TabFragments.tab2.mAdapter.actionMode!=null)
-                {
-                    TabFragments.tab2.mAdapter.actionMode.finish();
-                }
-                else if(TabFragments.tab3!=null && TabFragments.tab3.mAdapter!=null && TabFragments.tab3.mAdapter.actionMode!=null)
-                {
-                    TabFragments.tab3.mAdapter.actionMode.finish();
-                }
+                closeAction();
+                searchView.setQuery("", false);
+                searchView.setIconified(true);
             }
             @Override
             public void onPageSelected(int position) {
-
+                closeAction();
                 mViewPager.getAdapter().notifyDataSetChanged();
                 switch (position)
                 {
                     case 0:{
                         tabsType=TabsType.CARS;
                         searchView.setQueryHint("cars");
-                        fab.setImageResource(R.drawable.ic_madd);
-                        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_blue)));
+                        //fab.setImageResource(R.drawable.ic_madd);
+                        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_blue)));
                         break;
                     }
                     case 1:{
                         tabsType=TabsType.CAR_MODELS;
                         searchView.setQueryHint("car models");
-                        fab.setImageResource(R.drawable.ic_madd);
-                        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkorange)));
+                        //fab.setImageResource(R.drawable.ic_madd);
+                        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkorange)));
                         break;
                     }
                     case 2:{
                         tabsType=TabsType.BRANCHES;
                         searchView.setQueryHint("branches");
-                        fab.setImageResource(R.drawable.ic_add_branch);
-                        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkgreen)));
+                        //fab.setImageResource(R.drawable.ic_add_branch);
+                        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkgreen)));
                         break;
                     }
                     case 3:{
                         tabsType=TabsType.CLIENTS;
                         searchView.setQueryHint("clients");
-                        fab.setImageResource(R.drawable.ic_add_client);
-                        fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkred)));
+                       // fab.setImageResource(R.drawable.ic_add_client);
+                        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkred)));
                         break;
                     }
                 }
@@ -221,15 +221,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                    /*switch (state){
+                    switch (state){
                     case ViewPager.SCROLL_STATE_IDLE:
+                        changeFab();
                         fab.show();
                         break;
                     case ViewPager.SCROLL_STATE_DRAGGING:
                     case ViewPager.SCROLL_STATE_SETTLING:
                         fab.hide();
                         break;
-                }*/
+                }
             }
         });
 
@@ -238,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onClickSort(View view)
     {
+        closeAction();
         switch (tabsType)
         {
             case CARS:{
@@ -437,6 +439,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onClickFilter(View view)
     {
+        closeAction();
         switch (tabsType)
         {
             case CARS:{
@@ -637,6 +640,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        int i=0;
+        i++;
         switch (tabsType)
         {
             case CARS:{
@@ -666,11 +671,56 @@ public class MainActivity extends AppCompatActivity {
             {
                 if(TabFragments.tab4.mAdapter!=null)
                 {
-                    TabFragments.tab4.mAdapter.notifyDataSetChanged();
+                    TabFragments.tab4.updateView();
                 }
                 break;
             }
         }
 
+    }
+    public void closeAction(){
+        if (TabFragments.tab1.mAdapter!=null && TabFragments.tab1.mAdapter.actionMode!=null) {
+            TabFragments.tab1.mAdapter.actionMode.finish();
+        }
+        if(TabFragments.tab4.mAdapter!=null && TabFragments.tab4.mAdapter.actionMode!=null)
+        {
+            TabFragments.tab4.mAdapter.actionMode.finish();
+        }
+        if(TabFragments.tab2.mAdapter!=null && TabFragments.tab2.mAdapter.actionMode!=null)
+        {
+            TabFragments.tab2.mAdapter.actionMode.finish();
+        }
+        if(TabFragments.tab3.mAdapter!=null && TabFragments.tab3.mAdapter.actionMode!=null)
+        {
+            TabFragments.tab3.mAdapter.actionMode.finish();
+        }
+    }
+    public void changeFab()
+    {
+        switch (tabsType)
+        {
+            case CARS:{
+                fab.setImageResource(R.drawable.ic_madd);
+                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_blue)));
+                break;
+            }
+            case CLIENTS:
+            {
+                fab.setImageResource(R.drawable.ic_add_client);
+                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkred)));
+                break;
+            }
+            case BRANCHES:
+            {
+                fab.setImageResource(R.drawable.ic_add_branch);
+                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkgreen)));
+                break;
+            }
+            case CAR_MODELS:
+            {
+                fab.setImageResource(R.drawable.ic_madd);
+                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkorange)));
+            }
+        }
     }
 }

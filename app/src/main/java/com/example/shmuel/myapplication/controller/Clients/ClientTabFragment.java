@@ -37,10 +37,10 @@ public class ClientTabFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-        clients=new ArrayList<>(backEndFunc.getAllClients());
+        clients=backEndFunc.getAllClients();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
-        mAdapter=new ClientRecyclerViewAdapter(backEndFunc.getAllClients(),getActivity());
+        mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
@@ -110,6 +110,7 @@ public class ClientTabFragment extends Fragment {
     }
     public void updateView()
     {
+        clients=backEndFunc.getAllClients();
         mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
         recyclerView.setAdapter(mAdapter);
     }
@@ -134,4 +135,6 @@ public class ClientTabFragment extends Fragment {
         clients.removeAll(tmp);
         updateView();
     }
+
+
 }

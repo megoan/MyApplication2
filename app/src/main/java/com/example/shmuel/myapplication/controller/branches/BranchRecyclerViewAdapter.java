@@ -106,10 +106,9 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                BranchRecyclerViewAdapter.MyActionModeCallbackBranch callback=new BranchRecyclerViewAdapter.MyActionModeCallbackBranch();
+                MyActionModeCallbackBranch callback=new MyActionModeCallbackBranch();
                 actionMode=((Activity)mContext).startActionMode(callback);
                 actionMode.setTitle("delete branch");
-
                 selectedPosition=position;
                 ((MainActivity)mContext).branch_is_in_action_mode=true;
                 notifyDataSetChanged();
@@ -215,6 +214,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
                                 backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
+                                objects.remove(selectedPosition);
                                 notifyDataSetChanged();
                                 Toast.makeText(mContext,
                                         "branch deleted", Toast.LENGTH_SHORT).show();

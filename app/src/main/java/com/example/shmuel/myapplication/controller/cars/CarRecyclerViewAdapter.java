@@ -47,7 +47,6 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
     public CarRecyclerViewAdapter(ArrayList<Car> objects, Context context) {
         this.objects=objects;
         this.mContext=context;
-
     }
 
     @Override
@@ -58,7 +57,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
     }
 
     @Override
-    public void onBindViewHolder(final CarRecyclerViewAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(CarRecyclerViewAdapter.ViewHolder holder, final int position) {
         Car car = objects.get(position);
         if(selectedPosition==position){
             if(((MainActivity)mContext).is_in_action_mode==true){
@@ -227,6 +226,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
                                 backEndFunc.deleteCar(objects.get(selectedPosition).getCarNum());
+                                objects.remove(selectedPosition);
                                 notifyDataSetChanged();
                                 Toast.makeText(mContext,
                                         "car deleted", Toast.LENGTH_SHORT).show();

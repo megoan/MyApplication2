@@ -1,6 +1,5 @@
 package com.example.shmuel.myapplication.controller.Clients;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -13,16 +12,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
-import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 
 public class ClientActivity extends AppCompatActivity {
-
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
     public ActionMode actionMode;
     int id;
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    String name;
+    String lastName;
+    String phone;
+    String email;
+    String creditCardNum;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +34,12 @@ public class ClientActivity extends AppCompatActivity {
         actionMode=startActionMode(callback);
 
         Intent intent =getIntent();
-        String name=intent.getStringExtra("name");
-        String lastName=intent.getStringExtra("lastName");
-        String phone=intent.getStringExtra("phone");
-        String email=intent.getStringExtra("email");
+        name=intent.getStringExtra("name");
+        lastName=intent.getStringExtra("lastName");
+        phone=intent.getStringExtra("phone");
+        email=intent.getStringExtra("email");
         id=intent.getIntExtra("id",-1);
-        String creditCardNum=intent.getStringExtra("credit");
+        creditCardNum=intent.getStringExtra("credit");
 
         TextView nameclient =(TextView)findViewById(R.id.nameclient);
         TextView lastnameclient =(TextView)findViewById(R.id.last_name_client);
@@ -57,7 +60,7 @@ public class ClientActivity extends AppCompatActivity {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.edit,menu);
+            mode.getMenuInflater().inflate(R.menu.preview,menu);
 
             return true;
         }
@@ -100,6 +103,22 @@ public class ClientActivity extends AppCompatActivity {
                     });
                     AlertDialog alert = builder.create();
                     alert.show();
+                    break;
+                }
+                case R.id.edit_item:
+                {
+                    Intent intent=new Intent(ClientActivity.this,ClientEditActivity.class);
+                    intent.putExtra("update","true");
+                    intent.putExtra("name",name);
+                    intent.putExtra("lastName",lastName);
+                    intent.putExtra("my_id",id);
+                    intent.putExtra("phone",phone);
+                    intent.putExtra("email",email);
+                    intent.putExtra("credit",creditCardNum);
+                    finish();
+                    //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    break;
                 }
             }
             return true;

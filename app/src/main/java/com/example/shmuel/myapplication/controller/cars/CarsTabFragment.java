@@ -29,9 +29,9 @@ public class CarsTabFragment extends Fragment {
     ArrayList<Car>cars;
     BackEndFunc backEndFunc;
 
-    public CarsTabFragment() {
+    /*public CarsTabFragment() {
         backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
