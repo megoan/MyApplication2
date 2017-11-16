@@ -213,8 +213,11 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
+                                int objectsLengh=objects.size();
                                 backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
-                                objects.remove(selectedPosition);
+                                if (objects.size()==objectsLengh) {
+                                    objects.remove(selectedPosition);
+                                }
                                 notifyDataSetChanged();
                                 Toast.makeText(mContext,
                                         "branch deleted", Toast.LENGTH_SHORT).show();

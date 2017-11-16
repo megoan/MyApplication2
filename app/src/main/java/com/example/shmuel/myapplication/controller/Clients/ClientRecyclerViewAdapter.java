@@ -148,9 +148,13 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
                     builder.setPositiveButton("delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            // TODO Auto-generated method stub
+                            // TODO Auto-generated method stubnhnbnhbghg
+                            int objectsLengh=objects.size();
                             backEndFunc.deleteClient(objects.get(selectedPosition).getId());
-                            objects.remove(selectedPosition);
+
+                            if (objectsLengh==objects.size()) {
+                                objects.remove(selectedPosition);
+                            }
                             notifyDataSetChanged();
                             Toast.makeText(mContext,
                                     "client deleted", Toast.LENGTH_SHORT).show();

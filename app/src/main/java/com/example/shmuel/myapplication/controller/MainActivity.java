@@ -23,6 +23,8 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.example.shmuel.myapplication.controller.Clients.ClientActivity;
+import com.example.shmuel.myapplication.controller.Clients.ClientEditActivity;
 import com.example.shmuel.myapplication.controller.Clients.ClientTabFragment;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
@@ -100,6 +102,16 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                switch (tabsType)
+                {
+                    case CLIENTS:
+                    {
+                        Intent intent=new Intent(MainActivity.this,ClientEditActivity.class);
+                        intent.putExtra("update","false");
+                        startActivity(intent);
+                        return;
+                    }
+                }
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -191,29 +203,21 @@ public class MainActivity extends AppCompatActivity {
                     case 0:{
                         tabsType=TabsType.CARS;
                         searchView.setQueryHint("cars");
-                        //fab.setImageResource(R.drawable.ic_madd);
-                        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_blue)));
                         break;
                     }
                     case 1:{
                         tabsType=TabsType.CAR_MODELS;
                         searchView.setQueryHint("car models");
-                        //fab.setImageResource(R.drawable.ic_madd);
-                        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkorange)));
                         break;
                     }
                     case 2:{
                         tabsType=TabsType.BRANCHES;
                         searchView.setQueryHint("branches");
-                        //fab.setImageResource(R.drawable.ic_add_branch);
-                        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkgreen)));
                         break;
                     }
                     case 3:{
                         tabsType=TabsType.CLIENTS;
                         searchView.setQueryHint("clients");
-                       // fab.setImageResource(R.drawable.ic_add_client);
-                        //fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkred)));
                         break;
                     }
                 }

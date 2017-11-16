@@ -225,8 +225,11 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
+                                int objectsLengh=objects.size();
                                 backEndFunc.deleteCar(objects.get(selectedPosition).getCarNum());
-                                objects.remove(selectedPosition);
+                                if (objectsLengh==objects.size()) {
+                                    objects.remove(selectedPosition);
+                                }
                                 notifyDataSetChanged();
                                 Toast.makeText(mContext,
                                         "car deleted", Toast.LENGTH_SHORT).show();

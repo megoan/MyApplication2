@@ -47,20 +47,52 @@ public class BackEndForList implements BackEndFunc {
     @Override
     public void updateClient(Client client) {
 
+        for(int i=0;i< ListDataSource.clientList.size();i++)
+        {
+            if(ListDataSource.clientList.get(i).getId()==client.getId())
+            {
+                ListDataSource.clientList.set(i,client);
+                return;
+            }
+        }
     }
 
     @Override
     public void updateCarModel(CarModel carModel) {
+        for(int i=0;i< ListDataSource.carModelList.size();i++)
+        {
+            if(ListDataSource.carModelList.get(i).getCarModelCode()==carModel.getCarModelCode())
+            {
+                ListDataSource.carModelList.set(i,carModel);
+                return;
+            }
+        }
 
     }
 
     @Override
     public void updateCar(Car car) {
+        for(int i=0;i< ListDataSource.carList.size();i++)
+        {
+            if(ListDataSource.carList.get(i).getCarNum()==car.getCarNum())
+            {
+                ListDataSource.carList.set(i,car);
+                return;
+            }
+        }
 
     }
 
     @Override
     public void updateBranch(Branch branch) {
+        for(int i=0;i< ListDataSource.branchList.size();i++)
+        {
+            if(ListDataSource.branchList.get(i).getBranchNum()==branch.getBranchNum())
+            {
+                ListDataSource.branchList.set(i,branch);
+                return;
+            }
+        }
 
     }
 

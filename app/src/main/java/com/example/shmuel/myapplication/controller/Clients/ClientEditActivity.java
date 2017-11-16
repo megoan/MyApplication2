@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
@@ -25,29 +25,30 @@ public class ClientEditActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
     public ActionMode actionMode;
     boolean update=false;
-    TextView nameclient;
-    TextView lastnameclient;
-    TextView idclient;
-    TextView phoneclient;
-    TextView emailclient;
-    TextView credit;
+    EditText nameclient;
+    EditText lastnameclient;
+    EditText idclient;
+    EditText phoneclient;
+    EditText emailclient;
+    EditText credit;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_edit);
         MyActionModeCallbackClient callback=new MyActionModeCallbackClient();
         actionMode=startActionMode(callback);
-        nameclient =(TextView)findViewById(R.id.name);
-        lastnameclient =(TextView)findViewById(R.id.last_name);
-        idclient =(TextView)findViewById(R.id.id);
-        phoneclient =(TextView)findViewById(R.id.phone);
-        emailclient =(TextView)findViewById(R.id.email);
-        credit=(TextView)findViewById(R.id.credit);
+        nameclient =(EditText)findViewById(R.id.name);
+        lastnameclient =(EditText)findViewById(R.id.last_name);
+        idclient =(EditText)findViewById(R.id.id);
+        phoneclient =(EditText)findViewById(R.id.phone);
+        emailclient =(EditText)findViewById(R.id.email);
+        credit=(EditText)findViewById(R.id.credit);
         Intent intent =getIntent();
         String update1=intent.getStringExtra("update");
         if(update1.equals("true"))
         {
             update=true;
+            idclient.setEnabled(false);
             actionMode.setTitle("Update client");
             nameclient.setText(intent.getStringExtra("name"));
             lastnameclient.setText(intent.getStringExtra("lastName"));
@@ -94,19 +95,19 @@ public class ClientEditActivity extends AppCompatActivity {
                         inputWarningDialog("Please fill all fields!");
                         return false;
                     }
-                    //bad id
-                    if(id.length()!=9)
-                    {
-                        inputWarningDialog("ID must be 9 digits!");
-                        return false;
-                    }
                     //bad email address
                     if(!emailValidator(email))
                     {
                         inputWarningDialog("Invalid email address!");
                         return false;
                     }
-                    client.setId(Integer.valueOf(id));
+                    if (update) {
+                        client.setId(Integer.valueOf(id.substring(1)));
+                    }
+                    else
+                    {
+                        client.setId(Integer.valueOf(id));
+                    }
                     client.setName(name);
                     client.setLastName(lastName);
                     client.setPhoneNum(phone);
@@ -150,7 +151,9 @@ public class ClientEditActivity extends AppCompatActivity {
                                     backEndFunc.addClient(client);
                                     Toast.makeText(ClientEditActivity.this,
                                             "new client added", Toast.LENGTH_SHORT).show();
-                                    actionMode.finish();
+                                    //actionMode.finish();
+                                    resetView();
+                                    client=new Client();
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -207,5 +210,15 @@ public class ClientEditActivity extends AppCompatActivity {
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public void resetView()
+    {
+        nameclient.setText("");
+        lastnameclient.setText("");
+        idclient.setText("");
+        phoneclient.setText("");
+        emailclient.setText("");
+        credit.setText("");
     }
 }
