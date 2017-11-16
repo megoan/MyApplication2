@@ -221,7 +221,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                                 notifyDataSetChanged();
                                 Toast.makeText(mContext,
                                         "branch deleted", Toast.LENGTH_SHORT).show();
-
+                                int i=1;
                                 selectedPosition=-1;
                                 notifyItemChanged(selectedPosition);
                                 actionMode.finish();
