@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".controller.Clients.ClientActivity" />
-        <activity android:name=".controller.Clients.ClientEditActivity"></activity>
+        <activity android:name=".controller.Clients.ClientEditActivity" />
+        <activity android:name=".controller.cars.CarActivity"></activity>
     </application>
 
 </manifest>

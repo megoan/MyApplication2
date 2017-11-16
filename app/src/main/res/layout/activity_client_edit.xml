@@ -61,7 +61,7 @@
                 app:layout_constraintVertical_bias="0.094" />
 
             <EditText
-                android:id="@+id/last_name"
+                android:id="@+id/mile_cost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -95,7 +95,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/last_name"
+                app:layout_constraintTop_toBottomOf="@+id/mile_cost"
                 app:layout_constraintVertical_bias="0.0"
                 android:inputType="number"/>
 
@@ -177,7 +177,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/email"
+                android:id="@+id/inUse"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"

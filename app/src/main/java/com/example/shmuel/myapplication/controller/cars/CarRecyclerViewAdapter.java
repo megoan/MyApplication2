@@ -3,6 +3,7 @@ package com.example.shmuel.myapplication.controller.cars;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -21,6 +22,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.shmuel.myapplication.controller.Clients.ClientActivity;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
@@ -29,6 +31,7 @@ import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.entities.Address;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
+import com.example.shmuel.myapplication.model.entities.Client;
 
 import java.util.ArrayList;
 
@@ -117,6 +120,18 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             @Override
             public void onClick(View v) {
                 notifyItemChanged(selectedPosition);
+                if(((MainActivity)mContext).is_in_action_mode==false){
+                    Intent intent=new Intent(mContext,CarActivity.class);
+                    Car car1=objects.get(position);
+                    /*intent.putExtra("name",client.getName());
+                    intent.putExtra("lastName",client.getLastName());
+                    intent.putExtra("id",client.getId());
+                    intent.putExtra("phone",client.getPhoneNum());
+                    intent.putExtra("email",client.getEmailAddress());
+                    intent.putExtra("credit",client.getCreditCardNum());*/
+
+                    ((Activity)mContext).startActivity(intent);
+                }
                 if (actionMode!=null) {
                     actionMode.finish();
                 }

@@ -38,10 +38,10 @@ public class ClientEditActivity extends AppCompatActivity {
         MyActionModeCallbackClient callback=new MyActionModeCallbackClient();
         actionMode=startActionMode(callback);
         nameclient =(EditText)findViewById(R.id.name);
-        lastnameclient =(EditText)findViewById(R.id.last_name);
+        lastnameclient =(EditText)findViewById(R.id.mile_cost);
         idclient =(EditText)findViewById(R.id.id);
         phoneclient =(EditText)findViewById(R.id.phone);
-        emailclient =(EditText)findViewById(R.id.email);
+        emailclient =(EditText)findViewById(R.id.inUse);
         credit=(EditText)findViewById(R.id.credit);
         Intent intent =getIntent();
         String update1=intent.getStringExtra("update");

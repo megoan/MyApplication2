@@ -66,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:textColor="@color/colorAccent"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -78,7 +79,7 @@
             app:layout_constraintVertical_bias="0.094" />
 
         <TextView
-            android:id="@+id/last_name"
+            android:id="@+id/mile_cost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -96,9 +97,10 @@
             app:layout_constraintVertical_bias="0.16" />
 
         <TextView
-            android:id="@+id/last_name_client"
+            android:id="@+id/mileage_car"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
@@ -125,14 +127,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/last_name"
-            app:layout_constraintTop_toBottomOf="@+id/last_name"
+            app:layout_constraintStart_toStartOf="@+id/mile_cost"
+            app:layout_constraintTop_toBottomOf="@+id/mile_cost"
             app:layout_constraintVertical_bias="0.466" />
 
         <TextView
             android:id="@+id/id_client"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
@@ -142,7 +145,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/nameclient"
-            app:layout_constraintTop_toBottomOf="@+id/last_name_client"
+            app:layout_constraintTop_toBottomOf="@+id/mileage_car"
             app:layout_constraintVertical_bias="0.428" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
@@ -192,6 +195,7 @@
                 android:id="@+id/phoneClient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
@@ -233,7 +237,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/email"
+                android:id="@+id/inUse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -252,6 +256,7 @@
                 android:id="@+id/emailClient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
@@ -260,7 +265,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.039"
-                app:layout_constraintStart_toEndOf="@+id/email"
+                app:layout_constraintStart_toEndOf="@+id/inUse"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.586" />
         </android.support.constraint.ConstraintLayout>
@@ -313,6 +318,7 @@
                 android:id="@+id/creditClient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
