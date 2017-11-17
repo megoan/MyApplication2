@@ -97,6 +97,14 @@ public class CarModelsFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
     }
 
+    public void updateView2()
+    {
+
+        carModels=backEndFunc.getAllCarModels();
+        mAdapter=new CarCompaniesInnerRecyclerViewAdapter(carModels,getActivity());
+        recyclerView.setAdapter(mAdapter);
+    }
+
     public String carModelSearchString(CarModel carModel)
     {
         return (carModel.getCompanyName()+" "+carModel.getCarModelName()).toLowerCase();

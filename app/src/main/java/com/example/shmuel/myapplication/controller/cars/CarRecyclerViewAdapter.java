@@ -29,6 +29,7 @@ import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.entities.Address;
+import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.Client;
@@ -61,7 +62,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
 
     @Override
     public void onBindViewHolder(CarRecyclerViewAdapter.ViewHolder holder, final int position) {
-        Car car = objects.get(position);
+        final Car car = objects.get(position);
         if(selectedPosition==position){
             if(((MainActivity)mContext).is_in_action_mode==true){
                 holder.itemView.setBackgroundColor(Color.parseColor("#a3a3a3"));
@@ -123,6 +124,19 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                 if(((MainActivity)mContext).is_in_action_mode==false){
                     Intent intent=new Intent(mContext,CarActivity.class);
                     Car car1=objects.get(position);
+                    Branch branch=backEndFunc.getBranch(car1.getBranchNum());
+                    CarModel carModel=backEndFunc.getCarModel(car1.getCarModel());
+                    intent.putExtra("carModel",carModel.getCompanyName()+" "+carModel.getCarModelName());
+                    intent.putExtra("branch",branch.getAddress().getCity()+" "+branch.getAddress().getStreet());
+                    intent.putExtra("mileage",car1.getMileage());
+                    intent.putExtra("id",car1.getCarNum());
+                    intent.putExtra("rating",car1.getRating());
+                    intent.putExtra("numberOfRatings",car1.getNumOfRatings());
+                    intent.putExtra("oneDayCost",car1.getOneDayCost());
+                    intent.putExtra("oneMileCost",car1.getOneKilometerCost());
+                    intent.putExtra("year",car1.getYear());
+                    intent.putExtra("inUse",car1.isInUse());
+                    intent.putExtra("img",car1.getImgURL());
                     /*intent.putExtra("name",client.getName());
                     intent.putExtra("lastName",client.getLastName());
                     intent.putExtra("id",client.getId());

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -41,7 +42,7 @@ public class ClientActivity extends AppCompatActivity {
         id=intent.getIntExtra("id",-1);
         creditCardNum=intent.getStringExtra("credit");
 
-        TextView nameclient =(TextView)findViewById(R.id.nameclient);
+        TextView nameclient =(TextView)findViewById(R.id.year);
         TextView lastnameclient =(TextView)findViewById(R.id.mileage_car);
         TextView idclient =(TextView)findViewById(R.id.id_client);
         TextView phoneclient =(TextView)findViewById(R.id.phoneClient);
@@ -87,6 +88,7 @@ public class ClientActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
                            backEndFunc.deleteClient(id);
+                           TabFragments.tab4.updateView2();
 
                             Toast.makeText(ClientActivity.this,
                                     "client deleted", Toast.LENGTH_SHORT).show();

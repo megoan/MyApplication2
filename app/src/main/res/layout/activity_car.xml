@@ -20,8 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardElevation="10dp"
-        app:cardCornerRadius="5dp"
         android:layout_margin="10dp"
+        android:adjustViewBounds="true"
+        android:cropToPadding="false"
+        android:scaleType="fitXY"
         app:cardPreventCornerOverlap="false">
        <LinearLayout
            android:layout_width="wrap_content"
@@ -29,10 +31,10 @@
            android:orientation="vertical"
 >
         <ImageView
+            android:id="@+id/mainImage"
             android:layout_width="360dp"
             android:layout_height="180dp"
-
-            android:src="@drawable/car"
+            android:background="@drawable/audi8"
 
             />
            <LinearLayout
@@ -49,6 +51,7 @@
                    android:layout_marginTop="4dp"
                    android:layout_marginBottom="4dp"/>
            <TextView
+               android:id="@+id/carModel"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:text="Audi R8"
@@ -105,7 +108,7 @@
                 app:layout_constraintVertical_bias="0.094" />
 
             <TextView
-                android:id="@+id/nameclient"
+                android:id="@+id/year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -150,8 +153,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/nameclient"
-                app:layout_constraintTop_toBottomOf="@+id/nameclient"
+                app:layout_constraintStart_toStartOf="@+id/year"
+                app:layout_constraintTop_toBottomOf="@+id/year"
                 app:layout_constraintVertical_bias="0.16" />
 
             <TextView
@@ -185,11 +188,76 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/nameclient"
+                app:layout_constraintStart_toStartOf="@+id/year"
                 app:layout_constraintTop_toBottomOf="@+id/mileage_car"
                 app:layout_constraintVertical_bias="0.428" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:cardElevation="10dp"
+        app:cardCornerRadius="5dp"
+        android:layout_margin="10dp"
+        app:cardBackgroundColor="@color/white"
+        >
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imageBranch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_gps_position"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.025"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/branch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:text="Branch:"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.093"
+                app:layout_constraintStart_toEndOf="@+id/imageBranch"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.586" />
+
+            <TextView
+                android:id="@+id/branch_car"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:text="Tel Aviv, Alenby"
+                android:textColor="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.039"
+                app:layout_constraintStart_toEndOf="@+id/branch"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.586" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v7.widget.CardView>
+
+
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -358,7 +426,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Number of ratings"
+                android:text="Number of ratings:"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"

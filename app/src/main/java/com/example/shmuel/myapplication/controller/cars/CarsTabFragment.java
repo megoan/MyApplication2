@@ -148,6 +148,14 @@ public class CarsTabFragment extends Fragment {
         mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
         recyclerView.setAdapter(mAdapter);
     }
+    public void updateView2()
+    {
+
+
+        cars=backEndFunc.getAllCars();
+        mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
+        recyclerView.setAdapter(mAdapter);
+    }
 
     public String carSearchString(Car car)
     {

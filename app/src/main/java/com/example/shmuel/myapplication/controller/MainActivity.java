@@ -1,5 +1,6 @@
 package com.example.shmuel.myapplication.controller;
 
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.ListView;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean car_model_is_in_action_mode=false;
     public boolean branch_is_in_action_mode=false;
     boolean searchClicked=false;
+    boolean searchViewOn=false;
 
 
     //filtering companies
@@ -86,16 +89,16 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String>branchesCitiesSet=new ArrayList<>();
     Set<String> b;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         int i=0;
         i++;
         searchClicked=false;
         super.onCreate(savedInstanceState);
-        TabFragments tabFragments=new TabFragments();
+        final TabFragments tabFragments=new TabFragments();
 
         ListDataSource listDataSource=new ListDataSource();
-
         setContentView(R.layout.activity_main);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -120,7 +123,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState!=null) {
             updatedTab=savedInstanceState.getInt("CHILD");
-            check=false;
+
+            //check=false;
            // tabsType=TabsType.valueOf(savedInstanceState.getString("tab"));
         }
         else
@@ -144,11 +148,23 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         searchView=(SearchView)findViewById(R.id.search);
+        searchView.setFocusable(false);
+
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+               // searchClicked=true;
                 searchClicked=true;
                 return false;
+            }
+        });
+
+        searchView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                searchViewOn=true;
+                return true;
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -191,33 +207,57 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 closeAction();
-                searchView.setQuery("", false);
+                searchView.setQuery(null, false);
+                searchView.clearFocus();
+
                 searchView.setIconified(true);
+
             }
             @Override
             public void onPageSelected(int position) {
                 closeAction();
                 mViewPager.getAdapter().notifyDataSetChanged();
+
                 switch (position)
                 {
                     case 0:{
                         tabsType=TabsType.CARS;
                         searchView.setQueryHint("cars");
+                        if(TabFragments.tab1.mAdapter!=null && searchViewOn==true)
+                        {
+                           /* TabFragments.tab1.updateView2();
+                            searchViewOn=false;*/
+                        }
                         break;
                     }
                     case 1:{
                         tabsType=TabsType.CAR_MODELS;
                         searchView.setQueryHint("car models");
+                        if(TabFragments.tab2.mAdapter!=null && searchViewOn==true)
+                        {
+                            /*TabFragments.tab2.updateView2();
+                            searchViewOn=false;*/
+                        }
                         break;
                     }
                     case 2:{
                         tabsType=TabsType.BRANCHES;
                         searchView.setQueryHint("branches");
+                        if(TabFragments.tab3.mAdapter!=null && searchViewOn==true)
+                        {
+                            /*TabFragments.tab3.updateView2();
+                            searchViewOn=false;*/
+                        }
                         break;
                     }
                     case 3:{
                         tabsType=TabsType.CLIENTS;
                         searchView.setQueryHint("clients");
+                        if(TabFragments.tab4.mAdapter!=null && searchViewOn==true)
+                        {
+                            /*TabFragments.tab4.updateView2();
+                            searchViewOn=false;*/
+                        }
                         break;
                     }
                 }
@@ -675,7 +715,9 @@ public class MainActivity extends AppCompatActivity {
             {
                 if(TabFragments.tab4.mAdapter!=null)
                 {
-                    TabFragments.tab4.updateView();
+
+                    //TabFragments.tab4.updateView2();
+                    TabFragments.tab4.mAdapter.notifyDataSetChanged();
                 }
                 break;
             }

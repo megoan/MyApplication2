@@ -62,7 +62,7 @@
             app:layout_constraintVertical_bias="0.094" />
 
         <TextView
-            android:id="@+id/nameclient"
+            android:id="@+id/year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -109,8 +109,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/nameclient"
-            app:layout_constraintTop_toBottomOf="@+id/nameclient"
+            app:layout_constraintStart_toStartOf="@+id/year"
+            app:layout_constraintTop_toBottomOf="@+id/year"
             app:layout_constraintVertical_bias="0.16" />
 
         <TextView
@@ -144,7 +144,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/nameclient"
+            app:layout_constraintStart_toStartOf="@+id/year"
             app:layout_constraintTop_toBottomOf="@+id/mileage_car"
             app:layout_constraintVertical_bias="0.428" />
     </android.support.constraint.ConstraintLayout>

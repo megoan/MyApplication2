@@ -114,6 +114,13 @@ public class BranchesFragment extends Fragment {
         mAdapter=new BranchRecyclerViewAdapter(branches,getActivity());
         recyclerView.setAdapter(mAdapter);
     }
+    public void updateView2()
+    {
+
+        branches=backEndFunc.getAllBranches();
+        mAdapter=new BranchRecyclerViewAdapter(branches,getActivity());
+        recyclerView.setAdapter(mAdapter);
+    }
 
     public String BranchSearchString(Branch branch)
     {

@@ -2,6 +2,7 @@ package com.example.shmuel.myapplication.controller.Clients;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +32,13 @@ public class ClientTabFragment extends Fragment {
     public ClientRecyclerViewAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
     ArrayList<Client> clients;
+    View view;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,7 +118,6 @@ public class ClientTabFragment extends Fragment {
     }
     public void updateView()
     {
-        clients=backEndFunc.getAllClients();
         mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
         recyclerView.setAdapter(mAdapter);
     }
@@ -135,6 +142,22 @@ public class ClientTabFragment extends Fragment {
         clients.removeAll(tmp);
         updateView();
     }
+    public void updateView2()
+    {
+        if(recyclerView==null)
 
+        {
+           /* backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+            view=inflater.inflate(R.layout.recycle_view_layout, container, false);
+            mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+            recyclerView= view.findViewById(R.id.recycleView);*/
+        };
+
+        clients=backEndFunc.getAllClients();
+        mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
+        recyclerView.setAdapter(mAdapter);
+    }
 
 }
