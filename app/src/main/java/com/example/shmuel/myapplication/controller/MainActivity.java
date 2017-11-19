@@ -32,12 +32,18 @@ import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.controller.cars.CarsTabFragment;
+import com.example.shmuel.myapplication.model.backend.BackEndFunc;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
+import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
+import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -56,9 +62,12 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+    ListDataSource listDataSource;
+    private BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    TabFragments tabFragments;
+    //private ViewPager mViewPager;
     private TabsType tabsType=TabsType.CARS;
-    private PageAdapter pageAdapter;
+    //private PageAdapter pageAdapter;
     int updatedTab=0;
     boolean check=true;
     FloatingActionButton fab;
@@ -69,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean branch_is_in_action_mode=false;
     boolean searchClicked=false;
     boolean searchViewOn=false;
-
+    public  String filter="";
+    public Map<String,Boolean>carCom=new HashMap<String, Boolean>();
 
     //filtering companies
     String[] carCompanies;
@@ -96,9 +106,15 @@ public class MainActivity extends AppCompatActivity {
         i++;
         searchClicked=false;
         super.onCreate(savedInstanceState);
-        final TabFragments tabFragments=new TabFragments();
+        if (TabFragments.tab1==null) {
+            tabFragments=new TabFragments();
+        }
 
-        ListDataSource listDataSource=new ListDataSource();
+
+        if (ListDataSource.carList==null) {
+            listDataSource=new ListDataSource();
+        }
+        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
         setContentView(R.layout.activity_main);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -138,14 +154,19 @@ public class MainActivity extends AppCompatActivity {
         // primary sections of the activity.
 
         activateFilters();
-        pageAdapter = new PageAdapter(getSupportFragmentManager());
+        activateCarFilters();
+        TabFragments.pageAdapter=new PageAdapter(getSupportFragmentManager());
+        TabFragments.mViewPager=(ViewPager) findViewById(R.id.container);
+        TabFragments.mViewPager.setOffscreenPageLimit(3);
+        TabFragments.mViewPager.setAdapter(TabFragments.pageAdapter);
+
+
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setOffscreenPageLimit(3);
-        mViewPager.setAdapter(pageAdapter);
+
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setupWithViewPager(TabFragments.mViewPager);
 
         searchView=(SearchView)findViewById(R.id.search);
         searchView.setFocusable(false);
@@ -178,22 +199,24 @@ public class MainActivity extends AppCompatActivity {
                 if(searchClicked && check) {
                     switch (tabsType) {
                         case CARS: {
-                            CarsTabFragment carsTabFragment = (CarsTabFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
-                            carsTabFragment.filterCardsSearch(newText);
+                            //CarsTabFragment carsTabFragment = (CarsTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
+                            //carsTabFragment.filterCardsSearch(newText);
+                            CarsTabFragment.mAdapter.getFilter().filter(newText);
+                            //TabFragments.tab1.filterCardsSearch(newText);
                             break;
                         }
                         case CAR_MODELS: {
-                            CarModelsFragment carModelsFragment = (CarModelsFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                            CarModelsFragment carModelsFragment = (CarModelsFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                             carModelsFragment.filterCardsSearch(newText);
                             break;
                         }
                         case BRANCHES: {
-                            BranchesFragment branchesFragment = (BranchesFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                            BranchesFragment branchesFragment = (BranchesFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                             branchesFragment.filterCardsSearch(newText);
                             break;
                         }
                         case CLIENTS: {
-                            ClientTabFragment clientTabFragment = (ClientTabFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                            ClientTabFragment clientTabFragment = (ClientTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                             clientTabFragment.filterCardsSearch(newText);
                             break;
                         }
@@ -203,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        TabFragments.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 closeAction();
@@ -216,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 closeAction();
-                mViewPager.getAdapter().notifyDataSetChanged();
+                TabFragments.mViewPager.getAdapter().notifyDataSetChanged();
 
                 switch (position)
                 {
@@ -287,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
         switch (tabsType)
         {
             case CARS:{
-                final CarsTabFragment carsTabFragment=(CarsTabFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                final CarsTabFragment carsTabFragment=(CarsTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Sort by:");
 
@@ -348,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case CAR_MODELS:{
-                final CarModelsFragment carModelsFragment=(CarModelsFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                final CarModelsFragment carModelsFragment=(CarModelsFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Sort by:");
 
@@ -388,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case BRANCHES:{
-                final BranchesFragment branchesFragment=(BranchesFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                final BranchesFragment branchesFragment=(BranchesFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Sort by:");
 
@@ -439,7 +462,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case CLIENTS:{
-                final ClientTabFragment clientTabFragment=(ClientTabFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                final ClientTabFragment clientTabFragment=(ClientTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Sort by:");
 
@@ -487,7 +510,21 @@ public class MainActivity extends AppCompatActivity {
         switch (tabsType)
         {
             case CARS:{
-                final CarsTabFragment carsTabFragment=(CarsTabFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                filter="";
+                updateCarFilter();
+
+                //final String filter="";
+                carCompanies=new String[carCom.size()];
+                carCompaniesChecked=new boolean[carCom.size()];
+                int i=0;
+                for (Map.Entry<String, Boolean> entry :  carCom.entrySet()
+                        ) {
+                    carCompanies[i]=entry.getKey();
+                    carCompaniesChecked[i]=entry.getValue();
+                    i++;
+                }
+
+                //final CarsTabFragment carsTabFragment=(CarsTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Filter by:");
 
@@ -507,7 +544,22 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        carsTabFragment.filterByCompanyName(carCompanies,carCompaniesChecked);
+
+
+                        for (int i=0;i<carCompanies.length;i++)
+                        {
+                            carCom.put(carCompanies[i],carCompaniesChecked[i]);
+                            if (carCompaniesChecked[i]==true) {
+                                filter+=carCompanies[i];
+
+                            }
+
+                        }
+                        if(filter.length()==0)filter="you got no cars dude";
+                        CarsTabFragment.mAdapter.getFilter().filter(filter);
+                        CarsTabFragment.mAdapter.notifyDataSetChanged();
+
+                        //carsTabFragment.filterByCompanyName(carCompanies,carCompaniesChecked);
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -517,7 +569,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case CAR_MODELS:{
-                final CarModelsFragment carModelsFragment=(CarModelsFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                final CarModelsFragment carModelsFragment=(CarModelsFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Filter by:");
 
@@ -547,7 +599,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case BRANCHES:{
-                final BranchesFragment branchesFragment=(BranchesFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
+                final BranchesFragment branchesFragment=(BranchesFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Filter by:");
 
@@ -586,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("CHILD", mViewPager.getCurrentItem());
+        outState.putInt("CHILD", TabFragments.mViewPager.getCurrentItem());
         super.onSaveInstanceState(outState);
         outState.putString("tab",tabsType.toString());
 
@@ -613,9 +665,25 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void activateCarFilters()
+    {
+        for (Car car:backEndFunc.getAllCars()
+             ) {
+            CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
+            carCompanySet.add(carModel.getCompanyName());
+        }
+
+        s = new LinkedHashSet<>(carCompanySet);
+        carCompanySet.clear();
+        carCompanySet.addAll(s);
+
+        for (int i = 0; i < carCompanySet.size(); i++) {
+            carCom.put(carCompanySet.get(i),true);
+        }
+    }
     public void activateFilters()
     {
-        for (CarModel carmodel:ListDataSource.carModelList
+       /* for (CarModel carmodel:ListDataSource.carModelList
                 ) {
             carCompanySet.add(carmodel.getCompanyName());
         }
@@ -626,13 +694,14 @@ public class MainActivity extends AppCompatActivity {
 
         carCompanies=new String[carCompanySet.size()];
         for (int i = 0; i < carCompanies.length; i++) {
+            carCom.put(carCompanies[i],true);
             carCompanies[i]=  carCompanySet.get(i);
 
         }
         carCompaniesChecked=new boolean[carCompanies.length];
         for (int i = 0; i < carCompaniesChecked.length; i++) {
             carCompaniesChecked[i]=true;
-        }
+        }*/
 
         for (CarModel carmodel:ListDataSource.carModelList
                 ) {
@@ -675,6 +744,49 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+    public void updateCarFilter()
+    {
+        for (Car car:backEndFunc.getAllCars()
+                ) {
+            CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
+            carCompanySet.add(carModel.getCompanyName());
+        }
+
+        s = new LinkedHashSet<>(carCompanySet);
+        carCompanySet.clear();
+        carCompanySet.addAll(s);
+
+        for(int i=0;i<carCompanySet.size();i++)
+        {
+            if(!carCom.containsKey(carCompanySet.get(i))){
+            carCom.put(carCompanySet.get(i),true);
+                 }
+
+
+        }
+        boolean check=false;
+        ArrayList<String>r=new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry :  carCom.entrySet()
+                ) {
+            check=false;
+            for(int j=0;j<carCompanySet.size();j++)
+            {
+                if(entry.getKey()==carCompanySet.get(j))
+                {
+                    check=true;
+                }
+            }
+            if(check==false)
+            {
+               r.add(entry.getKey());
+            }
+        }
+        for (String s:r
+             ) {
+            carCom.remove(s);
+        }
+
+    }
 
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
@@ -691,7 +803,9 @@ public class MainActivity extends AppCompatActivity {
             case CARS:{
                 if(TabFragments.tab1.mAdapter!=null)
                 {
+                    TabFragments.tab1.updateView();
                     TabFragments.tab1.mAdapter.notifyDataSetChanged();
+
                 }
                 break;
             }

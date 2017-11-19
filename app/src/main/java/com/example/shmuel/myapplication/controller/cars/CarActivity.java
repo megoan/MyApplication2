@@ -39,6 +39,7 @@ public class CarActivity extends AppCompatActivity {
     private int year;
     private boolean inUse;
     private String imgUrl;
+    private int position;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,7 @@ public class CarActivity extends AppCompatActivity {
         year=intent.getIntExtra("year",0);
         inUse=intent.getBooleanExtra("inUse",false);
         imgUrl=intent.getStringExtra("img");
+        position=intent.getIntExtra("position",0);
 
 
         TextView branch1=(TextView)findViewById(R.id.branch_car);
@@ -121,7 +123,7 @@ public class CarActivity extends AppCompatActivity {
                             // TODO Auto-generated method stub
                             if (inUse==false) {
                                 backEndFunc.deleteCar(carNum);
-                                TabFragments.tab1.updateView2();
+                                TabFragments.tab1.updateView2(position);
                                 Toast.makeText(CarActivity.this,
                                         "car deleted", Toast.LENGTH_SHORT).show();
                                 actionMode.finish();

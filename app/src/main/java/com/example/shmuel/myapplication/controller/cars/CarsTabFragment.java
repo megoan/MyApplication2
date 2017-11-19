@@ -7,9 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 
 import com.example.shmuel.myapplication.controller.DividerItemDecoration;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.model.backend.BackEndForList;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -25,9 +27,12 @@ import java.util.Comparator;
 public class CarsTabFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    public CarRecyclerViewAdapter mAdapter;
+    public static CarRecyclerViewAdapter mAdapter;
     ArrayList<Car>cars;
     BackEndFunc backEndFunc;
+    View view1;
+    LayoutInflater inflater1;
+    ViewGroup container1;
 
     /*public CarsTabFragment() {
         backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
@@ -36,12 +41,16 @@ public class CarsTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        inflater1=inflater;
+        container1=container;
         // Inflate the layout for this fragment
         backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
         cars=backEndFunc.getAllCars();
-        View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
+        view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
-        mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
+        if (mAdapter==null) {
+            mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
+        }
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
@@ -145,16 +154,26 @@ public class CarsTabFragment extends Fragment {
 
     public void updateView()
     {
-        mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
-        recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+        mAdapter.objects=cars;
+        cars= backEndFunc.getAllCars();
+       // mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
+       //recyclerView.setAdapter(mAdapter);
+        //(recyclerView.getAdapter()).notifyDataSetChanged();
+        // mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
+       // recyclerView.setAdapter(mAdapter);
     }
-    public void updateView2()
+    public void updateView2(int position)
     {
-
-
-        cars=backEndFunc.getAllCars();
-        mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
-        recyclerView.setAdapter(mAdapter);
+        //updateView();
+     //   view1=inflater1.inflate(R.layout.recycle_view_layout, container1, false);
+     //   recyclerView= view1.findViewById(R.id.recycleView);
+        //mAdapter.removeitem(position);
+        mAdapter.notifyDataSetChanged();
+        //(recyclerView.getAdapter()).notifyDataSetChanged();
+       //cars=backEndFunc.getAllCars();
+       // mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
+       // recyclerView.setAdapter(mAdapter);
     }
 
     public String carSearchString(Car car)
@@ -163,6 +182,7 @@ public class CarsTabFragment extends Fragment {
         Branch branch=backEndFunc.getBranch(car.getBranchNum());
         return (carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getAddress().getCity()+" "+branch.getAddress().getStreet()).toLowerCase();
     }
+
     public void filterCardsSearch(String string)
     {
         cars=new ArrayList<>(backEndFunc.getAllCars());
@@ -186,6 +206,7 @@ public class CarsTabFragment extends Fragment {
         if(mAdapter.actionMode!=null)
         {
             mAdapter.actionMode.finish();
+            mAdapter.notifyDataSetChanged();
         }
     }
 

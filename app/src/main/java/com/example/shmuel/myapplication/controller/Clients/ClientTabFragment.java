@@ -118,6 +118,7 @@ public class ClientTabFragment extends Fragment {
     }
     public void updateView()
     {
+
         mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
         recyclerView.setAdapter(mAdapter);
     }

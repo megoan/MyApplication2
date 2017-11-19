@@ -62,4 +62,5 @@ public class PageAdapter extends FragmentPagerAdapter {
     public int getItemPosition(Object object) {
         return super.getItemPosition(object);
     }
+
 }

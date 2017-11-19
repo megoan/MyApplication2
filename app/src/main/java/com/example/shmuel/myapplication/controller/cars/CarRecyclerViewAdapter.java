@@ -16,23 +16,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.shmuel.myapplication.controller.Clients.ClientActivity;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Address;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
-import com.example.shmuel.myapplication.model.entities.Client;
 
 import java.util.ArrayList;
 
@@ -40,13 +41,19 @@ import java.util.ArrayList;
  * Created by shmuel on 23/10/2017.
  */
 
-public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerViewAdapter.ViewHolder> {
+public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerViewAdapter.ViewHolder> implements Filterable{
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-    private ArrayList<Car> objects;
+    public ArrayList<Car> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition=-1;
+    MyFilter myFilter;
 
+
+    public void removeitem(int position)
+    {
+        objects.remove(position);
+    }
 
     public CarRecyclerViewAdapter(ArrayList<Car> objects, Context context) {
         this.objects=objects;
@@ -137,6 +144,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                     intent.putExtra("year",car1.getYear());
                     intent.putExtra("inUse",car1.isInUse());
                     intent.putExtra("img",car1.getImgURL());
+                    intent.putExtra("position",selectedPosition);
                     /*intent.putExtra("name",client.getName());
                     intent.putExtra("lastName",client.getLastName());
                     intent.putExtra("id",client.getId());
@@ -191,6 +199,14 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
     @Override
     public int getItemCount() {
         return objects.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        if (myFilter == null)
+            myFilter = new MyFilter();
+
+        return myFilter;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -295,6 +311,41 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             notifyDataSetChanged();
         }
 
+    }
+
+    private class MyFilter extends Filter {
+        FilterResults results;
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            results = new FilterResults();
+            if (charSequence == null || charSequence.length() == 0) {
+                results.values = ListDataSource.carList;
+                results.count = ListDataSource.carList.size();
+            }
+            else
+            {
+                ArrayList<Car> filteredCars = new ArrayList<Car>();
+                for (Car c : backEndFunc.getAllCars()) {
+                    CarModel carModel=backEndFunc.getCarModel(c.getCarModel());
+                    Branch branch=backEndFunc.getBranch(c.getBranchNum());
+                    String s=(carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getAddress().getCity()+" "+branch.getAddress().getStreet()).toLowerCase();
+                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains(carModel.getCompanyName().toLowerCase())) {
+                        // if `contains` == true then add it
+                        // to our filtered list
+                        filteredCars.add(c);
+                    }
+                }
+                results.values = filteredCars;
+                results.count = filteredCars.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            objects=(ArrayList<Car>)results.values;
+            notifyDataSetChanged();
+        }
     }
 
 
