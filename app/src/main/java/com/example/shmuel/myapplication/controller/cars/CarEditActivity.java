@@ -2,6 +2,7 @@ package com.example.shmuel.myapplication.controller.cars;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,7 +42,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     EditText idcar;
     EditText singleDayCost;
     EditText singleMileCost;
-
+    FloatingActionButton check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,11 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         mileage =(EditText)findViewById(R.id.mileage);
         singleDayCost=(EditText)findViewById(R.id.single_Day_Cost);
         singleMileCost =(EditText)findViewById(R.id.single_mile_cost);
+        final FloatingActionButton right=(FloatingActionButton)findViewById(R.id.scrollRight);
+        final FloatingActionButton left=(FloatingActionButton)findViewById(R.id.scrollLeft);
+        check=(FloatingActionButton)findViewById(R.id.carModelSelectedCheck);
+
+
         Intent intent =getIntent();
         carmodelID=intent.getIntExtra("carmodel",0);
         int index=backEndFunc.getAllCarModels().indexOf(backEndFunc.getCarModel(carmodelID));
@@ -90,7 +96,29 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
 
 
 
+       mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+           @Override
+           public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+               super.onScrollStateChanged(recyclerView, newState);
+               switch (newState){
+                   case RecyclerView.SCROLL_STATE_IDLE:{
+                       right.show();
+                       left.show();
+                       break;
+                   }
+                   case RecyclerView.SCROLL_STATE_DRAGGING:
+                   {
+                       right.hide();
+                       left.hide();
+                   }
+               }
+           }
 
+           @Override
+           public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+               super.onScrolled(recyclerView, dx, dy);
+           }
+       });
 
 
         String update1=intent.getStringExtra("update");
@@ -115,8 +143,12 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     }
 
     @Override
-    public void recyclerViewListClicked(View v, int position) {
-        carmodelID=backEndFunc.getAllCarModels().get(position).getCarModelCode();
+    public void recyclerViewListClicked(View v, int position,boolean selected) {
+        if (selected) {
+            carmodelID=backEndFunc.getAllCarModels().get(position).getCarModelCode();
+            check.show();
+        }
+        else check.hide();
     }
 
     public class MyActionModeCallbackCar implements android.view.ActionMode.Callback{

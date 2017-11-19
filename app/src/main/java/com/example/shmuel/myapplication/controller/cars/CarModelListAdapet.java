@@ -52,6 +52,7 @@ class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHol
 
 
 
+
     public CarModelListAdapet(ArrayList<CarModel> objects, Context context,RecyclerViewClickListener itemListener) {
         this.objects=objects;
         this.mContext=context;
@@ -80,7 +81,7 @@ class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHol
             @Override
             public boolean onLongClick(View v) {
                 selectedPosition=position;
-                itemListener.recyclerViewListClicked(v, position);
+                itemListener.recyclerViewListClicked(v, position,true);
                 notifyDataSetChanged();
                 return true;
             }
@@ -89,6 +90,7 @@ class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHol
             @Override
             public void onClick(View v) {
                 selectedPosition=-1;
+                itemListener.recyclerViewListClicked(v, position,false);
                 notifyDataSetChanged();
 
             }
