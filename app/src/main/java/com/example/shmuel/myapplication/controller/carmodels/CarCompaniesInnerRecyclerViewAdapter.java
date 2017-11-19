@@ -16,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.Transmission;
 
@@ -35,17 +38,24 @@ import java.util.ArrayList;
  * Created by shmuel on 23/10/2017.
  */
 
-public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<CarCompaniesInnerRecyclerViewAdapter.ViewHolder> {
+public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<CarCompaniesInnerRecyclerViewAdapter.ViewHolder> implements Filterable {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-    private ArrayList<CarModel> objects;
+    public ArrayList<CarModel> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition=-1;
+    private MyFilter myFilter;
+
 
 
     public CarCompaniesInnerRecyclerViewAdapter(ArrayList<CarModel> objects, Context context) {
         this.objects=objects;
         this.mContext=context;
+    }
+
+    public void removeitem(int position)
+    {
+        objects.remove(position);
     }
 
     @Override
@@ -166,6 +176,12 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         return objects.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        if(myFilter==null)myFilter=new MyFilter();
+        return myFilter;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView companyName;
         TextView carModel;
@@ -268,5 +284,39 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             notifyDataSetChanged();
         }
 
+    }
+    private class MyFilter extends Filter {
+        FilterResults results;
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            results = new FilterResults();
+            if (charSequence == null || charSequence.length() == 0) {
+                results.values = ListDataSource.carModelList;
+                results.count = ListDataSource.carModelList.size();
+            }
+            else
+            {
+                ArrayList<CarModel> filteredCars = new ArrayList<CarModel>();
+                for (CarModel carModel : backEndFunc.getAllCarModels()) {
+
+                    String s=(carModel.getCompanyName()+" "+carModel.getCarModelName());
+                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains(carModel.getCompanyName().toLowerCase())) {
+                        // if `contains` == true then add it
+                        // to our filtered list
+                        filteredCars.add(carModel);
+                    }
+                }
+                results.values = filteredCars;
+                results.count = filteredCars.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            objects=new ArrayList<CarModel>((ArrayList<CarModel>)results.values);
+
+            notifyDataSetChanged();
+        }
     }
 }

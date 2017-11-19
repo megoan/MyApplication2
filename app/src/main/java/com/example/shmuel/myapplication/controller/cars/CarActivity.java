@@ -40,6 +40,8 @@ public class CarActivity extends AppCompatActivity {
     private boolean inUse;
     private String imgUrl;
     private int position;
+    int branchid;
+    int carModelid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,16 +62,18 @@ public class CarActivity extends AppCompatActivity {
         inUse=intent.getBooleanExtra("inUse",false);
         imgUrl=intent.getStringExtra("img");
         position=intent.getIntExtra("position",0);
+        branchid=intent.getIntExtra("branchID",0);
+        carModelid=intent.getIntExtra("carmodelID",0);
 
 
         TextView branch1=(TextView)findViewById(R.id.branch_car);
         TextView carModel1 =(TextView)findViewById(R.id.carModel);
         TextView carNum1 =(TextView)findViewById(R.id.id_car);
-        TextView mileage1 =(TextView)findViewById(R.id.mileage_cost_car);
+        TextView mileage1 =(TextView)findViewById(R.id.mileage_car);
         TextView year1 =(TextView)findViewById(R.id.year);
         TextView numOfRatings1 =(TextView)findViewById(R.id.numberOfRatings);
         TextView oneDayCost1 =(TextView)findViewById(R.id.day_cost);
-        TextView oneKilometerCost1 =(TextView)findViewById(R.id.single_mile_cost);
+        TextView oneKilometerCost1 =(TextView)findViewById(R.id.mileage_cost_car);
         TextView inUse1=(TextView)findViewById(R.id.inUse_car);
         ImageView imageView1=(ImageView)findViewById(R.id.mainImage);
         RatingBar ratingBar1=(RatingBar)findViewById(R.id.rating_car);
@@ -150,17 +154,19 @@ public class CarActivity extends AppCompatActivity {
                 }
                 case R.id.edit_item:
                 {
-                   /* Intent intent=new Intent(ClientActivity.this,ClientEditActivity.class);
+                    Intent intent=new Intent(CarActivity.this,CarEditActivity.class);
                     intent.putExtra("update","true");
-                    intent.putExtra("name",name);
-                    intent.putExtra("lastName",lastName);
-                    intent.putExtra("my_id",id);
-                    intent.putExtra("phone",phone);
-                    intent.putExtra("email",email);
-                    intent.putExtra("credit",creditCardNum);
+                    intent.putExtra("branchName",branchName);
+                    intent.putExtra("branchID",branchid);
+                    intent.putExtra("carmodel",carModelid);
+                    intent.putExtra("mileage",mileage);
+                    intent.putExtra("carID",carNum);
+                    intent.putExtra("oneDayCost",oneDayCost);
+                    intent.putExtra("oneKilometerCost",oneKilometerCost);
+                    intent.putExtra("year",year);
+                    intent.putExtra("position",position);
                     finish();
-                    //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);*/
+                    startActivity(intent);
                     break;
                 }
             }

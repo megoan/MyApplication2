@@ -29,7 +29,7 @@ public class ClientTabFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private BackEndFunc backEndFunc;
-    public ClientRecyclerViewAdapter mAdapter;
+    public static ClientRecyclerViewAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
     ArrayList<Client> clients;
     View view;
@@ -48,7 +48,9 @@ public class ClientTabFragment extends Fragment {
         clients=backEndFunc.getAllClients();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
-        mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
+        if (mAdapter==null) {
+            mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
+        }
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));

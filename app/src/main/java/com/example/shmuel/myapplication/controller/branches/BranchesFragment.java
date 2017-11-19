@@ -22,7 +22,7 @@ import java.util.Comparator;
 
 public class BranchesFragment extends Fragment {
     private RecyclerView recyclerView;
-    public BranchRecyclerViewAdapter mAdapter;
+    public static BranchRecyclerViewAdapter mAdapter;
     BackEndFunc backEndFunc;
     ArrayList<Branch>branches;
     @Override
@@ -33,7 +33,9 @@ public class BranchesFragment extends Fragment {
         branches=backEndFunc.getAllBranches();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
-        mAdapter=new BranchRecyclerViewAdapter(branches,getActivity());
+        if (mAdapter==null) {
+            mAdapter=new BranchRecyclerViewAdapter(branches,getActivity());
+        }
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));

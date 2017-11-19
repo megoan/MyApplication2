@@ -38,7 +38,7 @@ public class ClientEditActivity extends AppCompatActivity {
         MyActionModeCallbackClient callback=new MyActionModeCallbackClient();
         actionMode=startActionMode(callback);
         nameclient =(EditText)findViewById(R.id.name);
-        lastnameclient =(EditText)findViewById(R.id.mile_cost);
+        lastnameclient =(EditText)findViewById(R.id.mileage);
         idclient =(EditText)findViewById(R.id.id);
         phoneclient =(EditText)findViewById(R.id.phone);
         emailclient =(EditText)findViewById(R.id.inUse);

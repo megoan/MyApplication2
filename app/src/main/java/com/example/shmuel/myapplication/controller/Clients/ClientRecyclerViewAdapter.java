@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Client;
 
 import java.util.ArrayList;
@@ -29,12 +32,13 @@ import java.util.ArrayList;
  * Created by shmuel on 23/10/2017.
  */
 
-public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecyclerViewAdapter.ViewHolder> {
+public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecyclerViewAdapter.ViewHolder> implements Filterable{
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
     private ArrayList<Client> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition=-1;
+    MyFilter myFilter;
 
     public ClientRecyclerViewAdapter(ArrayList<Client> objects, Context context) {
         this.objects=objects;
@@ -106,6 +110,12 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
     @Override
     public int getItemCount() {
         return objects.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        if(myFilter==null)myFilter=new MyFilter();
+        return myFilter;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -189,5 +199,40 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
             notifyDataSetChanged();
         }
 
+    }
+
+    private class MyFilter extends Filter {
+        FilterResults results;
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            results = new FilterResults();
+            if (charSequence == null || charSequence.length() == 0) {
+                results.values = ListDataSource.clientList;
+                results.count = ListDataSource.clientList.size();
+            }
+            else
+            {
+                ArrayList<Client> filteredClients = new ArrayList<Client>();
+                for (Client c : backEndFunc.getAllClients()) {
+
+                    String s=(c.getName()+" "+c.getLastName()).toLowerCase();
+                    if (s.contains( charSequence.toString().toLowerCase())) {
+                        // if `contains` == true then add it
+                        // to our filtered list
+                        filteredClients.add(c);
+                    }
+                }
+                results.values =filteredClients;
+                results.count = filteredClients.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            objects=new ArrayList<Client>((ArrayList<Client>)results.values);
+
+            notifyDataSetChanged();
+        }
     }
 }

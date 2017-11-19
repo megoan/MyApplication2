@@ -154,9 +154,10 @@ public class CarsTabFragment extends Fragment {
 
     public void updateView()
     {
-        mAdapter.notifyDataSetChanged();
+
         mAdapter.objects=cars;
-        cars= backEndFunc.getAllCars();
+        mAdapter.notifyDataSetChanged();
+        //cars= backEndFunc.getAllCars();
        // mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
        //recyclerView.setAdapter(mAdapter);
         //(recyclerView.getAdapter()).notifyDataSetChanged();
@@ -168,7 +169,8 @@ public class CarsTabFragment extends Fragment {
         //updateView();
      //   view1=inflater1.inflate(R.layout.recycle_view_layout, container1, false);
      //   recyclerView= view1.findViewById(R.id.recycleView);
-        //mAdapter.removeitem(position);
+        mAdapter.removeitem(position);
+        //mAdapter.objects=cars;
         mAdapter.notifyDataSetChanged();
         //(recyclerView.getAdapter()).notifyDataSetChanged();
        //cars=backEndFunc.getAllCars();

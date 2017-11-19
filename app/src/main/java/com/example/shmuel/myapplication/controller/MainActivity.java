@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
     boolean searchViewOn=false;
     public  String filter="";
     public Map<String,Boolean>carCom=new HashMap<String, Boolean>();
+    public Map<String,Boolean>carModelCom=new HashMap<String, Boolean>();
+    public Map<String,Boolean>branchesCom=new HashMap<String, Boolean>();
 
     //filtering companies
     String[] carCompanies;
@@ -206,18 +208,16 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         }
                         case CAR_MODELS: {
-                            CarModelsFragment carModelsFragment = (CarModelsFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
-                            carModelsFragment.filterCardsSearch(newText);
+                            CarModelsFragment.mAdapter.getFilter().filter(newText);
                             break;
                         }
                         case BRANCHES: {
-                            BranchesFragment branchesFragment = (BranchesFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
-                            branchesFragment.filterCardsSearch(newText);
+                            BranchesFragment.mAdapter.getFilter().filter(newText);
                             break;
                         }
                         case CLIENTS: {
-                            ClientTabFragment clientTabFragment = (ClientTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
-                            clientTabFragment.filterCardsSearch(newText);
+                            ClientTabFragment.mAdapter.getFilter().filter(newText);
+
                             break;
                         }
                     }
@@ -511,7 +511,8 @@ public class MainActivity extends AppCompatActivity {
         {
             case CARS:{
                 filter="";
-                updateCarFilter();
+                updateAbstractFilter(carCom,carCompanySet);
+                //updateCarFilter();
 
                 //final String filter="";
                 carCompanies=new String[carCom.size()];
@@ -569,7 +570,21 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case CAR_MODELS:{
-                final CarModelsFragment carModelsFragment=(CarModelsFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
+                filter="";
+                updateAbstractFilter(carModelCom,carModelCompanySet);
+                //updateCarFilter();
+
+                //final String filter="";
+                carModelCompanies=new String[carModelCom.size()];
+                carModelCompaniesChecked=new boolean[carModelCom.size()];
+                int i=0;
+                for (Map.Entry<String, Boolean> entry :  carModelCom.entrySet()
+                        ) {
+                    carModelCompanies[i]=entry.getKey();
+                    carModelCompaniesChecked[i]=entry.getValue();
+                    i++;
+                }
+                //final CarModelsFragment carModelsFragment=(CarModelsFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Filter by:");
 
@@ -589,7 +604,21 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        carModelsFragment.filterByCompanyName(carModelCompanies,carModelCompaniesChecked);
+
+                        for (int i=0;i<carModelCompanies.length;i++)
+                        {
+                            carCom.put(carModelCompanies[i],carModelCompaniesChecked[i]);
+                            if (carModelCompaniesChecked[i]==true) {
+                                filter+=carModelCompanies[i];
+
+                            }
+
+                        }
+                        if(filter.length()==0)filter="you got no cars dude";
+                        CarModelsFragment.mAdapter.getFilter().filter(filter);
+                        CarModelsFragment.mAdapter.notifyDataSetChanged();
+
+                        //carModelsFragment.filterByCompanyName(carModelCompanies,carModelCompaniesChecked);
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -599,6 +628,20 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case BRANCHES:{
+                filter="";
+                updateAbstractFilter(branchesCom,branchesCitiesSet);
+                //updateCarFilter();
+
+                //final String filter="";
+                branchesCities=new String[branchesCom.size()];
+                branchesCitiesChecked=new boolean[branchesCom.size()];
+                int i=0;
+                for (Map.Entry<String, Boolean> entry :  branchesCom.entrySet()
+                        ) {
+                    branchesCities[i]=entry.getKey();
+                    branchesCitiesChecked[i]=entry.getValue();
+                    i++;
+                }
                 final BranchesFragment branchesFragment=(BranchesFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Filter by:");
@@ -619,7 +662,18 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        branchesFragment.filterByCompanyName(branchesCities,branchesCitiesChecked);
+                        for (int i=0;i<branchesCities.length;i++)
+                        {
+                            branchesCom.put(branchesCities[i],branchesCitiesChecked[i]);
+                            if (branchesCitiesChecked[i]==true) {
+                                filter+=branchesCities[i];
+
+                            }
+
+                        }
+                        if(filter.length()==0)filter="you got no cars dude";
+                        BranchesFragment.mAdapter.getFilter().filter(filter);
+                        BranchesFragment.mAdapter.notifyDataSetChanged();
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -683,26 +737,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void activateFilters()
     {
-       /* for (CarModel carmodel:ListDataSource.carModelList
-                ) {
-            carCompanySet.add(carmodel.getCompanyName());
-        }
-
-        s = new LinkedHashSet<>(carCompanySet);
-        carCompanySet.clear();
-        carCompanySet.addAll(s);
-
-        carCompanies=new String[carCompanySet.size()];
-        for (int i = 0; i < carCompanies.length; i++) {
-            carCom.put(carCompanies[i],true);
-            carCompanies[i]=  carCompanySet.get(i);
-
-        }
-        carCompaniesChecked=new boolean[carCompanies.length];
-        for (int i = 0; i < carCompaniesChecked.length; i++) {
-            carCompaniesChecked[i]=true;
-        }*/
-
         for (CarModel carmodel:ListDataSource.carModelList
                 ) {
             carModelCompanySet.add(carmodel.getCompanyName());
@@ -744,8 +778,74 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+    public void updateAbstractFilter(Map<String,Boolean> hashMap,ArrayList<String> set){
+
+        set.clear();
+        switch (tabsType)
+        {
+            case CARS:{
+                for (Car car:backEndFunc.getAllCars()
+                        ) {
+                    CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
+                    set.add(carModel.getCompanyName());
+                }
+                break;
+            }
+            case CAR_MODELS:
+            {
+                for (CarModel carmodel:ListDataSource.carModelList
+                        ) {
+                    set.add(carmodel.getCompanyName());
+                }
+                break;
+            }
+            case BRANCHES:
+            {
+                for (Branch branch:ListDataSource.branchList
+                        ) {
+                    branchesCitiesSet.add(branch.getAddress().getCity());
+                }
+                break;
+            }
+            case CLIENTS:{
+                break;
+            }
+        }
+        s = new LinkedHashSet<>(set);
+        set.clear();
+        set.addAll(s);
+
+        for(int i=0;i<set.size();i++)
+        {
+            if(!hashMap.containsKey(set.get(i))){
+                hashMap.put(set.get(i),true);
+            }
+        }
+        boolean check;
+        ArrayList<String>r=new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry :  hashMap.entrySet()
+                ) {
+            check=false;
+            for(int j=0;j<set.size();j++)
+            {
+                if(entry.getKey()==set.get(j))
+                {
+                    check=true;
+                }
+            }
+            if(check==false)
+            {
+                r.add(entry.getKey());
+            }
+        }
+        for (String s:r
+                ) {
+            hashMap.remove(s);
+        }
+    }
     public void updateCarFilter()
     {
+        carCompanySet.clear();
         for (Car car:backEndFunc.getAllCars()
                 ) {
             CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
@@ -764,7 +864,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-        boolean check=false;
+        boolean check;
         ArrayList<String>r=new ArrayList<>();
         for (Map.Entry<String, Boolean> entry :  carCom.entrySet()
                 ) {
@@ -788,6 +888,49 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void updateCarModelFilter()
+    {
+        carModelCompanySet.clear();
+        for (CarModel carModel:backEndFunc.getAllCarModels()
+                ) {
+
+            carCompanySet.add(carModel.getCompanyName());
+        }
+
+        s = new LinkedHashSet<>(carModelCompanySet);
+        carModelCompanySet.clear();
+        carModelCompanySet.addAll(s);
+
+        for(int i=0;i<carModelCompanySet.size();i++)
+        {
+            if(!carModelCom.containsKey(carModelCompanySet.get(i))){
+                carModelCom.put(carModelCompanySet.get(i),true);
+            }
+
+
+        }
+        boolean check=false;
+        ArrayList<String>r=new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry :  carModelCom.entrySet()
+                ) {
+            check=false;
+            for(int j=0;j<carModelCompanySet.size();j++)
+            {
+                if(entry.getKey()==carModelCompanySet.get(j))
+                {
+                    check=true;
+                }
+            }
+            if(check==false)
+            {
+                r.add(entry.getKey());
+            }
+        }
+        for (String s:r
+                ) {
+            carModelCom.remove(s);
+        }
+    }
     public int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
@@ -803,8 +946,8 @@ public class MainActivity extends AppCompatActivity {
             case CARS:{
                 if(TabFragments.tab1.mAdapter!=null)
                 {
-                    TabFragments.tab1.updateView();
-                    TabFragments.tab1.mAdapter.notifyDataSetChanged();
+                    //TabFragments.tab1.updateView();
+                    //TabFragments.tab1.mAdapter.notifyDataSetChanged();
 
                 }
                 break;

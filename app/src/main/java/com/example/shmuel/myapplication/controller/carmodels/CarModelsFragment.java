@@ -23,7 +23,7 @@ import java.util.Comparator;
 public class CarModelsFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    public CarCompaniesInnerRecyclerViewAdapter mAdapter;
+    public static CarCompaniesInnerRecyclerViewAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
     ArrayList<CarModel> carModels;
     private BackEndFunc backEndFunc;
@@ -36,7 +36,9 @@ public class CarModelsFragment extends Fragment {
         carModels=new ArrayList<>(backEndFunc.getAllCarModels());
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
-        mAdapter=new CarCompaniesInnerRecyclerViewAdapter(backEndFunc.getAllCarModels(),getActivity());
+        if (mAdapter==null) {
+            mAdapter=new CarCompaniesInnerRecyclerViewAdapter(backEndFunc.getAllCarModels(),getActivity());
+        }
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
@@ -93,16 +95,17 @@ public class CarModelsFragment extends Fragment {
 
     public void updateView()
     {
-        mAdapter=new CarCompaniesInnerRecyclerViewAdapter(carModels,getActivity());
-        recyclerView.setAdapter(mAdapter);
+        mAdapter.objects=carModels;
+        mAdapter.notifyDataSetChanged();
+
     }
 
-    public void updateView2()
+    public void updateView2(int position)
     {
 
-        carModels=backEndFunc.getAllCarModels();
-        mAdapter=new CarCompaniesInnerRecyclerViewAdapter(carModels,getActivity());
-        recyclerView.setAdapter(mAdapter);
+        mAdapter.removeitem(position);
+        //mAdapter.objects=cars;
+        mAdapter.notifyDataSetChanged();
     }
 
     public String carModelSearchString(CarModel carModel)

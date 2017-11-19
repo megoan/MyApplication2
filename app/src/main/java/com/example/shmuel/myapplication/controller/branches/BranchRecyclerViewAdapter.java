@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
 
 import java.text.NumberFormat;
@@ -35,11 +38,12 @@ import java.util.Locale;
  * Created by shmuel on 23/10/2017.
  */
 
-public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecyclerViewAdapter.ViewHolder>{
+public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecyclerViewAdapter.ViewHolder> implements Filterable{
     private ArrayList<Branch> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition=-1;
+    MyFilter myFilter;
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
 
     public BranchRecyclerViewAdapter(ArrayList<Branch> objects, Context context) {
@@ -154,6 +158,12 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         return objects.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        if(myFilter==null)myFilter=new MyFilter();
+        return myFilter;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView branchCity;
         TextView branchStreet;
@@ -258,5 +268,40 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
         }
 
+    }
+
+    private class MyFilter extends Filter {
+        FilterResults results;
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            results = new FilterResults();
+            if (charSequence == null || charSequence.length() == 0) {
+                results.values = ListDataSource.branchList;
+                results.count = ListDataSource.branchList.size();
+            }
+            else
+            {
+                ArrayList<Branch> filteredBranches = new ArrayList<Branch>();
+                for (Branch branch : backEndFunc.getAllBranches()) {
+
+                    String s=(branch.getAddress().getCity()+" "+branch.getAddress().getStreet()).toLowerCase();
+                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains((branch.getAddress().getCity().toLowerCase()))) {
+                        // if `contains` == true then add it
+                        // to our filtered list
+                        filteredBranches.add(branch);
+                    }
+                }
+                results.values = filteredBranches;
+                results.count = filteredBranches.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            objects=new ArrayList<Branch>((ArrayList<Branch>)results.values);
+
+            notifyDataSetChanged();
+        }
     }
 }

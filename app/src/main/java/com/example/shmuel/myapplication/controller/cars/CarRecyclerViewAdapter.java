@@ -134,7 +134,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                     Branch branch=backEndFunc.getBranch(car1.getBranchNum());
                     CarModel carModel=backEndFunc.getCarModel(car1.getCarModel());
                     intent.putExtra("carModel",carModel.getCompanyName()+" "+carModel.getCarModelName());
-                    intent.putExtra("branch",branch.getAddress().getCity()+" "+branch.getAddress().getStreet());
+                    intent.putExtra("branch",branch.getAddress().getCity()+" "+branch.getAddress().getStreet()+" "+branch.getAddress().getNumber());
                     intent.putExtra("mileage",car1.getMileage());
                     intent.putExtra("id",car1.getCarNum());
                     intent.putExtra("rating",car1.getRating());
@@ -144,7 +144,9 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                     intent.putExtra("year",car1.getYear());
                     intent.putExtra("inUse",car1.isInUse());
                     intent.putExtra("img",car1.getImgURL());
-                    intent.putExtra("position",selectedPosition);
+                    intent.putExtra("position",position);
+                    intent.putExtra("carmodelID",carModel.getCarModelCode());
+                    intent.putExtra("branchID",branch.getBranchNum());
                     /*intent.putExtra("name",client.getName());
                     intent.putExtra("lastName",client.getLastName());
                     intent.putExtra("id",client.getId());
@@ -343,7 +345,8 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            objects=(ArrayList<Car>)results.values;
+            objects=new ArrayList<Car>((ArrayList<Car>)results.values);
+
             notifyDataSetChanged();
         }
     }
