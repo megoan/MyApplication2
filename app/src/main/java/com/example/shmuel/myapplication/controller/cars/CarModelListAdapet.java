@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -70,11 +71,13 @@ class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHol
     public void onBindViewHolder(CarModelListAdapet.ViewHolder holder, final int position) {
         final CarModel carModel = objects.get(position);
         if(selectedPosition==position){
-            holder.itemView.setBackgroundColor(Color.parseColor("#a3a3a3"));
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#a3a3a3"));
+            holder.carModelName.setTextColor(Color.parseColor("#ffffff"));
             }
         else
         {
-            holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#ffffff"));
+            holder.carModelName.setTextColor(Color.parseColor("#000000"));
 
         }
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -113,12 +116,13 @@ class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHol
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView carModelName;
         ImageView imageView;
-
+        CardView cardView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imageView=(ImageView)itemView.findViewById(R.id.carModelCardImage);
             carModelName=(TextView)itemView.findViewById(R.id.carModelCardCompany);
+            cardView =(CardView)itemView.findViewById(R.id.card);
         }
     }
 }

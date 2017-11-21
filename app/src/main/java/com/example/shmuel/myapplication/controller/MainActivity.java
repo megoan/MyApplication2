@@ -31,6 +31,7 @@ import com.example.shmuel.myapplication.controller.Clients.ClientTabFragment;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
+import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
 import com.example.shmuel.myapplication.controller.cars.CarsTabFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
@@ -125,6 +126,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 switch (tabsType)
                 {
+                    case CARS:{
+                        Intent intent=new Intent(MainActivity.this,CarEditActivity.class);
+                        intent.putExtra("update","false");
+                        startActivity(intent);
+                        return;
+                    }
                     case CLIENTS:
                     {
                         Intent intent=new Intent(MainActivity.this,ClientEditActivity.class);
@@ -132,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         return;
                     }
+
                 }
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -947,7 +955,7 @@ public class MainActivity extends AppCompatActivity {
                 if(TabFragments.tab1.mAdapter!=null)
                 {
                     //TabFragments.tab1.updateView();
-                    //TabFragments.tab1.mAdapter.notifyDataSetChanged();
+                    TabFragments.tab1.mAdapter.notifyDataSetChanged();
 
                 }
                 break;

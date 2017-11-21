@@ -50,6 +50,7 @@ public class CarActivity extends AppCompatActivity {
         actionMode=startActionMode(callback);
 
         Intent intent =getIntent();
+
         branchName=intent.getStringExtra("branch");
         carModel=intent.getStringExtra("carModel");
         mileage=intent.getDoubleExtra("mileage",0);
@@ -60,7 +61,7 @@ public class CarActivity extends AppCompatActivity {
         oneKilometerCost=intent.getDoubleExtra("oneMileCost",0);
         year=intent.getIntExtra("year",0);
         inUse=intent.getBooleanExtra("inUse",false);
-        imgUrl=intent.getStringExtra("img");
+        imgUrl=intent.getStringExtra("imgUrl");
         position=intent.getIntExtra("position",0);
         branchid=intent.getIntExtra("branchID",0);
         carModelid=intent.getIntExtra("carmodelID",0);
@@ -114,7 +115,12 @@ public class CarActivity extends AppCompatActivity {
             switch (item.getItemId())
             {
                 case R.id.delete_item:{
-
+                    if(inUse==true)
+                    {
+                        Toast.makeText(CarActivity.this,
+                                "cannot delete car! car in use!!!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                     AlertDialog.Builder builder = new AlertDialog.Builder(CarActivity.this);
 
                     builder.setTitle("Delete Car");
@@ -125,19 +131,11 @@ public class CarActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
-                            if (inUse==false) {
                                 backEndFunc.deleteCar(carNum);
                                 TabFragments.tab1.updateView2(position);
                                 Toast.makeText(CarActivity.this,
                                         "car deleted", Toast.LENGTH_SHORT).show();
                                 actionMode.finish();
-                            }
-                            else {
-                                Toast.makeText(CarActivity.this,
-                                        "cannot delete car! car in use!!!", Toast.LENGTH_SHORT).show();
-                            }
-
-
                         }
                     });
 
@@ -154,6 +152,12 @@ public class CarActivity extends AppCompatActivity {
                 }
                 case R.id.edit_item:
                 {
+                    if(inUse==true)
+                    {
+                        Toast.makeText(CarActivity.this,
+                                "cannot update car! car in use!!!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                     Intent intent=new Intent(CarActivity.this,CarEditActivity.class);
                     intent.putExtra("update","true");
                     intent.putExtra("branchName",branchName);
@@ -165,6 +169,10 @@ public class CarActivity extends AppCompatActivity {
                     intent.putExtra("oneKilometerCost",oneKilometerCost);
                     intent.putExtra("year",year);
                     intent.putExtra("position",position);
+                    intent.putExtra("imgUrl",imgUrl);
+                    intent.putExtra("inUse",inUse);
+                    intent.putExtra("rating",rating);
+                    intent.putExtra("numOfRatings",numOfRatings);
                     finish();
                     startActivity(intent);
                     break;

@@ -143,7 +143,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                     intent.putExtra("oneMileCost",car1.getOneKilometerCost());
                     intent.putExtra("year",car1.getYear());
                     intent.putExtra("inUse",car1.isInUse());
-                    intent.putExtra("img",car1.getImgURL());
+                    intent.putExtra("imgUrl",car1.getImgURL());
                     intent.putExtra("position",position);
                     intent.putExtra("carmodelID",carModel.getCarModelCode());
                     intent.putExtra("branchID",branch.getBranchNum());
