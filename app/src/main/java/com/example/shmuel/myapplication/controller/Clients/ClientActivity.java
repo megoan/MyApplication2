@@ -42,8 +42,8 @@ public class ClientActivity extends AppCompatActivity {
         id=intent.getIntExtra("id",-1);
         creditCardNum=intent.getStringExtra("credit");
 
-        TextView nameclient =(TextView)findViewById(R.id.year);
-        TextView lastnameclient =(TextView)findViewById(R.id.mileage_car);
+        TextView nameclient =(TextView)findViewById(R.id.numOfCars);
+        TextView lastnameclient =(TextView)findViewById(R.id.numOfSpots);
         TextView idclient =(TextView)findViewById(R.id.id_client);
         TextView phoneclient =(TextView)findViewById(R.id.phoneClient);
         TextView emailclient =(TextView)findViewById(R.id.emailClient);

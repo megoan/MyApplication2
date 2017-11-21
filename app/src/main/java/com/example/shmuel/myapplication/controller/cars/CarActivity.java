@@ -1,6 +1,5 @@
 package com.example.shmuel.myapplication.controller.cars;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -17,8 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
-import com.example.shmuel.myapplication.controller.Clients.ClientActivity;
-import com.example.shmuel.myapplication.controller.Clients.ClientEditActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
@@ -71,10 +68,10 @@ public class CarActivity extends AppCompatActivity {
         TextView branch1=(TextView)findViewById(R.id.branch_car);
         TextView carModel1 =(TextView)findViewById(R.id.carModel);
         TextView carNum1 =(TextView)findViewById(R.id.id_car);
-        TextView mileage1 =(TextView)findViewById(R.id.mileage_car);
-        TextView year1 =(TextView)findViewById(R.id.year);
+        TextView mileage1 =(TextView)findViewById(R.id.numOfSpots);
+        TextView year1 =(TextView)findViewById(R.id.numOfCars);
         TextView numOfRatings1 =(TextView)findViewById(R.id.numberOfRatings);
-        TextView oneDayCost1 =(TextView)findViewById(R.id.day_cost);
+        TextView oneDayCost1 =(TextView)findViewById(R.id.established);
         TextView oneKilometerCost1 =(TextView)findViewById(R.id.mileage_cost_car);
         TextView inUse1=(TextView)findViewById(R.id.inUse_car);
         ImageView imageView1=(ImageView)findViewById(R.id.mainImage);

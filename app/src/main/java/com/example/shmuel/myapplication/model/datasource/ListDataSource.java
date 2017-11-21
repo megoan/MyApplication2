@@ -50,7 +50,7 @@ public class ListDataSource {
 
         carModelList.add(new CarModel(11,"Audi","R8",32.1, Transmission.AUTOMATIC,1,4,true,"@drawable/ferrari_812",true));
         carList.add(new Car(11,11,50,1,3.5,30,74,35,"@drawable/audi8",1997,false));
-        branchList.add(new Branch(new Address("Hifa","sanhedria","12a"),12,11,"@drawable/rental",15000,new MyDate(2,"july",2055),true));
+        branchList.add(new Branch(new Address("Hifa","sanhedria","12a"),50,11,"@drawable/rental",15000,new MyDate(2,"july",2055),true));
         clientList.add(new Client("abudaba","zuhabi",311,"999","s@e.com","111"));
 
         carModelList.add(new CarModel(12,"Farrari","R8",33.1, Transmission.MANUAL,2,3,false,"@drawable/ferrari_812",false));
@@ -77,6 +77,9 @@ public class ListDataSource {
         carList.add(new Car(16,15,50,6,2.5,33,70,70,"@drawable/car",1894,false));
         branchList.add(new Branch(new Address("Hifa","alenbyf","12a"),16,16,"@drawable/rental",15000,new MyDate(2,"july",2055),true));
         clientList.add(new Client("lambde","melon",316,"999","s@e.com","111"));
+
+
+        branchList.add(new Branch(new Address("Hadera","sanhedria","15b"),40,22,"@drawable/rental",3000,new MyDate(24,"June",1999),false));
 
         branchList.get(0).addCar(1);
         branchList.get(1).addCar(2);

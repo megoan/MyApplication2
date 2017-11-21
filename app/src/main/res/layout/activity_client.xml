@@ -62,7 +62,7 @@
             app:layout_constraintVertical_bias="0.094" />
 
         <TextView
-            android:id="@+id/year"
+            android:id="@+id/numOfCars"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -97,7 +97,7 @@
             app:layout_constraintVertical_bias="0.16" />
 
         <TextView
-            android:id="@+id/mileage_car"
+            android:id="@+id/numOfSpots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
@@ -109,8 +109,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/year"
-            app:layout_constraintTop_toBottomOf="@+id/year"
+            app:layout_constraintStart_toStartOf="@+id/numOfCars"
+            app:layout_constraintTop_toBottomOf="@+id/numOfCars"
             app:layout_constraintVertical_bias="0.16" />
 
         <TextView
@@ -144,8 +144,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/year"
-            app:layout_constraintTop_toBottomOf="@+id/mileage_car"
+            app:layout_constraintStart_toStartOf="@+id/numOfCars"
+            app:layout_constraintTop_toBottomOf="@+id/numOfSpots"
             app:layout_constraintVertical_bias="0.428" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

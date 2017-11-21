@@ -36,8 +36,8 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;
-    Car car=new Car();
 
+    Car car=new Car();
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
     public ActionMode actionMode;
     boolean update=false;

@@ -3,6 +3,7 @@ package com.example.shmuel.myapplication.controller.branches;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -24,11 +25,14 @@ import android.widget.Toast;
 
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.cars.CarActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
+import com.example.shmuel.myapplication.model.entities.Car;
+import com.example.shmuel.myapplication.model.entities.CarModel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -123,6 +127,19 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             @Override
             public void onClick(View v) {
                 notifyItemChanged(selectedPosition);
+                if(((MainActivity)mContext).branch_is_in_action_mode==false){
+                    Intent intent=new Intent(mContext,BranchActivity.class);
+                    Branch branch1=objects.get(position);
+                    intent.putExtra("id",branch1.getBranchNum());
+                    intent.putExtra("address",branch1.getAddress().getCity()+" "+branch1.getAddress().getStreet()+" "+branch1.getAddress().getNumber());
+                    intent.putExtra("established",branch1.getEstablishedDate().toString());
+                    intent.putExtra("parkingSpotsNum",branch1.getCarIds().size());
+                    intent.putExtra("available",branch1.numberOfParkingSpotsAvailable());
+                    intent.putExtra("imgUrl",branch1.getImgURL());
+                    intent.putExtra("inUse",branch1.isInUse());
+                    intent.putExtra("revenue",branch1.getBranchRevenue());
+                    ((Activity)mContext).startActivity(intent);
+                }
                 if (actionMode!=null) {
                     actionMode.finish();
                 }

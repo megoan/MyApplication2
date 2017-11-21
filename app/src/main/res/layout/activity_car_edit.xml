@@ -158,18 +158,16 @@
                     app:srcCompat="@drawable/ic_scroll_right"
                     android:layout_alignParentTop="false"
                     />
+
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/carModelSelectedCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="10dp"
-                    app:rippleColor="@color/black"
-                    app:srcCompat="@drawable/ic_select_car_model"
                     android:layout_alignParentBottom="true"
-                    android:layout_alignParentTop="false"
+                    android:layout_centerHorizontal="true"
 
-                    />
+                    app:rippleColor="@color/black"
+                    app:srcCompat="@drawable/ic_select_car_model" />
             </RelativeLayout>
             </android.support.design.widget.CoordinatorLayout>
         </android.support.v7.widget.CardView>

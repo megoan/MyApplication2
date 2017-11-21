@@ -148,13 +148,6 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                     intent.putExtra("position",position);
                     intent.putExtra("carmodelID",carModel.getCarModelCode());
                     intent.putExtra("branchID",branch.getBranchNum());
-                    /*intent.putExtra("name",client.getName());
-                    intent.putExtra("lastName",client.getLastName());
-                    intent.putExtra("id",client.getId());
-                    intent.putExtra("phone",client.getPhoneNum());
-                    intent.putExtra("email",client.getEmailAddress());
-                    intent.putExtra("credit",client.getCreditCardNum());*/
-
                     ((Activity)mContext).startActivity(intent);
                 }
                 if (actionMode!=null) {
