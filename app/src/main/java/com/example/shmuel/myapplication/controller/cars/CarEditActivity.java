@@ -23,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.TabFragments;
+import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -250,9 +252,8 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                     }
                     else
                     {
-                        car.setCarNum(Integer.valueOf(id1.substring(1)));
+                        car.setCarNum(Integer.valueOf(id1));
                     }
-                    car.setCarNum(Integer.valueOf(id1.substring(1)));
                     car.setBranchNum(branchID);
                     car.setMileage(mileage1);
                     car.setOneDayCost(singleDayCost1);
@@ -283,6 +284,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
 
                                 try {
                                     backEndFunc.updateCar(car);
+
                                     Toast.makeText(CarEditActivity.this,
                                             "car updated", Toast.LENGTH_SHORT).show();
                                     actionMode.finish();
@@ -301,6 +303,10 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
 
                                 try {
                                     backEndFunc.addCar(car);
+                                    backEndFunc.addCarToBranch(car.getCarNum(),car.getBranchNum());
+                                    BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
+                                    BranchesFragment.mAdapter.notifyDataSetChanged();
+
                                     Toast.makeText(CarEditActivity.this,
                                             "new car added", Toast.LENGTH_SHORT).show();
                                     //actionMode.finish();

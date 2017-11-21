@@ -1,5 +1,7 @@
 package com.example.shmuel.myapplication.model.entities;
 
+import java.util.ArrayList;
+
 /**
  * Created by shmuel on 19/10/2017.
  */
@@ -12,6 +14,7 @@ public class Branch {
     private double branchRevenue;
     private MyDate establishedDate;
     private boolean inUse;
+    private ArrayList<Integer>carIdsList;
 
     public Branch() {
     }
@@ -24,6 +27,7 @@ public class Branch {
         this.branchRevenue=branchRevenue;
         this.establishedDate=new MyDate(establishedDate);
         this.inUse=inUse;
+        carIdsList=new ArrayList<>();
     }
 
     public Branch(Branch other) {
@@ -34,6 +38,7 @@ public class Branch {
         this.branchRevenue=other.branchRevenue;
         this.establishedDate=new MyDate(other.establishedDate);
         this.inUse=other.inUse;
+        this.carIdsList=other.carIdsList;
     }
 
     public Address getAddress() {
@@ -90,5 +95,26 @@ public class Branch {
 
     public void setInUse(boolean inUse) {
         this.inUse = inUse;
+    }
+
+    public ArrayList<Integer> getCarIds() {
+        return carIdsList;
+    }
+
+    public void setCarIds(ArrayList<Integer> carIds) {
+        this.carIdsList = carIds;
+    }
+
+    public int numberOfParkingSpotsAvailable()
+    {
+        return parkingSpotsNum-carIdsList.size();
+    }
+
+    public void addCar(int carID)
+    {
+        if(!carIdsList.contains(carID))carIdsList.add(carID);
+    }
+    public void removeCar(int carID){
+        if(carIdsList.contains(carID))carIdsList.remove(carID);
     }
 }

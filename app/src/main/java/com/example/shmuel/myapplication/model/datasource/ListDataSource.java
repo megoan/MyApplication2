@@ -17,11 +17,11 @@ import java.util.List;
  */
 
 public class ListDataSource {
-    public static ArrayList<CarModel> carModelList;
-    public static ArrayList<Client>clientList;
-    public static ArrayList<Branch>branchList;
-    public static ArrayList<Car>carList;
-    public static ArrayList<Order>orderList;
+    public static List<CarModel> carModelList;
+    public static List<Client>clientList;
+    public static List<Branch>branchList;
+    public static List<Car>carList;
+    public static List<Order>orderList;
 
     public ListDataSource() {
         carList=new ArrayList<>();
@@ -60,7 +60,7 @@ public class ListDataSource {
 
         carModelList.add(new CarModel(13,"Audi","R8",32.1, Transmission.AUTOMATIC,1,4,true,"@drawable/ferrari_812",true));
         carList.add(new Car(13,13,50,3,1.5,48,10,62,"@drawable/car",2005,true));
-        branchList.add(new Branch(new Address("Elat","harambam","12a"),13,13,"@drawable/rental",15000,new MyDate(2,"july",2055),false));
+        branchList.add(new Branch(new Address("Elat","harambam","12a"),13,13,"@drawable/rental",15000,new MyDate(2,"july",2055),true));
         clientList.add(new Client("Elomaka","koyoso",313,"999","s@e.com","111"));
 
         carModelList.add(new CarModel(14,"Toyota","R8",32.1, Transmission.MANUAL,7,4,false,"@drawable/ferrari_812",false));
@@ -75,7 +75,14 @@ public class ListDataSource {
 
         carModelList.add(new CarModel(16,"Delete","D",32.1, Transmission.MANUAL,3,3,false,"@drawable/ferrari_812",false));
         carList.add(new Car(16,15,50,6,2.5,33,70,70,"@drawable/car",1894,false));
-        branchList.add(new Branch(new Address("Hifa","alenbyf","12a"),16,16,"@drawable/rental",15000,new MyDate(2,"july",2055),false));
+        branchList.add(new Branch(new Address("Hifa","alenbyf","12a"),16,16,"@drawable/rental",15000,new MyDate(2,"july",2055),true));
         clientList.add(new Client("lambde","melon",316,"999","s@e.com","111"));
+
+        branchList.get(0).addCar(1);
+        branchList.get(1).addCar(2);
+        branchList.get(2).addCar(3);
+        branchList.get(3).addCar(4);
+        branchList.get(4).addCar(5);
+        branchList.get(5).addCar(6);
     }
 }

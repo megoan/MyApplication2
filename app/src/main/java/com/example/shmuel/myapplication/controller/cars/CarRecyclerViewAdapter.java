@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -273,10 +274,14 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
                                 int objectsLengh=objects.size();
-                                backEndFunc.deleteCar(objects.get(selectedPosition).getCarNum());
+                                Car car=new Car(objects.get(selectedPosition));
+                                backEndFunc.deleteCar(car.getCarNum());
                                 if (objectsLengh==objects.size()) {
                                     objects.remove(selectedPosition);
                                 }
+                                backEndFunc.removeCarFromBranch(car.getCarNum(),car.getBranchNum());
+                                BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
+                                BranchesFragment.mAdapter.notifyDataSetChanged();
                                 notifyDataSetChanged();
                                 Toast.makeText(mContext,
                                         "car deleted", Toast.LENGTH_SHORT).show();

@@ -20,6 +20,7 @@ import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.Clients.ClientActivity;
 import com.example.shmuel.myapplication.controller.Clients.ClientEditActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
+import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -81,7 +82,7 @@ public class CarActivity extends AppCompatActivity {
 
         branch1.setText(branchName);
         carModel1.setText(carModel);
-        carNum1.setText(String.valueOf(carNum));
+        carNum1.setText("#"+String.valueOf(carNum));
         mileage1.setText(String.valueOf(mileage));
         year1.setText(String.valueOf(year));
         numOfRatings1.setText(String.valueOf(numOfRatings));
@@ -91,7 +92,8 @@ public class CarActivity extends AppCompatActivity {
         ratingBar1.setRating((float) rating);
         int defaultImage = getResources().getIdentifier(imgUrl,null,getApplicationContext().getPackageName());
         Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
-        imageView1.setBackgroundDrawable(drawable);
+        //imageView1.setBackgroundDrawable(drawable);
+        imageView1.setImageDrawable(drawable);
 
         actionMode.setTitle(carModel);
     }
@@ -132,6 +134,9 @@ public class CarActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
                                 backEndFunc.deleteCar(carNum);
+                                backEndFunc.removeCarFromBranch(carNum,branchid);
+                                BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
+                                BranchesFragment.mAdapter.notifyDataSetChanged();
                                 TabFragments.tab1.updateView2(position);
                                 Toast.makeText(CarActivity.this,
                                         "car deleted", Toast.LENGTH_SHORT).show();

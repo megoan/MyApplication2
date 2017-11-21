@@ -15,20 +15,21 @@ import java.util.List;
 public interface BackEndFunc {
     public boolean clientExists(int clientID);
 
-    public void addClient(Client client);
-    public void addCarModel(CarModel carModel);
-    public void addCar(Car car);
-    public void addBranch(Branch branch);
+    public boolean addClient(Client client);
+    public boolean addCarModel(CarModel carModel);
+    public boolean addCar(Car car);
+    public boolean addCar(Car car, int branchID);
+    public boolean addBranch(Branch branch);
 
-    public void updateClient(Client client);
-    public void updateCarModel(CarModel carModel);
-    public void updateCar(Car car);
-    public void updateBranch(Branch branch);
+    public boolean updateClient(Client client);
+    public boolean updateCarModel(CarModel carModel);
+    public boolean updateCar(Car car);
+    public boolean updateBranch(Branch branch);
 
-    public void deleteClient(int clientID);
-    public void deleteCarModel(int carModelID);
-    public void deleteCar(int carID);
-    public void deleteBranch(int branchID);
+    public boolean deleteClient(int clientID);
+    public boolean deleteCarModel(int carModelID);
+    public boolean deleteCar(int carID);
+    public boolean deleteBranch(int branchID);
 
     public Client getClient(int id);
     public CarModel getCarModel(int carModelNumber);
@@ -39,6 +40,9 @@ public interface BackEndFunc {
     public ArrayList<Client> getAllClients();
     public ArrayList<Branch> getAllBranches();
     public ArrayList<Car>getAllCars();
+
+    public boolean removeCarFromBranch(int carID, int branch);
+    public boolean addCarToBranch(int carID, int branch);
 
 
 

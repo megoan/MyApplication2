@@ -24,121 +24,140 @@ public class BackEndForList implements BackEndFunc {
     }
 
     @Override
-    public void addClient(Client client) {
-        ListDataSource.clientList.add(client);
+    public boolean addClient(Client client) {
+       return ListDataSource.clientList.add(client);
 
     }
 
     @Override
-    public void addCarModel(CarModel carModel) {
-        ListDataSource.carModelList.add(carModel);
+    public boolean addCarModel(CarModel carModel) {
+      return   ListDataSource.carModelList.add(carModel);
     }
 
     @Override
-    public void addCar(Car car) {
-        ListDataSource.carList.add(car);
+    public boolean addCar(Car car) {
+      return   ListDataSource.carList.add(car);
+    }
+    
+    @Override
+    public boolean addCar(Car car, int branchID)
+    {
+        if (addCar(car)) {
+            return getBranch(branchID).getCarIds().add(car.getCarNum()) ;
+        }
+        return false;
     }
 
     @Override
-    public void addBranch(Branch branch) {
-        ListDataSource.branchList.add(branch);
+    public boolean addBranch(Branch branch) {
+       return ListDataSource.branchList.add(branch);
     }
 
     @Override
-    public void updateClient(Client client) {
+    public boolean updateClient(Client client) {
 
         for(int i=0;i< ListDataSource.clientList.size();i++)
         {
             if(ListDataSource.clientList.get(i).getId()==client.getId())
             {
                 ListDataSource.clientList.set(i,client);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     @Override
-    public void updateCarModel(CarModel carModel) {
+    public boolean updateCarModel(CarModel carModel) {
         for(int i=0;i< ListDataSource.carModelList.size();i++)
         {
             if(ListDataSource.carModelList.get(i).getCarModelCode()==carModel.getCarModelCode())
             {
                 ListDataSource.carModelList.set(i,carModel);
-                return;
+                return true;
             }
         }
-
+        return false;
     }
 
     @Override
-    public void updateCar(Car car) {
+    public boolean updateCar(Car car) {
         for(int i=0;i< ListDataSource.carList.size();i++)
         {
             if(ListDataSource.carList.get(i).getCarNum()==car.getCarNum())
             {
                 ListDataSource.carList.set(i,car);
-                return;
+                return true;
             }
         }
-
+        return false;
     }
 
     @Override
-    public void updateBranch(Branch branch) {
+    public boolean updateBranch(Branch branch) {
         for(int i=0;i< ListDataSource.branchList.size();i++)
         {
             if(ListDataSource.branchList.get(i).getBranchNum()==branch.getBranchNum())
             {
-                ListDataSource.branchList.set(i,branch);
-                return;
+              ListDataSource.branchList.set(i,branch);
+                return true;
             }
         }
-
+return false;
     }
 
     @Override
-    public void deleteClient(int clientID) {
+    public boolean deleteClient(int clientID) {
+        Client clientTmp=null;
         for (Client client: ListDataSource.clientList
              ) {
             if(client.getId()==clientID){
-            ListDataSource.clientList.remove(client);
-            return;}
+                clientTmp=client;
+                break;
+            }
         }
-
+        return ListDataSource.clientList.remove(clientTmp);
     }
 
     @Override
-    public void deleteCarModel(int carModelID) {
+    public boolean deleteCarModel(int carModelID) {
+        CarModel carModelTmp=null;
         for (CarModel carModel: ListDataSource.carModelList
                 ) {
             if(carModel.getCarModelCode()==carModelID){
-            ListDataSource.carModelList.remove(carModel);
-            return;}
+                carModelTmp=carModel;
+                break;
+
+            }
         }
+        return ListDataSource.carModelList.remove(carModelTmp);
     }
 
     @Override
-    public void deleteCar(int carID) {
+    public boolean deleteCar(int carID) {
+        Car carTmp=null;
         for (Car car: ListDataSource.carList
                 ) {
             if(car.getCarNum()==carID){
+                carTmp=car;
+                break;
 
-            ListDataSource.carList.remove(car);
-            return;
             }
         }
+        return ListDataSource.carList.remove(carTmp);
     }
 
     @Override
-    public void deleteBranch(int branchID) {
+    public boolean deleteBranch(int branchID) {
+        Branch branchTmp=null;
         for (Branch branch: ListDataSource.branchList
                 ) {
             if(branch.getBranchNum()==branchID){
-
-            ListDataSource.branchList.remove(branch);
-            return;
+                branchTmp=branch;
+                break;
             }
         }
+        return ListDataSource.branchList.remove(branchTmp);
     }
 
     @Override
@@ -179,21 +198,43 @@ public class BackEndForList implements BackEndFunc {
 
     @Override
     public ArrayList<CarModel> getAllCarModels() {
-        return ListDataSource.carModelList;
+        return (ArrayList<CarModel>) ListDataSource.carModelList;
     }
 
     @Override
     public ArrayList<Client> getAllClients() {
-        return ListDataSource.clientList;
+        return (ArrayList<Client>) ListDataSource.clientList;
     }
 
     @Override
     public ArrayList<Branch> getAllBranches() {
-        return ListDataSource.branchList;
+        return (ArrayList<Branch>) ListDataSource.branchList;
     }
 
     @Override
     public ArrayList<Car> getAllCars() {
-        return ListDataSource.carList;
+        return (ArrayList<Car>) ListDataSource.carList;
+    }
+
+    @Override
+    public boolean removeCarFromBranch(int carID, int branch)
+    {
+        Branch branch1=getBranch(branch);
+        branch1.getCarIds().remove(new Integer(carID));
+        if(branch1.getCarIds().size()==0){
+            branch1.setInUse(false);
+            updateBranch(branch1);
+        }
+       return true;
+    }
+
+    @Override
+    public boolean addCarToBranch(int carID, int branch){
+        Branch branch1=getBranch(branch);
+        if(branch1.getCarIds().size()==0){
+            branch1.setInUse(true);
+            updateBranch(branch1);
+        }
+        return getBranch(branch).getCarIds().add(new Integer(carID));
     }
 }

@@ -77,7 +77,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="8dp"
-                    android:text="Car Model:"
+                    android:text="Car Model"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -90,7 +90,7 @@
                         android:id="@+id/picked_car_model"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pick car"
+                        android:text="Pick car model:"
                         android:layout_marginBottom="0dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginRight="8dp"
@@ -249,7 +249,7 @@
                     app:layout_constraintStart_toEndOf="@+id/textView2"
                     app:layout_constraintTop_toBottomOf="@+id/yearSpinner"
                     app:layout_constraintVertical_bias="0.16"
-                    android:inputType="number"/>
+                    android:inputType="numberDecimal"/>
 
                 <EditText
                     android:id="@+id/id"
@@ -387,6 +387,7 @@
                     android:layout_height="44dp"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
                     android:hint="Single day cost"
                     android:textSize="14sp"
@@ -396,7 +397,8 @@
                     app:layout_constraintStart_toEndOf="@+id/textView4"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.375"
-                    android:inputType="number"/>
+                    android:inputType="numberDecimal"
+                    />
 
                 <EditText
                     android:id="@+id/single_mile_cost"
@@ -404,6 +406,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
                     android:hint="Single mile cost"
                     android:textSize="14sp"
@@ -413,7 +416,7 @@
                     app:layout_constraintStart_toStartOf="@+id/single_Day_Cost"
                     app:layout_constraintTop_toBottomOf="@+id/textView4"
                     app:layout_constraintVertical_bias="0.45"
-                    android:inputType="number"/>
+                    android:inputType="numberDecimal"/>
 
                 <TextView
                     android:id="@+id/textView4"

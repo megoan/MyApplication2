@@ -39,7 +39,7 @@ import java.util.Locale;
  */
 
 public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecyclerViewAdapter.ViewHolder> implements Filterable{
-    private ArrayList<Branch> objects;
+    public ArrayList<Branch> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition=-1;
@@ -138,7 +138,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         holder.branchStreet.setText(branch.getAddress().getStreet());
         holder.branchAddressNumber.setText(branch.getAddress().getNumber());
         holder.revenue.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(branch.getBranchRevenue())));
-        holder.numberOfCars.setText(String.valueOf(branch.getParkingSpotsNum()));
+        holder.numberOfCars.setText(String.valueOf(branch.getCarIds().size()));
         holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
         holder.imageView.setImageDrawable(drawable);
 

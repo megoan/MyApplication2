@@ -956,6 +956,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     //TabFragments.tab1.updateView();
                     TabFragments.tab1.mAdapter.notifyDataSetChanged();
+                    TabFragments.tab3.mAdapter.notifyDataSetChanged();
 
                 }
                 break;
