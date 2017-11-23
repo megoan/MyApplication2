@@ -35,9 +35,13 @@ public class MyDate {
     public String getMonth() {
         return month;
     }
+    public int getMonth(int stam){return convertMonthToNumber(month);}
 
     public void setMonth(String month) {
         this.month = month;
+    }
+    public void setMonth(int month) {
+        this.month = convertNumberToMonth(month);
     }
 
     public int getYear() {
@@ -70,6 +74,65 @@ public class MyDate {
         else if(month=="December"||month=="december")mon=11;
         else mon=12;
         return year+String.valueOf(mon)+day;
+    }
+    public int convertMonthToNumber(String month)
+    {
+        if(month.equals("January")||month.equals("january"))return 0;
+        else if(month.equals("February")||month.equals("february"))return 1;
+        else if(month.equals("March")||month.equals("march"))return 2;
+        else if(month.equals("April")||month.equals("April"))return 3;
+        else if(month.equals("May")||month.equals("may"))return 4;
+        else if(month.equals("June")||month.equals("june"))return 5;
+        else if(month.equals("July")||month.equals("july"))return 6;
+        else if(month.equals("August")||month.equals("august"))return 7;
+        else if(month.equals("September")||month.equals("september"))return 8;
+        else if(month.equals("October")||month.equals("october"))return 9;
+        else if(month.equals("November")||month.equals("november"))return 10;
+        else if(month.equals("December")||month.equals("december"))return 11;
+        else return 12;
+    }
+    public String convertNumberToMonth(int month)
+    {
+        switch (month)
+        {
+            case 0:{
+                return "January";
+            }
+            case 1:{
+                return "February";
+            }
+            case 2:{
+                return "March";
+            }
+            case 3:{
+                return "April";
+            }
+            case 4:{
+                return "May";
+            }
+            case 5:{
+                return "June";
+            }
+            case 6:{
+                return "July";
+            }
+            case 7:{
+                return "August";
+            }
+            case 8:{
+                return "September";
+            }
+            case 9:{
+                return "October";
+            }
+            case 10:{
+                return "November";
+            }
+            case 11:{
+                return "December";
+            }
+        }
+        return "no month";
     }
 }
 

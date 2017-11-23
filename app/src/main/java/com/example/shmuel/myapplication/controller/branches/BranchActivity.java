@@ -26,18 +26,24 @@ import com.example.shmuel.myapplication.model.entities.Address;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.MyDate;
 
+import java.util.ArrayList;
+
 public class BranchActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
     public ActionMode actionMode;
 
-    private String address;
+    //private String address=new Address();
+    private Address address=new Address();
+    private MyDate myDate=new MyDate();
     private int parkingSpotsNum;
+    private int numOfCars;
     private int avaibaleSpots;
     private int branchNum;
     private String imgUrl;
     private double branchRevenue;
     private String establishedDate;
     private boolean inUse;
+    private ArrayList<Integer>carList=new ArrayList<>();
 
 
 
@@ -50,13 +56,20 @@ public class BranchActivity extends AppCompatActivity {
 
         Intent intent =getIntent();
         branchNum=intent.getIntExtra("id",0);
-        address=intent.getStringExtra("address");
+        address.setCity(intent.getStringExtra("city"));
+        address.setStreet(intent.getStringExtra("street"));
+        address.setNumber(intent.getStringExtra("number"));
+        myDate.setYear(intent.getIntExtra("year",0));
+        myDate.setMonth(intent.getStringExtra("month"));
+        myDate.setDay(intent.getIntExtra("day",0));
         establishedDate=intent.getStringExtra("established");
         parkingSpotsNum=intent.getIntExtra("parkingSpotsNum",0);
         avaibaleSpots=intent.getIntExtra("available",0);
         inUse=intent.getBooleanExtra("inUse",false);
         imgUrl=intent.getStringExtra("imgUrl");
         branchRevenue=intent.getDoubleExtra("revenue",0);
+        numOfCars=intent.getIntExtra("numOfCars",0);
+        carList=intent.getIntegerArrayListExtra("carList");
 
         TextView branchIDText=(TextView)findViewById(R.id.branchid);
         TextView addressText =(TextView)findViewById(R.id.address);
@@ -68,8 +81,8 @@ public class BranchActivity extends AppCompatActivity {
         TextView establish=(TextView)findViewById(R.id.established);
 
         branchIDText.setText(String.valueOf("#"+branchNum));
-        addressText.setText(address);
-        numOfCarsText.setText(String.valueOf(parkingSpotsNum));
+        addressText.setText(address.getCity()+" "+address.getStreet()+" "+address.getNumber());
+        numOfCarsText.setText(String.valueOf(numOfCars));
         numOfSpotsText.setText(String.valueOf(String.valueOf(avaibaleSpots)));
         revenueText.setText(String.valueOf(branchRevenue));
         inUseText.setText(String.valueOf(inUse));
@@ -78,7 +91,7 @@ public class BranchActivity extends AppCompatActivity {
         Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
         imageView.setImageDrawable(drawable);
 
-        actionMode.setTitle(address);
+        actionMode.setTitle(address.getCity()+" "+address.getStreet());
     }
 
     public class MyActionModeCallbackClient implements ActionMode.Callback{
@@ -146,7 +159,9 @@ public class BranchActivity extends AppCompatActivity {
                     }
                     Intent intent=new Intent(BranchActivity.this, BranchEditActivity.class);
                     intent.putExtra("update","true");
-                    intent.putExtra("address",address);
+                    intent.putExtra("city",address.getCity());
+                    intent.putExtra("street",address.getStreet());
+                    intent.putExtra("number",address.getNumber());
                     intent.putExtra("branchID",branchNum);
                     intent.putExtra("imgUrl",imgUrl);
                     intent.putExtra("inUse",inUse);
@@ -154,6 +169,11 @@ public class BranchActivity extends AppCompatActivity {
                     intent.putExtra("parkingSpotsNum",parkingSpotsNum);
                     intent.putExtra("available",avaibaleSpots);
                     intent.putExtra("revenue",branchRevenue);
+                    intent.putExtra("year",myDate.getYear());
+                    intent.putExtra("month",myDate.getMonth());
+                    intent.putExtra("day",myDate.getDay());
+                    intent.putExtra("numOfCars",numOfCars);
+                    intent.putExtra("carList",carList);
                     finish();
                     startActivity(intent);
                     break;

@@ -66,7 +66,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Branch branch = objects.get(position);
+        final Branch branch = objects.get(position);
 
 
         if(selectedPosition==position){
@@ -133,11 +133,19 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                     intent.putExtra("id",branch1.getBranchNum());
                     intent.putExtra("address",branch1.getAddress().getCity()+" "+branch1.getAddress().getStreet()+" "+branch1.getAddress().getNumber());
                     intent.putExtra("established",branch1.getEstablishedDate().toString());
-                    intent.putExtra("parkingSpotsNum",branch1.getCarIds().size());
+                    intent.putExtra("parkingSpotsNum",branch1.getParkingSpotsNum());
+                    intent.putExtra("numOfCars",branch1.getCarIds().size());
                     intent.putExtra("available",branch1.numberOfParkingSpotsAvailable());
                     intent.putExtra("imgUrl",branch1.getImgURL());
                     intent.putExtra("inUse",branch1.isInUse());
                     intent.putExtra("revenue",branch1.getBranchRevenue());
+                    intent.putExtra("city",branch1.getAddress().getCity());
+                    intent.putExtra("street",branch1.getAddress().getStreet());
+                    intent.putExtra("number",branch1.getAddress().getNumber());
+                    intent.putExtra("year",branch1.getEstablishedDate().getYear());
+                    intent.putExtra("month",branch1.getEstablishedDate().getMonth());
+                    intent.putExtra("day",branch1.getEstablishedDate().getDay());
+                    intent.putExtra("carList",branch1.getCarIds());
                     ((Activity)mContext).startActivity(intent);
                 }
                 if (actionMode!=null) {

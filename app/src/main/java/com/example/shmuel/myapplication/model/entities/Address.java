@@ -52,4 +52,9 @@ public class Address {
     {
         return city+street+number;
     }
+
+    @Override
+    public String toString() {
+        return city+" "+street+" "+number;
+    }
 }
