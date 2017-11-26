@@ -11,10 +11,13 @@ import android.widget.BaseAdapter;
 
 import com.example.shmuel.myapplication.controller.DividerItemDecoration;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
+import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.model.backend.BackEndForList;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
@@ -35,7 +38,7 @@ public class CarsTabFragment extends Fragment {
     ViewGroup container1;
 
     /*public CarsTabFragment() {
-        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.SelectedDataSource.dataSourceType);
     }*/
 
     @Override
@@ -44,8 +47,8 @@ public class CarsTabFragment extends Fragment {
         inflater1=inflater;
         container1=container;
         // Inflate the layout for this fragment
-        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-        cars=backEndFunc.getAllCars();
+        backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+        cars=new ArrayList<>();
         view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
         if (mAdapter==null) {
@@ -155,6 +158,7 @@ public class CarsTabFragment extends Fragment {
     public void updateView()
     {
 
+        cars=backEndFunc.getAllCars();
         mAdapter.objects=cars;
         mAdapter.notifyDataSetChanged();
         //cars= backEndFunc.getAllCars();
@@ -219,5 +223,11 @@ public class CarsTabFragment extends Fragment {
         {
             mAdapter.actionMode.finish();
         }
+    }
+    public void setCarList()
+    {
+       cars=new ArrayList<>(backEndFunc.getAllCars());
+       updateView();
+       //mAdapter.notifyDataSetChanged();
     }
 }

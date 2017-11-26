@@ -1,7 +1,9 @@
 package com.example.shmuel.myapplication.controller.Clients;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,13 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
+import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 
 public class ClientActivity extends AppCompatActivity {
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ActionMode actionMode;
     int id;
     String name;
@@ -26,7 +31,7 @@ public class ClientActivity extends AppCompatActivity {
     String phone;
     String email;
     String creditCardNum;
-
+    private ProgressDialog progDailog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,12 +92,13 @@ public class ClientActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
-                           backEndFunc.deleteClient(id);
-                           TabFragments.tab4.updateView2();
+                            new BackGroundDeleteClient().execute();
+                           /*backEndFunc.deleteClient(id);
+                           TabFragments.tab4.updateView2();*/
 
-                            Toast.makeText(ClientActivity.this,
+                           /* Toast.makeText(ClientActivity.this,
                                     "client deleted", Toast.LENGTH_SHORT).show();
-                            actionMode.finish();
+                            actionMode.finish();*/
                         }
                     });
 
@@ -131,5 +137,44 @@ public class ClientActivity extends AppCompatActivity {
             finish();
         }
 
+    }
+    public class BackGroundDeleteClient extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(ClientActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            backEndFunc.deleteClient(id);
+
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            ClientTabFragment.mAdapter.objects=backEndFunc.getAllClients();
+            ClientTabFragment.mAdapter.notifyDataSetChanged();
+            TabFragments.tab4.updateView2();
+            Toast.makeText(ClientActivity.this,
+                    "client deleted", Toast.LENGTH_SHORT).show();
+            actionMode.finish();
+            progDailog.dismiss();
+        }
     }
 }

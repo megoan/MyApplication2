@@ -1,11 +1,13 @@
 package com.example.shmuel.myapplication.controller.cars;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -26,10 +28,12 @@ import android.widget.Toast;
 
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Address;
 import com.example.shmuel.myapplication.model.entities.Branch;
@@ -43,13 +47,13 @@ import java.util.ArrayList;
  */
 
 public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerViewAdapter.ViewHolder> implements Filterable{
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ArrayList<Car> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition=-1;
     MyFilter myFilter;
-
+    private ProgressDialog progDailog;
 
     public void removeitem(int position)
     {
@@ -268,7 +272,8 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                                 // TODO Auto-generated method stub
                                 int objectsLengh=objects.size();
                                 Car car=new Car(objects.get(selectedPosition));
-                                backEndFunc.deleteCar(car.getCarNum());
+                                new BackGroundDeleteCar().execute();
+                                /*backEndFunc.deleteCar(car.getCarNum());
                                 if (objectsLengh==objects.size()) {
                                     objects.remove(selectedPosition);
                                 }
@@ -281,7 +286,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
 
                                 selectedPosition=-1;
                                 notifyItemChanged(selectedPosition);
-                                actionMode.finish();
+                                actionMode.finish();*/
                             }
                         });
 
@@ -348,6 +353,51 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             notifyDataSetChanged();
         }
     }
+    public class BackGroundDeleteCar extends AsyncTask<Void,Void,Void> {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(mContext);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Car car=objects.get(selectedPosition);
+            backEndFunc.deleteCar(car.getCarNum());
+            backEndFunc.removeCarFromBranch(car.getCarNum(),car.getBranchNum());
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            int i=1;
+            selectedPosition=-1;
+            notifyItemChanged(selectedPosition);
+            notifyDataSetChanged();
+            BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
+            BranchesFragment.mAdapter.notifyDataSetChanged();
+            TabFragments.tab1.updateView();
+            Toast.makeText(mContext,
+                    "car deleted from source", Toast.LENGTH_SHORT).show();
+            actionMode.finish();
+            progDailog.dismiss();
+
+
+        }
+    }
 
 }

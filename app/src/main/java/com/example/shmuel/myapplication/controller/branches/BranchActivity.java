@@ -1,8 +1,10 @@
 package com.example.shmuel.myapplication.controller.branches;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.cars.CarActivity;
 import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Address;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.MyDate;
@@ -29,7 +34,7 @@ import com.example.shmuel.myapplication.model.entities.MyDate;
 import java.util.ArrayList;
 
 public class BranchActivity extends AppCompatActivity {
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ActionMode actionMode;
 
     //private String address=new Address();
@@ -44,7 +49,7 @@ public class BranchActivity extends AppCompatActivity {
     private String establishedDate;
     private boolean inUse;
     private ArrayList<Integer>carList=new ArrayList<>();
-
+    private ProgressDialog progDailog;
 
 
     @Override
@@ -129,12 +134,10 @@ public class BranchActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
-                            backEndFunc.deleteBranch(branchNum);
-
+                          //backEndFunc.deleteBranch(branchNum);
+                           new BackGroundDeleteBranch().execute();
                             //TabFragments.tab3.updateView2(position);
-                            Toast.makeText(BranchActivity.this,
-                                    "branch deleted", Toast.LENGTH_SHORT).show();
-                            actionMode.finish();
+
                         }
                     });
 
@@ -187,5 +190,40 @@ public class BranchActivity extends AppCompatActivity {
             finish();
         }
 
+    }
+    public class BackGroundDeleteBranch extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(BranchActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            backEndFunc.deleteBranch(branchNum);
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(BranchActivity.this,
+                    "branch deleted", Toast.LENGTH_SHORT).show();
+            actionMode.finish();
+            progDailog.dismiss();
+        }
     }
 }

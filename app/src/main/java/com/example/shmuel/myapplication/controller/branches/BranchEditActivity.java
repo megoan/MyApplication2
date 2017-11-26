@@ -1,9 +1,11 @@
 package com.example.shmuel.myapplication.controller.branches;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -21,10 +23,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
+import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
+import com.example.shmuel.myapplication.model.backend.BackEndForList;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.Address;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
@@ -44,7 +50,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
     DatePickerDialog datePickerDialog;
     Branch branch=new Branch();
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ActionMode actionMode;
 
     boolean update=false;
@@ -54,7 +60,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
     private int avaibaleSpots;
     private String imgUrl;
     private double branchRevenue;
-
+    ProgressDialog progDailog;
     private boolean inUse;
     private MyDate myDate=new MyDate();
     private Address address=new Address();
@@ -239,7 +245,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
 
 
-                    if(id1.equals("")|| branchRevenueString==0||parkingSpotsNum==0|| avaibaleSpots==0|| addressString==null || establishedString==null ||myDate==null)
+                    if(id1.equals("")||parkingSpotsNum==0|| addressString==null || establishedString==null ||myDate==null)
                     {
                         inputWarningDialog("Please fill all fields!");
                         return false;
@@ -273,6 +279,10 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     if (imgUrl!=null) {
                         branch.setImgURL(imgUrl);
                     }
+                    else
+                    {
+                        branch.setImgURL("@drawable/rental");
+                    }
 
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(BranchEditActivity.this);
@@ -291,11 +301,12 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                                 // TODO check that all sadot are filled
 
                                 try {
-                                    backEndFunc.updateBranch(branch);
-
+                                    new BackGroundDeleteBranch().execute();
+                                   /* backEndFunc.updateBranch(branch);
                                     Toast.makeText(BranchEditActivity.this,
-                                            "branch updated", Toast.LENGTH_SHORT).show();
-                                    actionMode.finish();
+                                            "branch updated", Toast.LENGTH_SHORT).show();*/
+
+
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -310,15 +321,15 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                                 // TODO Auto-generated method stub
 
                                 try {
-                                    backEndFunc.addBranch(branch);
 
+                                    new BackGroundDeleteBranch().execute();
+                                   /* backEndFunc.addBranch(branch);
                                     BranchesFragment.mAdapter.notifyDataSetChanged();
 
                                     Toast.makeText(BranchEditActivity.this,
                                             "new bramch added", Toast.LENGTH_SHORT).show();
-                                    //actionMode.finish();
-                                    resetView();
-                                    branch=new Branch();
+                                    //actionMode.finish();*/
+
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -346,7 +357,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
         @Override
         public void onDestroyActionMode(android.view.ActionMode actionMode) {
-            finish();
+            //finish();
         }
 
     }
@@ -391,6 +402,64 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         } catch(NumberFormatException nfe) {
             // Log exception.
             return 0;
+        }
+    }
+    public class BackGroundDeleteBranch extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(BranchEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (update)
+            {
+                backEndFunc.updateBranch(branch);
+            }
+            else
+            {
+                backEndFunc.addBranch(branch);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+
+            if(update)
+            {
+
+                Toast.makeText(BranchEditActivity.this,
+                        "branch updated", Toast.LENGTH_SHORT).show();
+                BranchesFragment.mAdapter.objects = backEndFunc.getAllBranches();
+                BranchesFragment.mAdapter.notifyDataSetChanged();
+                finish();
+            }
+            else
+            {
+                Toast.makeText(BranchEditActivity.this,"new bramch added", Toast.LENGTH_SHORT).show();
+                BranchesFragment.mAdapter.objects= backEndFunc.getAllBranches();
+                BranchesFragment.mAdapter.notifyDataSetChanged();
+                resetView();
+                branch=new Branch();
+                progDailog.dismiss();
+
+            }
+            actionMode.finish();
         }
     }
 }

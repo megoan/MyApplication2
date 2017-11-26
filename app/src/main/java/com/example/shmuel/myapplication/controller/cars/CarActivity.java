@@ -1,8 +1,10 @@
 package com.example.shmuel.myapplication.controller.cars;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,15 +18,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.entities.Car;
 
 public class CarActivity extends AppCompatActivity {
 
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ActionMode actionMode;
     private String branchName;
     private String carModel;
@@ -40,6 +45,8 @@ public class CarActivity extends AppCompatActivity {
     private int position;
     int branchid;
     int carModelid;
+    private ProgressDialog progDailog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,14 +137,15 @@ public class CarActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
-                                backEndFunc.deleteCar(carNum);
+                            new BackGroundDeleteCar().execute();
+                               /* backEndFunc.deleteCar(carNum);
                                 backEndFunc.removeCarFromBranch(carNum,branchid);
                                 BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
                                 BranchesFragment.mAdapter.notifyDataSetChanged();
                                 TabFragments.tab1.updateView2(position);
                                 Toast.makeText(CarActivity.this,
                                         "car deleted", Toast.LENGTH_SHORT).show();
-                                actionMode.finish();
+                                actionMode.finish();*/
                         }
                     });
 
@@ -188,5 +196,44 @@ public class CarActivity extends AppCompatActivity {
             finish();
         }
 
+    }
+    public class BackGroundDeleteCar extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(CarActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            backEndFunc.deleteCar(carNum);
+            backEndFunc.removeCarFromBranch(carNum,branchid);
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
+            BranchesFragment.mAdapter.notifyDataSetChanged();
+            TabFragments.tab1.updateView2(position);
+            Toast.makeText(CarActivity.this,
+                    "car deleted", Toast.LENGTH_SHORT).show();
+            actionMode.finish();
+            progDailog.dismiss();
+        }
     }
 }

@@ -12,9 +12,11 @@ import android.view.ViewGroup;
 
 import com.example.shmuel.myapplication.controller.DividerItemDecoration;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.Client;
 
 import java.util.ArrayList;
@@ -44,8 +46,8 @@ public class ClientTabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-        clients=backEndFunc.getAllClients();
+        backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+        clients=new ArrayList<>();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
         if (mAdapter==null) {
@@ -150,7 +152,7 @@ public class ClientTabFragment extends Fragment {
         if(recyclerView==null)
 
         {
-           /* backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+           /* backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.SelectedDataSource.dataSourceType);
             view=inflater.inflate(R.layout.recycle_view_layout, container, false);
             mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             recyclerView.setLayoutManager(mLayoutManager);
@@ -161,6 +163,12 @@ public class ClientTabFragment extends Fragment {
         clients=backEndFunc.getAllClients();
         mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
         recyclerView.setAdapter(mAdapter);
+    }
+    public void setClientsList()
+    {
+        clients=new ArrayList<>(backEndFunc.getAllClients());
+        updateView();
+
     }
 
 }

@@ -28,6 +28,7 @@ import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.Transmission;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
  */
 
 public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<CarCompaniesInnerRecyclerViewAdapter.ViewHolder> implements Filterable {
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ArrayList<CarModel> objects;
     private Context mContext;
     public ActionMode actionMode;

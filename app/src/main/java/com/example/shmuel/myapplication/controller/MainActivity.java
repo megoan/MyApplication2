@@ -1,10 +1,12 @@
 package com.example.shmuel.myapplication.controller;
 
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -29,6 +31,7 @@ import com.example.shmuel.myapplication.controller.Clients.ClientActivity;
 import com.example.shmuel.myapplication.controller.Clients.ClientEditActivity;
 import com.example.shmuel.myapplication.controller.Clients.ClientTabFragment;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.branches.BranchEditActivity;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
@@ -36,6 +39,7 @@ import com.example.shmuel.myapplication.controller.cars.CarsTabFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
@@ -50,6 +54,11 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static DataSourceType dataSourceType=DataSourceType.DATA_LIST;
+
+    public MainActivity() {
+    }
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -60,19 +69,29 @@ public class MainActivity extends AppCompatActivity {
      */
 
 
+    public MainActivity(DataSourceType dataSourceType) {
+        SelectedDataSource.dataSourceType=dataSourceType;
+    }
+
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     ListDataSource listDataSource;
-    private BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    private BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     TabFragments tabFragments;
     //private ViewPager mViewPager;
     private TabsType tabsType=TabsType.CARS;
     //private PageAdapter pageAdapter;
     int updatedTab=0;
-    boolean check=true;
+
+    ProgressDialog progDailog;
+    public static ProgressDialog progressDialog;
+
+
     FloatingActionButton fab;
     SearchView searchView;
+    boolean check=true;
     public boolean is_in_action_mode=false;
     public boolean client_is_in_action_mode=false;
     public boolean car_model_is_in_action_mode=false;
@@ -113,12 +132,22 @@ public class MainActivity extends AppCompatActivity {
             tabFragments=new TabFragments();
         }
 
-
-        if (ListDataSource.carList==null) {
+        progressDialog= new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("Updating...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        //TODO BON
+       new BackGroundLoad().execute();
+       /* if (ListDataSource.carList==null) {
             listDataSource=new ListDataSource();
-        }
-        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+        }*/
+
+
+        backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
         setContentView(R.layout.activity_main);
+
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +164,13 @@ public class MainActivity extends AppCompatActivity {
                     case CLIENTS:
                     {
                         Intent intent=new Intent(MainActivity.this,ClientEditActivity.class);
+                        intent.putExtra("update","false");
+                        startActivity(intent);
+                        return;
+                    }
+                    case BRANCHES:
+                    {
+                        Intent intent=new Intent(MainActivity.this,BranchEditActivity.class);
                         intent.putExtra("update","false");
                         startActivity(intent);
                         return;
@@ -163,8 +199,7 @@ public class MainActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
 
-        activateFilters();
-        activateCarFilters();
+
         TabFragments.pageAdapter=new PageAdapter(getSupportFragmentManager());
         TabFragments.mViewPager=(ViewPager) findViewById(R.id.container);
         TabFragments.mViewPager.setOffscreenPageLimit(3);
@@ -703,8 +738,31 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt("CHILD", TabFragments.mViewPager.getCurrentItem());
         super.onSaveInstanceState(outState);
         outState.putString("tab",tabsType.toString());
+        //outState.putBoolean("check",check);
+        outState.putBoolean("is_in_action_mode",is_in_action_mode);
+        outState.putBoolean("client_is_in_action_mode",client_is_in_action_mode);
+        outState.putBoolean("car_model_is_in_action_mode",car_model_is_in_action_mode);
+        outState.putBoolean("branch_is_in_action_mode",branch_is_in_action_mode);
+
+        /*boolean check=true;
+        public boolean is_in_action_mode=false;
+        public boolean client_is_in_action_mode=false;
+        public boolean car_model_is_in_action_mode=false;
+        public boolean branch_is_in_action_mode=false;
+        boolean searchClicked=false;
+        boolean searchViewOn=false;*/
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        is_in_action_mode=savedInstanceState.getBoolean("is_in_action_mode");
+        client_is_in_action_mode= savedInstanceState.getBoolean("client_is_in_action_mode");
+        car_model_is_in_action_mode=savedInstanceState.getBoolean("car_model_is_in_action_mode");
+        branch_is_in_action_mode= savedInstanceState.getBoolean("branch_is_in_action_mode");
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -1034,5 +1092,46 @@ public class MainActivity extends AppCompatActivity {
                 fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkorange)));
             }
         }
+    }
+    public class BackGroundLoad extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (ListDataSource.carList==null) {
+                listDataSource=new ListDataSource();
+            }
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            TabFragments.tab1.setCarList();
+            TabFragments.tab2.setCarModelList();
+            TabFragments.tab3.setBranchesList();
+            TabFragments.tab4.setClientsList();
+            activateFilters();
+            activateCarFilters();
+            progressDialog.dismiss();
+        }
+    }
+    public static void showDialog(){
+        progressDialog.show();
+    }
+    public static void dissmissDialog(){
+        progressDialog.dismiss();
     }
 }

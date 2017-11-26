@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 
 import com.example.shmuel.myapplication.controller.DividerItemDecoration;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 
 import java.util.ArrayList;
@@ -32,12 +34,12 @@ public class CarModelsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-        carModels=new ArrayList<>(backEndFunc.getAllCarModels());
+        backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+        carModels=new ArrayList<>();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
         if (mAdapter==null) {
-            mAdapter=new CarCompaniesInnerRecyclerViewAdapter(backEndFunc.getAllCarModels(),getActivity());
+            mAdapter=new CarCompaniesInnerRecyclerViewAdapter(carModels,getActivity());
         }
         mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -126,6 +128,11 @@ public class CarModelsFragment extends Fragment {
             }
         }
         carModels.removeAll(tmp);
+        updateView();
+    }
+    public void setCarModelList()
+    {
+        carModels=new ArrayList<>(backEndFunc.getAllCarModels());
         updateView();
     }
 

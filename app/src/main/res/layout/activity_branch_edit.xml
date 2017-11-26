@@ -299,7 +299,8 @@
                     app:layout_constraintHorizontal_bias="0.089"
                     app:layout_constraintStart_toEndOf="@+id/single_Day_Cost"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.52" />
+                    app:layout_constraintVertical_bias="0.52"
+                    android:inputType="number"/>
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>

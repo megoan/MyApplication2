@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 
 import com.example.shmuel.myapplication.controller.DividerItemDecoration;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
 
 import java.util.ArrayList;
@@ -29,8 +31,8 @@ public class BranchesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-        branches=backEndFunc.getAllBranches();
+        backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+        branches=new ArrayList<>();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
         if (mAdapter==null) {
@@ -113,6 +115,7 @@ public class BranchesFragment extends Fragment {
     }
     public void updateView()
     {
+        branches=backEndFunc.getAllBranches();
         mAdapter=new BranchRecyclerViewAdapter(branches,getActivity());
         recyclerView.setAdapter(mAdapter);
     }
@@ -142,6 +145,11 @@ public class BranchesFragment extends Fragment {
             }
         }
         branches.removeAll(tmp);
+        updateView();
+    }
+    public void setBranchesList()
+    {
+        branches=new ArrayList<>(backEndFunc.getAllBranches());
         updateView();
     }
 }

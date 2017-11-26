@@ -1,11 +1,13 @@
 package com.example.shmuel.myapplication.controller.branches;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -25,10 +27,12 @@ import android.widget.Toast;
 
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.cars.CarActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
@@ -48,7 +52,8 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
     public ActionMode actionMode;
     private int selectedPosition=-1;
     MyFilter myFilter;
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    private ProgressDialog progDailog;
 
     public BranchRecyclerViewAdapter(ArrayList<Branch> objects, Context context) {
         this.objects=objects;
@@ -249,17 +254,15 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
                                 int objectsLengh=objects.size();
-                                backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
-                                if (objects.size()==objectsLengh) {
+                                new BackGroundDeleteBranch().execute();
+                                //backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
+                               /* if (objects.size()==objectsLengh) {
                                     objects.remove(selectedPosition);
-                                }
-                                notifyDataSetChanged();
+                                }*/
+                               /* notifyDataSetChanged();
                                 Toast.makeText(mContext,
                                         "branch deleted", Toast.LENGTH_SHORT).show();
-                                int i=1;
-                                selectedPosition=-1;
-                                notifyItemChanged(selectedPosition);
-                                actionMode.finish();
+                                actionMode.finish();*/
                             }
                         });
 
@@ -327,6 +330,48 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             objects=new ArrayList<Branch>((ArrayList<Branch>)results.values);
 
             notifyDataSetChanged();
+        }
+    }
+    public class BackGroundDeleteBranch extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(mContext);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            int i=1;
+            selectedPosition=-1;
+            notifyItemChanged(selectedPosition);
+            notifyDataSetChanged();
+            TabFragments.tab3.updateView();
+            Toast.makeText(mContext,
+                    "branch deleted from source", Toast.LENGTH_SHORT).show();
+            actionMode.finish();
+            progDailog.dismiss();
+
+
         }
     }
 }

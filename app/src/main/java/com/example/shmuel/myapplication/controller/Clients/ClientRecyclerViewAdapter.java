@@ -1,10 +1,12 @@
 package com.example.shmuel.myapplication.controller.Clients;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.ActionMode;
@@ -20,9 +22,11 @@ import android.widget.Toast;
 
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Client;
 
@@ -33,11 +37,12 @@ import java.util.ArrayList;
  */
 
 public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecyclerViewAdapter.ViewHolder> implements Filterable{
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
-    private ArrayList<Client> objects;
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    public ArrayList<Client> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition=-1;
+    private ProgressDialog progDailog;
     MyFilter myFilter;
 
     public ClientRecyclerViewAdapter(ArrayList<Client> objects, Context context) {
@@ -160,7 +165,8 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stubnhnbnhbghg
                             int objectsLengh=objects.size();
-                            backEndFunc.deleteClient(objects.get(selectedPosition).getId());
+                            new BackGroundDeleteClient().execute();
+                           /* backEndFunc.deleteClient(objects.get(selectedPosition).getId());
 
                             if (objectsLengh==objects.size()) {
                                 objects.remove(selectedPosition);
@@ -171,7 +177,7 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
 
                             selectedPosition=-1;
                             notifyItemChanged(selectedPosition);
-                            actionMode.finish();
+                            actionMode.finish();*/
                         }
                     });
 
@@ -233,6 +239,48 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
             objects=new ArrayList<Client>((ArrayList<Client>)results.values);
 
             notifyDataSetChanged();
+        }
+    }
+    public class BackGroundDeleteClient extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(mContext);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            backEndFunc.deleteClient(objects.get(selectedPosition).getId());
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            int i=1;
+            selectedPosition=-1;
+            notifyItemChanged(selectedPosition);
+            notifyDataSetChanged();
+            TabFragments.tab4.updateView();
+            Toast.makeText(mContext,
+                    "client deleted from source", Toast.LENGTH_SHORT).show();
+            actionMode.finish();
+            progDailog.dismiss();
+
+
         }
     }
 }

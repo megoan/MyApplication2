@@ -30,6 +30,7 @@ import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Address;
 import com.example.shmuel.myapplication.model.entities.Branch;
@@ -43,7 +44,7 @@ import java.util.ArrayList;
  */
 
 class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHolder> {
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ArrayList<CarModel> objects;
     private Context mContext;
     public int selectedPosition=-1;

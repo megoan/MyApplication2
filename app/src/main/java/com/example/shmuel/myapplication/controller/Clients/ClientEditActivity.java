@@ -1,7 +1,9 @@
 package com.example.shmuel.myapplication.controller.Clients;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,9 +14,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.Client;
 
 import java.util.regex.Matcher;
@@ -22,7 +26,7 @@ import java.util.regex.Pattern;
 
 public class ClientEditActivity extends AppCompatActivity {
     Client client=new Client();
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_LIST);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ActionMode actionMode;
     boolean update=false;
     EditText nameclient;
@@ -31,6 +35,7 @@ public class ClientEditActivity extends AppCompatActivity {
     EditText phoneclient;
     EditText emailclient;
     EditText credit;
+    ProgressDialog progDailog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,10 +135,11 @@ public class ClientEditActivity extends AppCompatActivity {
                                 // TODO check that all sadot are filled
 
                                 try {
-                                    backEndFunc.updateClient(client);
+                                    /*backEndFunc.updateClient(client);
                                     Toast.makeText(ClientEditActivity.this,
                                             "client updated", Toast.LENGTH_SHORT).show();
-                                    actionMode.finish();
+                                    actionMode.finish();*/
+                                    new BackGroundUpdateClient().execute();
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -148,12 +154,13 @@ public class ClientEditActivity extends AppCompatActivity {
                                 // TODO Auto-generated method stub
 
                                 try {
-                                    backEndFunc.addClient(client);
+                                   /* backEndFunc.addClient(client);
                                     Toast.makeText(ClientEditActivity.this,
                                             "new client added", Toast.LENGTH_SHORT).show();
                                     //actionMode.finish();
                                     resetView();
-                                    client=new Client();
+                                    client=new Client();*/
+                                   new BackGroundUpdateClient().execute();
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -220,5 +227,72 @@ public class ClientEditActivity extends AppCompatActivity {
         phoneclient.setText("");
         emailclient.setText("");
         credit.setText("");
+    }
+    public class BackGroundUpdateClient extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(ClientEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (update)
+            {
+                backEndFunc.updateClient(client);
+
+
+            }
+            else
+            {
+                backEndFunc.addClient(client);
+
+
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+
+            if(update)
+            {
+
+                Toast.makeText(ClientEditActivity.this,
+                        "client updated", Toast.LENGTH_SHORT).show();
+
+                ClientTabFragment.mAdapter.objects= backEndFunc.getAllClients();
+                ClientTabFragment.mAdapter.notifyDataSetChanged();
+                finish();
+            }
+            else
+            {
+                Toast.makeText(ClientEditActivity.this,
+                        "new client added", Toast.LENGTH_SHORT).show();
+                //actionMode.finish();
+
+                ClientTabFragment.mAdapter.objects= backEndFunc.getAllClients();
+                ClientTabFragment.mAdapter.notifyDataSetChanged();
+                resetView();
+                client=new Client();
+                progDailog.dismiss();
+            }
+
+        }
     }
 }
