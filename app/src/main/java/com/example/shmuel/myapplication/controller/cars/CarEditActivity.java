@@ -419,8 +419,8 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             }
             else
             {
-                backEndFunc.addCar(car);
-                backEndFunc.addCarToBranch(car.getCarNum(),car.getBranchNum());
+                backEndFunc.addCar(car,car.getBranchNum());
+                //backEndFunc.addCarToBranch(car.getCarNum(),car.getBranchNum());
                 BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
 
             }

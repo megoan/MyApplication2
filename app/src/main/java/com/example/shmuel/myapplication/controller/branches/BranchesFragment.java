@@ -32,7 +32,7 @@ public class BranchesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
-        branches=new ArrayList<>();
+        branches=backEndFunc.getAllBranches();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
         if (mAdapter==null) {

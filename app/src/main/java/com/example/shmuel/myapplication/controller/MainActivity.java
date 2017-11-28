@@ -132,17 +132,22 @@ public class MainActivity extends AppCompatActivity {
             tabFragments=new TabFragments();
         }
 
-        progressDialog= new ProgressDialog(MainActivity.this);
+       /* progressDialog= new ProgressDialog(MainActivity.this);
         progressDialog.setMessage("Updating...");
         progressDialog.setIndeterminate(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
         //TODO BON
-       new BackGroundLoad().execute();
-       /* if (ListDataSource.carList==null) {
+       new BackGroundLoad().execute();*/
+        if (ListDataSource.carList==null) {
             listDataSource=new ListDataSource();
-        }*/
-
+        }
+       /* TabFragments.tab1.setCarList();
+        TabFragments.tab2.setCarModelList();
+        TabFragments.tab3.setBranchesList();
+        TabFragments.tab4.setClientsList();*/
+        activateFilters();
+        activateCarFilters();
 
         backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
         setContentView(R.layout.activity_main);
@@ -229,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                searchViewOn=true;
+                searchViewOn=true;/**/
                 return true;
             }
         });
@@ -1119,12 +1124,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            TabFragments.tab1.setCarList();
+           /* TabFragments.tab1.setCarList();
             TabFragments.tab2.setCarModelList();
             TabFragments.tab3.setBranchesList();
             TabFragments.tab4.setClientsList();
             activateFilters();
-            activateCarFilters();
+            activateCarFilters();*/
             progressDialog.dismiss();
         }
     }

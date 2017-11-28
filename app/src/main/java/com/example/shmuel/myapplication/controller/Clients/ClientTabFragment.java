@@ -47,7 +47,7 @@ public class ClientTabFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
-        clients=new ArrayList<>();
+        clients=backEndFunc.getAllClients();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
         if (mAdapter==null) {

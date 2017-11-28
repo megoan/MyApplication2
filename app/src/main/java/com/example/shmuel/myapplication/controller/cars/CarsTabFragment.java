@@ -37,9 +37,9 @@ public class CarsTabFragment extends Fragment {
     LayoutInflater inflater1;
     ViewGroup container1;
 
-    /*public CarsTabFragment() {
-        backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.SelectedDataSource.dataSourceType);
-    }*/
+    public CarsTabFragment() {
+        backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,7 +48,7 @@ public class CarsTabFragment extends Fragment {
         container1=container;
         // Inflate the layout for this fragment
         backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
-        cars=new ArrayList<>();
+        cars=backEndFunc.getAllCars();
         view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
         if (mAdapter==null) {

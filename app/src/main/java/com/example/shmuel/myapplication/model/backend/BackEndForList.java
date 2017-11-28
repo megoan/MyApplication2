@@ -36,6 +36,7 @@ public class BackEndForList implements BackEndFunc {
 
     @Override
     public boolean addCar(Car car) {
+      //addCarToBranch(car.getCarNum(),car.getBranchNum());
       return   ListDataSource.carList.add(car);
     }
     
@@ -43,7 +44,8 @@ public class BackEndForList implements BackEndFunc {
     public boolean addCar(Car car, int branchID)
     {
         if (addCar(car)) {
-            return getBranch(branchID).getCarIds().add(car.getCarNum()) ;
+            addCarToBranch(car.getCarNum(),car.getBranchNum());
+           // return getBranch(branchID).getCarIds().add(car.getCarNum()) ;
         }
         return false;
     }
@@ -82,6 +84,27 @@ public class BackEndForList implements BackEndFunc {
 
     @Override
     public boolean updateCar(Car car) {
+        boolean sameBranch=false;
+        for(Branch branch:ListDataSource.branchList)
+        {
+            if(car.getBranchNum()==branch.getBranchNum())
+            {
+                for(int i=0;i<branch.getCarIds().size();i++)
+                {
+                    if(car.getCarNum()==branch.getCarIds().get(i))
+                    {
+                        sameBranch=true;
+                        break;
+                    }
+                }
+                if(sameBranch==true)break;
+                else
+                {
+                    removeCarFromBranch(car.getCarNum());
+                    addCarToBranch(car.getCarNum(),branch.getBranchNum());
+                }
+            }
+        }
         for(int i=0;i< ListDataSource.carList.size();i++)
         {
             if(ListDataSource.carList.get(i).getCarNum()==car.getCarNum())
@@ -91,6 +114,34 @@ public class BackEndForList implements BackEndFunc {
             }
         }
         return false;
+    }
+
+    private void removeCarFromBranch(int carNum) {
+        boolean remove=false;
+        Branch branch1=null;
+        for(Branch branch:ListDataSource.branchList)
+        {
+            branch1=branch;
+            for(int i=0;i<branch.getCarIds().size();i++)
+            {
+                if(carNum==branch.getCarIds().get(i))
+                {
+                    remove =true;
+                    break;
+
+                }
+            }
+            if (remove==true)break;
+        }
+        if (remove==true)
+        {
+            branch1.getCarIds().remove(new Integer(carNum));
+            if(branch1.getCarIds().size()==0){
+                branch1.setInUse(false);
+                updateBranch(branch1);
+            }
+        }
+
     }
 
     @Override

@@ -35,7 +35,7 @@ public class CarModelsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
-        carModels=new ArrayList<>();
+        carModels=backEndFunc.getAllCarModels();
         View view1=inflater.inflate(R.layout.recycle_view_layout, container, false);
         recyclerView= view1.findViewById(R.id.recycleView);
         if (mAdapter==null) {
