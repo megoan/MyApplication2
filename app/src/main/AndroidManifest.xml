@@ -10,10 +10,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC0L0I_nPWXlVgEAWDXJWNZw-LPz6X90iE"/>
+            android:value="AIzaSyC0L0I_nPWXlVgEAWDXJWNZw-LPz6X90iE" />
+
         <activity
             android:name=".controller.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -27,18 +27,23 @@
             android:name=".controller.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <!--<intent-filter>
+
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </activity>
         <activity android:name=".controller.Clients.ClientActivity" />
         <activity android:name=".controller.Clients.ClientEditActivity" />
         <activity android:name=".controller.cars.CarActivity" />
         <activity android:name=".controller.cars.CarEditActivity" />
         <activity android:name=".controller.branches.BranchActivity" />
-        <activity android:name=".controller.branches.BranchEditActivity"></activity>
+        <activity android:name=".controller.branches.BranchEditActivity" />
+        <activity android:name=".controller.carmodels.CarModelActivity" />
+        <activity android:name=".controller.carmodels.CarModelEditActivity"></activity>
     </application>
 
 </manifest>
