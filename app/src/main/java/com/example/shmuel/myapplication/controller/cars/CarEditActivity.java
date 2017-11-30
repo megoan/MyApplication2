@@ -401,7 +401,6 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progDailog.setCancelable(false);
             progDailog.show();
-
         }
 
         @Override
@@ -414,15 +413,12 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             if (update)
             {
                 backEndFunc.updateCar(car);
-
-
             }
             else
             {
                 backEndFunc.addCar(car,car.getBranchNum());
                 //backEndFunc.addCarToBranch(car.getCarNum(),car.getBranchNum());
                 BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
-
             }
             return null;
         }
@@ -430,7 +426,6 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
 
             if(update)
             {

@@ -9,14 +9,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        >
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC0L0I_nPWXlVgEAWDXJWNZw-LPz6X90iE" />
 
         <activity
             android:name=".controller.SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +28,8 @@
         <activity
             android:name=".controller.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
 
             <!--
             <intent-filter>
@@ -36,14 +39,14 @@
             </intent-filter>
             -->
         </activity>
-        <activity android:name=".controller.Clients.ClientActivity" />
-        <activity android:name=".controller.Clients.ClientEditActivity" />
-        <activity android:name=".controller.cars.CarActivity" />
-        <activity android:name=".controller.cars.CarEditActivity" />
-        <activity android:name=".controller.branches.BranchActivity" />
-        <activity android:name=".controller.branches.BranchEditActivity" />
-        <activity android:name=".controller.carmodels.CarModelActivity" />
-        <activity android:name=".controller.carmodels.CarModelEditActivity"></activity>
+        <activity android:name=".controller.Clients.ClientActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".controller.Clients.ClientEditActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".controller.cars.CarActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".controller.cars.CarEditActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".controller.branches.BranchActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".controller.branches.BranchEditActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".controller.carmodels.CarModelActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".controller.carmodels.CarModelEditActivity" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

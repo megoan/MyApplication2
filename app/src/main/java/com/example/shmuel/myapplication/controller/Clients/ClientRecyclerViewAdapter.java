@@ -90,7 +90,6 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
 
                 if(((MainActivity)mContext).client_is_in_action_mode==false){
                     Intent intent=new Intent(mContext,ClientActivity.class);
-                    Client client1=objects.get(position);
                     intent.putExtra("name",client.getName());
                     intent.putExtra("lastName",client.getLastName());
                     intent.putExtra("id",client.getId());
