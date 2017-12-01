@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="345dp"
+    android:layout_height="wrap_content"
     app:cardElevation="10dp"
     app:cardCornerRadius="6dp"
     android:layout_margin="10dp"
@@ -16,25 +16,23 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:padding="0dp"
-        android:background="?android:attr/selectableItemBackground"
-        >
+        android:layout_height="350dp"
+
+        android:background="?android:attr/selectableItemBackground">
 
         <ImageView
             android:id="@+id/carModelCardImage"
             android:layout_width="360dp"
             android:layout_height="180dp"
             android:layout_marginTop="8dp"
+            android:clickable="false"
             android:padding="10dp"
             android:src="@drawable/car"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            android:clickable="false"/>
+            app:layout_constraintVertical_bias="0.0" />
 
 
         <TextView
@@ -45,6 +43,8 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="6dp"
+            android:clickable="false"
+            android:longClickable="false"
             android:text="Ferrari 812 superfast"
             android:textColor="@color/black"
             android:textSize="20sp"
@@ -53,9 +53,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardImage"
-            app:layout_constraintVertical_bias="0.0"
-            android:longClickable="false"
-            android:clickable="false"/>
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageButton
             android:id="@+id/carCardInUdeButton"
@@ -68,14 +66,14 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
+            android:clickable="false"
             android:src="@drawable/ic_in_use"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardImage"
-            app:layout_constraintVertical_bias="0.028"
-            android:clickable="false"/>
+            app:layout_constraintVertical_bias="0.028" />
 
         <TextView
             android:id="@+id/carCardBranch"
@@ -87,6 +85,8 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:clickable="false"
+            android:longClickable="false"
             android:text="Branch: Alenby, Bet Shemesh"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -94,9 +94,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardCompany"
-            app:layout_constraintVertical_bias="0.0"
-            android:longClickable="false"
-            android:clickable="false"/>
+            app:layout_constraintVertical_bias="0.0" />
 
         <View
             android:id="@+id/line1"
@@ -105,14 +103,14 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="4dp"
             android:background="#c0c0c0"
+            android:clickable="false"
+            android:longClickable="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.04"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carCardBranch"
-            app:layout_constraintVertical_bias="0.0"
-            android:longClickable="false"
-            android:clickable="false"/>
+            app:layout_constraintVertical_bias="0.0" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -120,7 +118,7 @@
             android:layout_height="50dp"
 
             android:layout_marginBottom="8dp"
-            android:elevation="5dp"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -138,6 +136,8 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="6dp"
+                android:clickable="false"
+                android:longClickable="false"
                 android:text="Daily price:"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -145,9 +145,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                android:longClickable="false"
-                android:clickable="false"/>
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -157,6 +155,8 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="6dp"
+                android:clickable="false"
+                android:longClickable="false"
                 android:text="Mile price:"
                 android:textColor="@color/black"
                 android:textSize="13sp"
@@ -165,9 +165,7 @@
                 app:layout_constraintLeft_toRightOf="@+id/spinner"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                android:longClickable="false"
-                android:clickable="false"/>
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/carCardMilePrice"
@@ -177,6 +175,8 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="5dp"
+                android:clickable="false"
+                android:longClickable="false"
                 android:text="USD 7.00"
                 android:textColor="@color/colorPrimary"
                 android:textSize="13sp"
@@ -185,9 +185,7 @@
                 app:layout_constraintLeft_toLeftOf="@+id/textView6"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView6"
-                app:layout_constraintVertical_bias="0.0"
-                android:longClickable="false"
-                android:clickable="false"/>
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/carCardDayPrice"
@@ -199,6 +197,8 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="5dp"
+                android:clickable="false"
+                android:longClickable="false"
                 android:text="USD 34.00"
                 android:textColor="@color/colorPrimary"
                 android:textSize="13sp"
@@ -207,9 +207,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/spinner"
-                app:layout_constraintVertical_bias="0.0"
-                android:longClickable="false"
-                android:clickable="false"/>
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/textView9"
@@ -219,6 +217,8 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="6dp"
+                android:clickable="false"
+                android:longClickable="false"
                 android:text="Year:"
                 android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -226,10 +226,7 @@
                 app:layout_constraintLeft_toRightOf="@+id/textView6"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                android:longClickable="false"
-                android:clickable="false"/>
-
+                app:layout_constraintVertical_bias="0.0" />
 
 
             <TextView
@@ -240,17 +237,16 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
-                android:textColor="@color/colorPrimary"
+                android:clickable="false"
+                android:longClickable="false"
                 android:text="5555"
+                android:textColor="@color/colorPrimary"
                 android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="@+id/textView9"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView9"
-                android:longClickable="false"
-                android:clickable="false"/>
-
+                app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
 
         </android.support.constraint.ConstraintLayout>
@@ -260,25 +256,26 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="#c0c0c0"
+            android:clickable="false"
+            android:longClickable="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-            app:layout_constraintVertical_bias="0.0"
-            android:longClickable="false"
-            android:clickable="false"/>
+            app:layout_constraintVertical_bias="0.0" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
-            android:layout_height="55dp"
+            android:layout_height="33dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/line2"
 
+            app:layout_constraintTop_toBottomOf="@+id/line2"
             app:layout_constraintVertical_bias="0.0">
 
             <RatingBar
@@ -291,8 +288,9 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 android:clickable="false"
+                android:longClickable="false"
                 android:numStars="5"
                 android:rating="3.5"
                 android:stepSize="0.5"
@@ -302,9 +300,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                android:longClickable="false"
-                />
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/carCardRating"
@@ -315,7 +311,9 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="6dp"
+                android:clickable="false"
+                android:longClickable="false"
                 android:text="3.5"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -323,9 +321,7 @@
                 app:layout_constraintLeft_toRightOf="@+id/carCardratingBar"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                android:longClickable="false"
-                android:clickable="false"/>
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/carCardNumberOfRatings"
@@ -336,16 +332,16 @@
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="3dp"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="6dp"
+                android:clickable="false"
+                android:longClickable="false"
                 android:text="(51)"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/carCardRating"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                android:longClickable="false"
-                android:clickable="false"/>
+                app:layout_constraintVertical_bias="0.0" />
 
 
         </android.support.constraint.ConstraintLayout>
