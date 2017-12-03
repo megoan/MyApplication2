@@ -24,6 +24,7 @@ public interface BackEndFunc {
     public boolean updateClient(Client client);
     public boolean updateCarModel(CarModel carModel);
     public boolean updateCar(Car car);
+    public void updateCar(Car car,int originalCarModel);
     public boolean updateBranch(Branch branch);
 
     public boolean deleteClient(int clientID);

@@ -30,6 +30,7 @@ import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
+import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -271,7 +272,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
                                 int objectsLengh=objects.size();
-                                Car car=new Car(objects.get(selectedPosition));
+                                //Car car=new Car(objects.get(selectedPosition));
                                 new BackGroundDeleteCar().execute();
                                 /*backEndFunc.deleteCar(car.getCarNum());
                                 if (objectsLengh==objects.size()) {
@@ -390,6 +391,8 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             notifyDataSetChanged();
             BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
             BranchesFragment.mAdapter.notifyDataSetChanged();
+            CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
+            CarModelsFragment.mAdapter.notifyDataSetChanged();
             TabFragments.tab1.updateView();
             Toast.makeText(mContext,
                     "car deleted from source", Toast.LENGTH_SHORT).show();
