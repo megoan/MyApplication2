@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ public class CarModelEditActivity extends AppCompatActivity {
     ProgressDialog progDailog;
     public ActionMode actionMode;
     CarModel carModel=new CarModel();
+
     boolean update=false;
     private boolean inUse;
     private String imgUrl;
@@ -47,16 +49,18 @@ public class CarModelEditActivity extends AppCompatActivity {
     EditText luggageText;
     CheckBox acBox;
     ImageView imageView;
-
+    ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_model_edit);
+        carModel.setImgURL("@drawable/default_car_image");
         MyActionModeCallbackCarModel callback=new MyActionModeCallbackCarModel();
         actionMode=startActionMode(callback);
         transmission=findViewById(R.id.transmission);
 
+        scrollView=findViewById(R.id.carModel_scroll_view);
         companyNameText=findViewById(R.id.CompanyName_display_textView);
         modelNameText=findViewById(R.id.ModelName_display_textView);
         modelIdText=findViewById(R.id.ModelCode_display_textView);
@@ -69,6 +73,7 @@ public class CarModelEditActivity extends AppCompatActivity {
         acBox=findViewById(R.id.AC_display_textView);
         imageView=findViewById(R.id.Car_imageView);
 
+        automaticRadio.setChecked(true);
         Intent intent =getIntent();
         String update1=intent.getStringExtra("update");
         if(update1.equals("true"))
@@ -277,6 +282,7 @@ public class CarModelEditActivity extends AppCompatActivity {
         passengersText.setText("");
         luggageText.setText("");
         acBox.setChecked(false);
+        engineText.setText("");
     }
     int tryParseInt(String value) {
         try {
@@ -351,6 +357,7 @@ public class CarModelEditActivity extends AppCompatActivity {
                 resetView();
                 carModel=new CarModel();
                 progDailog.dismiss();
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
             }
         }
     }

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     FloatingActionButton left;
     ImageView imageView;
     CarModel carModel2;
+    ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,8 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter=new CarModelListAdapet(backEndFunc.getAllCarModels(),CarEditActivity.this,this);
         mRecyclerView.setAdapter(mAdapter);
+
+        scrollView=findViewById(R.id.car_scroll_view);
         yearSpinner =(Spinner) findViewById(R.id.yearSpinner);
         branchSpinner=(Spinner)findViewById(R.id.branchSpinner);
         idcar=(EditText)findViewById(R.id.id);
@@ -463,6 +467,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                 resetView();
                 car=new Car();
                 progDailog.dismiss();
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
             }
 
         }
