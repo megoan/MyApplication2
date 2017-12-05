@@ -136,7 +136,7 @@ public class BranchActivity extends AppCompatActivity {
                             // TODO Auto-generated method stub
                           //backEndFunc.deleteBranch(branchNum);
                            new BackGroundDeleteBranch().execute();
-                            //TabFragments.tab3.updateView2(position);
+                            //TabFragments.branchTab.updateView2(position);
 
                         }
                     });

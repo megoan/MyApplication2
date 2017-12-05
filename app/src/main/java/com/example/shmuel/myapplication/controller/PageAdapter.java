@@ -11,6 +11,7 @@ import com.example.shmuel.myapplication.controller.cars.CarsTabFragment;
 
 /**
  * Created by shmuel on 22/10/2017.
+ * class for switching between tabs on main activity
  */
 
 public class PageAdapter extends FragmentPagerAdapter {
@@ -22,17 +23,13 @@ public class PageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch(position){
             case 0:
-                CarsTabFragment tab1= /*new CarsTabFragment();*/TabFragments.tab1;
-                return tab1;
+                return TabFragments.carTab;
             case 1:
-                CarModelsFragment tab2=/*new CarModelsFragment();*/ TabFragments.tab2;
-                return tab2;
+                return TabFragments.carModelTab;
             case 2:
-                BranchesFragment tab3 =/*new BranchesFragment();*/  TabFragments.tab3;
-                return tab3;
+                return TabFragments.branchTab;
             case 3:
-                ClientTabFragment tab4 =/* new ClientTabFragment();*/  TabFragments.tab4;
-                return tab4;
+                return TabFragments.clientTab;
             default:
                 return null;
         }

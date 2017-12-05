@@ -405,7 +405,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
 
-            TabFragments.tab2.updateView();
+            TabFragments.carModelTab.updateView();
             Toast.makeText(mContext,
                     "car model deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();

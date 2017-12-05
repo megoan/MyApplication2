@@ -2,6 +2,7 @@ package com.example.shmuel.myapplication.model.backend;
 
 /**
  * Created by shmuel on 19/10/2017.
+ * gets one instance of back end functions
  */
 
 public class FactoryMethod {

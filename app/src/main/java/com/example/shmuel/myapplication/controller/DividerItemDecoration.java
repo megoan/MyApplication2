@@ -11,6 +11,8 @@ import android.view.View;
 
 /**
  * Created by shmuel on 23/10/2017.
+ * class for adding line in recycler view
+ * not importaant...
  */
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {

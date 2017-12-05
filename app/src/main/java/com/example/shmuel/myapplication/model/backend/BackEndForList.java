@@ -34,9 +34,9 @@ public class BackEndForList implements BackEndFunc {
       return   ListDataSource.carModelList.add(carModel);
     }
 
+
     @Override
     public boolean addCar(Car car) {
-      //addCarToBranch(car.getCarNum(),car.getBranchNum());
       return   ListDataSource.carList.add(car);
     }
     

@@ -90,6 +90,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         right=(FloatingActionButton)findViewById(R.id.scrollRight);
         left=(FloatingActionButton)findViewById(R.id.scrollLeft);
         check=(FloatingActionButton)findViewById(R.id.carModelSelectedCheck);
+        check.hide();
         imageView=(ImageView)findViewById(R.id.mainImage);
 
         Integer[] items = new Integer[60];
@@ -296,11 +297,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
 
                                 try {
                                     new  BackGroundUpdateCar().execute();
-                                    /*backEndFunc.updateCar(car);
 
-                                    Toast.makeText(CarEditActivity.this,
-                                            "car updated", Toast.LENGTH_SHORT).show();
-                                    actionMode.finish();*/
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -316,36 +313,22 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
 
                                 try {
                                     new  BackGroundUpdateCar().execute();
-                                    /*backEndFunc.addCar(car);
-                                    backEndFunc.addCarToBranch(car.getCarNum(),car.getBranchNum());
-                                    BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
-                                    BranchesFragment.mAdapter.notifyDataSetChanged();
-
-                                    Toast.makeText(CarEditActivity.this,
-                                            "new car added", Toast.LENGTH_SHORT).show();
-                                    //actionMode.finish();*/
-
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
                                 }
-
-
                             }
                         });
                     }
                     builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                         }
                     });
                     AlertDialog alert = builder.create();
                     alert.show();
                     break;
                 }
-
             }
             return true;
         }
@@ -360,8 +343,6 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(CarEditActivity.this);
         builder.setTitle("Invalid input!");
-        //builder.setIcon(getResources().getDrawable(android.R.drawable.stat_notify_error));
-        //builder.setIcon(android.R.drawable.stat_notify_error);
         builder.setMessage(message);
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
@@ -381,12 +362,15 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         idcar.setText("");
         branchSpinner.setSelection(0);
         yearSpinner.setSelection(0);
+        mRecyclerView.getLayoutManager().scrollToPosition(-1);
+        ((CarModelListAdapet)mAdapter).selectedPosition=-1;
+        check.hide();
+
     }
     int tryParseInt(String value) {
         try {
             return Integer.parseInt(value);
         } catch(NumberFormatException nfe) {
-            // Log exception.
             return 0;
         }
     }
@@ -394,7 +378,6 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         try {
             return Double.parseDouble(value);
         } catch(NumberFormatException nfe) {
-            // Log exception.
             return 0;
         }
     }
@@ -429,7 +412,6 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             else
             {
                 backEndFunc.addCar(car,car.getBranchNum());
-                //backEndFunc.addCarToBranch(car.getCarNum(),car.getBranchNum());
                 BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
             }
             return null;
@@ -456,8 +438,6 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             {
                 Toast.makeText(CarEditActivity.this,
                         "new car added", Toast.LENGTH_SHORT).show();
-                //actionMode.finish();
-
                 BranchesFragment.mAdapter.objects= backEndFunc.getAllBranches();
                 BranchesFragment.mAdapter.notifyDataSetChanged();
                 CarsTabFragment.mAdapter.objects= backEndFunc.getAllCars();

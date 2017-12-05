@@ -365,7 +365,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
-            TabFragments.tab3.updateView();
+            TabFragments.branchTab.updateView();
             Toast.makeText(mContext,
                     "branch deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();

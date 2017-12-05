@@ -145,7 +145,7 @@ public class CarModelActivity extends AppCompatActivity {
                                 backEndFunc.removeCarFromBranch(carNum,branchid);
                                 BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
                                 BranchesFragment.mAdapter.notifyDataSetChanged();
-                                TabFragments.tab1.updateView2(position);
+                                TabFragments.carTab.updateView2(position);
                                 Toast.makeText(CarActivity.this,
                                         "car deleted", Toast.LENGTH_SHORT).show();
                                 actionMode.finish();*/
@@ -225,7 +225,7 @@ public class CarModelActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            TabFragments.tab2.updateView2(position);
+            TabFragments.carModelTab.updateView2(position);
             Toast.makeText(CarModelActivity.this,
                     "car model deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();

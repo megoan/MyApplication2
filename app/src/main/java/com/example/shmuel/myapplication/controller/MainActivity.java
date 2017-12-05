@@ -125,30 +125,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        int i=0;
-        i++;
         searchClicked=false;
         super.onCreate(savedInstanceState);
-        if (TabFragments.tab1==null) {
+        if (TabFragments.carTab==null) {
             tabFragments=new TabFragments();
         }
 
-       /* progressDialog= new ProgressDialog(MainActivity.this);
-        progressDialog.setMessage("Updating...");
-        progressDialog.setIndeterminate(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setCancelable(false);
-        //TODO BON
+
+      /*  //TODO BON
        new BackGroundLoad().execute();*/
-        if (ListDataSource.carList==null) {
+        /*if (ListDataSource.carList==null) {
             listDataSource=new ListDataSource();
-        }
-       /* TabFragments.tab1.setCarList();
-        TabFragments.tab2.setCarModelList();
-        TabFragments.tab3.setBranchesList();
-        TabFragments.tab4.setClientsList();*/
+        }*/
+
         activateFilters();
-        activateCarFilters();
 
         backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
         setContentView(R.layout.activity_main);
@@ -198,9 +188,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState!=null) {
             updatedTab=savedInstanceState.getInt("CHILD");
-
-            //check=false;
-           // tabsType=TabsType.valueOf(savedInstanceState.getString("tab"));
         }
         else
         {
@@ -209,9 +196,6 @@ public class MainActivity extends AppCompatActivity {
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-
 
         TabFragments.pageAdapter=new PageAdapter(getSupportFragmentManager());
         TabFragments.mViewPager=(ViewPager) findViewById(R.id.container);
@@ -232,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-               // searchClicked=true;
                 searchClicked=true;
                 return false;
             }
@@ -242,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                searchViewOn=true;/**/
+                searchViewOn=true;
                 return true;
             }
         });
@@ -257,10 +240,7 @@ public class MainActivity extends AppCompatActivity {
                 if(searchClicked && check) {
                     switch (tabsType) {
                         case CARS: {
-                            //CarsTabFragment carsTabFragment = (CarsTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
-                            //carsTabFragment.filterCardsSearch(newText);
                             CarsTabFragment.mAdapter.getFilter().filter(newText);
-                            //TabFragments.tab1.filterCardsSearch(newText);
                             break;
                         }
                         case CAR_MODELS: {
@@ -273,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         case CLIENTS: {
                             ClientTabFragment.mAdapter.getFilter().filter(newText);
-
                             break;
                         }
                     }
@@ -288,7 +267,6 @@ public class MainActivity extends AppCompatActivity {
                 closeAction();
                 searchView.setQuery(null, false);
                 searchView.clearFocus();
-
                 searchView.setIconified(true);
 
             }
@@ -302,41 +280,21 @@ public class MainActivity extends AppCompatActivity {
                     case 0:{
                         tabsType=TabsType.CARS;
                         searchView.setQueryHint("cars");
-                        if(TabFragments.tab1.mAdapter!=null && searchViewOn==true)
-                        {
-                           /* TabFragments.tab1.updateView2();
-                            searchViewOn=false;*/
-                        }
                         break;
                     }
                     case 1:{
                         tabsType=TabsType.CAR_MODELS;
                         searchView.setQueryHint("car models");
-                        if(TabFragments.tab2.mAdapter!=null && searchViewOn==true)
-                        {
-                            /*TabFragments.tab2.updateView2();
-                            searchViewOn=false;*/
-                        }
                         break;
                     }
                     case 2:{
                         tabsType=TabsType.BRANCHES;
                         searchView.setQueryHint("branches");
-                        if(TabFragments.tab3.mAdapter!=null && searchViewOn==true)
-                        {
-                            /*TabFragments.tab3.updateView2();
-                            searchViewOn=false;*/
-                        }
                         break;
                     }
                     case 3:{
                         tabsType=TabsType.CLIENTS;
                         searchView.setQueryHint("clients");
-                        if(TabFragments.tab4.mAdapter!=null && searchViewOn==true)
-                        {
-                            /*TabFragments.tab4.updateView2();
-                            searchViewOn=false;*/
-                        }
                         break;
                     }
                 }
@@ -568,9 +526,6 @@ public class MainActivity extends AppCompatActivity {
             case CARS:{
                 filter="";
                 updateAbstractFilter(carCom,carCompanySet);
-                //updateCarFilter();
-
-                //final String filter="";
                 carCompanies=new String[carCom.size()];
                 carCompaniesChecked=new boolean[carCom.size()];
                 int i=0;
@@ -581,7 +536,7 @@ public class MainActivity extends AppCompatActivity {
                     i++;
                 }
 
-                //final CarsTabFragment carsTabFragment=(CarsTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Filter by:");
 
@@ -593,9 +548,7 @@ public class MainActivity extends AppCompatActivity {
                         carCompaniesChecked[which]=isChecked;
                         // Get the current focused item
                         String currentItem = carCompanies[which];
-                        // Notify the current action
-                       /* Toast.makeText(getApplicationContext(),
-                                currentItem + " " + isChecked, Toast.LENGTH_SHORT).show();*/
+
                     }
                 });
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -608,15 +561,11 @@ public class MainActivity extends AppCompatActivity {
                             carCom.put(carCompanies[i],carCompaniesChecked[i]);
                             if (carCompaniesChecked[i]==true) {
                                 filter+=carCompanies[i];
-
                             }
-
                         }
                         if(filter.length()==0)filter="you got no cars dude";
                         CarsTabFragment.mAdapter.getFilter().filter(filter);
                         CarsTabFragment.mAdapter.notifyDataSetChanged();
-
-                        //carsTabFragment.filterByCompanyName(carCompanies,carCompaniesChecked);
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -628,9 +577,6 @@ public class MainActivity extends AppCompatActivity {
             case CAR_MODELS:{
                 filter="";
                 updateAbstractFilter(carModelCom,carModelCompanySet);
-                //updateCarFilter();
-
-                //final String filter="";
                 carModelCompanies=new String[carModelCom.size()];
                 carModelCompaniesChecked=new boolean[carModelCom.size()];
                 int i=0;
@@ -640,7 +586,6 @@ public class MainActivity extends AppCompatActivity {
                     carModelCompaniesChecked[i]=entry.getValue();
                     i++;
                 }
-                //final CarModelsFragment carModelsFragment=(CarModelsFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Filter by:");
 
@@ -653,8 +598,6 @@ public class MainActivity extends AppCompatActivity {
                         // Get the current focused item
                         String currentItem = carModelCompanies[which];
                         // Notify the current action
-                        /*Toast.makeText(getApplicationContext(),
-                                currentItem + " " + isChecked, Toast.LENGTH_SHORT).show();*/
                     }
                 });
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -666,15 +609,12 @@ public class MainActivity extends AppCompatActivity {
                             carCom.put(carModelCompanies[i],carModelCompaniesChecked[i]);
                             if (carModelCompaniesChecked[i]==true) {
                                 filter+=carModelCompanies[i];
-
                             }
-
                         }
                         if(filter.length()==0)filter="you got no cars dude";
                         CarModelsFragment.mAdapter.getFilter().filter(filter);
                         CarModelsFragment.mAdapter.notifyDataSetChanged();
 
-                        //carModelsFragment.filterByCompanyName(carModelCompanies,carModelCompaniesChecked);
                     }
                 });
                 builder.setNegativeButton("Cancel", null);
@@ -686,9 +626,6 @@ public class MainActivity extends AppCompatActivity {
             case BRANCHES:{
                 filter="";
                 updateAbstractFilter(branchesCom,branchesCitiesSet);
-                //updateCarFilter();
-
-                //final String filter="";
                 branchesCities=new String[branchesCom.size()];
                 branchesCitiesChecked=new boolean[branchesCom.size()];
                 int i=0;
@@ -698,7 +635,7 @@ public class MainActivity extends AppCompatActivity {
                     branchesCitiesChecked[i]=entry.getValue();
                     i++;
                 }
-                final BranchesFragment branchesFragment=(BranchesFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Filter by:");
 
@@ -711,8 +648,6 @@ public class MainActivity extends AppCompatActivity {
                         // Get the current focused item
                         String currentItem = branchesCities[which];
                         // Notify the current action
-                       /* Toast.makeText(getApplicationContext(),
-                                currentItem + " " + isChecked, Toast.LENGTH_SHORT).show();*/
                     }
                 });
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -723,9 +658,7 @@ public class MainActivity extends AppCompatActivity {
                             branchesCom.put(branchesCities[i],branchesCitiesChecked[i]);
                             if (branchesCitiesChecked[i]==true) {
                                 filter+=branchesCities[i];
-
                             }
-
                         }
                         if(filter.length()==0)filter="you got no cars dude";
                         BranchesFragment.mAdapter.getFilter().filter(filter);
@@ -751,19 +684,10 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt("CHILD", TabFragments.mViewPager.getCurrentItem());
         super.onSaveInstanceState(outState);
         outState.putString("tab",tabsType.toString());
-        //outState.putBoolean("check",check);
         outState.putBoolean("is_in_action_mode",is_in_action_mode);
         outState.putBoolean("client_is_in_action_mode",client_is_in_action_mode);
         outState.putBoolean("car_model_is_in_action_mode",car_model_is_in_action_mode);
         outState.putBoolean("branch_is_in_action_mode",branch_is_in_action_mode);
-
-        /*boolean check=true;
-        public boolean is_in_action_mode=false;
-        public boolean client_is_in_action_mode=false;
-        public boolean car_model_is_in_action_mode=false;
-        public boolean branch_is_in_action_mode=false;
-        boolean searchClicked=false;
-        boolean searchViewOn=false;*/
     }
 
     @Override
@@ -798,10 +722,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void activateCarFilters()
+    public void activateFilters()
     {
+
+        //activate car filter
         for (Car car:backEndFunc.getAllCars()
-             ) {
+                ) {
             CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
             carCompanySet.add(carModel.getCompanyName());
         }
@@ -813,9 +739,8 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < carCompanySet.size(); i++) {
             carCom.put(carCompanySet.get(i),true);
         }
-    }
-    public void activateFilters()
-    {
+
+        //activate cae model filter
         for (CarModel carmodel:ListDataSource.carModelList
                 ) {
             carModelCompanySet.add(carmodel.getCompanyName());
@@ -836,7 +761,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
+        //activate branch filter
         for (Branch branch:ListDataSource.branchList
                 ) {
             branchesCitiesSet.add(branch.getAddress().getCity());
@@ -922,139 +847,41 @@ public class MainActivity extends AppCompatActivity {
             hashMap.remove(s);
         }
     }
-    public void updateCarFilter()
-    {
-        carCompanySet.clear();
-        for (Car car:backEndFunc.getAllCars()
-                ) {
-            CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
-            carCompanySet.add(carModel.getCompanyName());
-        }
-
-        s = new LinkedHashSet<>(carCompanySet);
-        carCompanySet.clear();
-        carCompanySet.addAll(s);
-
-        for(int i=0;i<carCompanySet.size();i++)
-        {
-            if(!carCom.containsKey(carCompanySet.get(i))){
-            carCom.put(carCompanySet.get(i),true);
-                 }
-
-
-        }
-        boolean check;
-        ArrayList<String>r=new ArrayList<>();
-        for (Map.Entry<String, Boolean> entry :  carCom.entrySet()
-                ) {
-            check=false;
-            for(int j=0;j<carCompanySet.size();j++)
-            {
-                if(entry.getKey()==carCompanySet.get(j))
-                {
-                    check=true;
-                }
-            }
-            if(check==false)
-            {
-               r.add(entry.getKey());
-            }
-        }
-        for (String s:r
-             ) {
-            carCom.remove(s);
-        }
-
-    }
-
-    public void updateCarModelFilter()
-    {
-        carModelCompanySet.clear();
-        for (CarModel carModel:backEndFunc.getAllCarModels()
-                ) {
-
-            carCompanySet.add(carModel.getCompanyName());
-        }
-
-        s = new LinkedHashSet<>(carModelCompanySet);
-        carModelCompanySet.clear();
-        carModelCompanySet.addAll(s);
-
-        for(int i=0;i<carModelCompanySet.size();i++)
-        {
-            if(!carModelCom.containsKey(carModelCompanySet.get(i))){
-                carModelCom.put(carModelCompanySet.get(i),true);
-            }
-
-
-        }
-        boolean check=false;
-        ArrayList<String>r=new ArrayList<>();
-        for (Map.Entry<String, Boolean> entry :  carModelCom.entrySet()
-                ) {
-            check=false;
-            for(int j=0;j<carModelCompanySet.size();j++)
-            {
-                if(entry.getKey()==carModelCompanySet.get(j))
-                {
-                    check=true;
-                }
-            }
-            if(check==false)
-            {
-                r.add(entry.getKey());
-            }
-        }
-        for (String s:r
-                ) {
-            carModelCom.remove(s);
-        }
-    }
-    public int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        int i=0;
-        i++;
         switch (tabsType)
         {
             case CARS:{
-                if(TabFragments.tab1.mAdapter!=null)
+                if(TabFragments.carTab.mAdapter!=null)
                 {
-                    //TabFragments.tab1.updateView();
-                    TabFragments.tab1.mAdapter.notifyDataSetChanged();
-                    TabFragments.tab3.mAdapter.notifyDataSetChanged();
-
+                    TabFragments.carTab.mAdapter.notifyDataSetChanged();
+                    TabFragments.branchTab.mAdapter.notifyDataSetChanged();
                 }
                 break;
             }
             case CAR_MODELS:
             {
-                if(TabFragments.tab2.mAdapter!=null)
+                if(TabFragments.carModelTab.mAdapter!=null)
                 {
-                    TabFragments.tab2.mAdapter.notifyDataSetChanged();
+                    TabFragments.carModelTab.mAdapter.notifyDataSetChanged();
                 }
                 break;
             }
             case BRANCHES:
             {
-                if(TabFragments.tab3.mAdapter!=null)
+                if(TabFragments.branchTab.mAdapter!=null)
                 {
-                    TabFragments.tab3.mAdapter.notifyDataSetChanged();
+                    TabFragments.branchTab.mAdapter.notifyDataSetChanged();
                 }
                 break;
             }
             case CLIENTS:
             {
-                if(TabFragments.tab4.mAdapter!=null)
+                if(TabFragments.clientTab.mAdapter!=null)
                 {
-
-                    //TabFragments.tab4.updateView2();
-                    TabFragments.tab4.mAdapter.notifyDataSetChanged();
+                    TabFragments.clientTab.mAdapter.notifyDataSetChanged();
                 }
                 break;
             }
@@ -1062,20 +889,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void closeAction(){
-        if (TabFragments.tab1.mAdapter!=null && TabFragments.tab1.mAdapter.actionMode!=null) {
-            TabFragments.tab1.mAdapter.actionMode.finish();
+        if (TabFragments.carTab.mAdapter!=null && TabFragments.carTab.mAdapter.actionMode!=null) {
+            TabFragments.carTab.mAdapter.actionMode.finish();
         }
-        if(TabFragments.tab4.mAdapter!=null && TabFragments.tab4.mAdapter.actionMode!=null)
+        if(TabFragments.clientTab.mAdapter!=null && TabFragments.clientTab.mAdapter.actionMode!=null)
         {
-            TabFragments.tab4.mAdapter.actionMode.finish();
+            TabFragments.clientTab.mAdapter.actionMode.finish();
         }
-        if(TabFragments.tab2.mAdapter!=null && TabFragments.tab2.mAdapter.actionMode!=null)
+        if(TabFragments.carModelTab.mAdapter!=null && TabFragments.carModelTab.mAdapter.actionMode!=null)
         {
-            TabFragments.tab2.mAdapter.actionMode.finish();
+            TabFragments.carModelTab.mAdapter.actionMode.finish();
         }
-        if(TabFragments.tab3.mAdapter!=null && TabFragments.tab3.mAdapter.actionMode!=null)
+        if(TabFragments.branchTab.mAdapter!=null && TabFragments.branchTab.mAdapter.actionMode!=null)
         {
-            TabFragments.tab3.mAdapter.actionMode.finish();
+            TabFragments.branchTab.mAdapter.actionMode.finish();
         }
     }
     public void changeFab()
@@ -1132,19 +959,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-           /* TabFragments.tab1.setCarList();
-            TabFragments.tab2.setCarModelList();
-            TabFragments.tab3.setBranchesList();
-            TabFragments.tab4.setClientsList();
-            activateFilters();
-            activateCarFilters();*/
             progressDialog.dismiss();
         }
-    }
-    public static void showDialog(){
-        progressDialog.show();
-    }
-    public static void dissmissDialog(){
-        progressDialog.dismiss();
     }
 }

@@ -94,7 +94,7 @@ public class ClientActivity extends AppCompatActivity {
                             // TODO Auto-generated method stub
                             new BackGroundDeleteClient().execute();
                            /*backEndFunc.deleteClient(id);
-                           TabFragments.tab4.updateView2();*/
+                           TabFragments.clientTab.updateView2();*/
 
                            /* Toast.makeText(ClientActivity.this,
                                     "client deleted", Toast.LENGTH_SHORT).show();
@@ -170,7 +170,7 @@ public class ClientActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             ClientTabFragment.mAdapter.objects=backEndFunc.getAllClients();
             ClientTabFragment.mAdapter.notifyDataSetChanged();
-            TabFragments.tab4.updateView2();
+            TabFragments.clientTab.updateView2();
             Toast.makeText(ClientActivity.this,
                     "client deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();

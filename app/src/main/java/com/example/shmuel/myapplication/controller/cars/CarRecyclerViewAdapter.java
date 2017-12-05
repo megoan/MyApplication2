@@ -393,7 +393,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             BranchesFragment.mAdapter.notifyDataSetChanged();
             CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
             CarModelsFragment.mAdapter.notifyDataSetChanged();
-            TabFragments.tab1.updateView();
+            TabFragments.carTab.updateView();
             Toast.makeText(mContext,
                     "car deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();

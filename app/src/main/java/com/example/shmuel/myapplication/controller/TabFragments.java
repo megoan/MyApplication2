@@ -18,72 +18,24 @@ public class TabFragments {
 
     public static PageAdapter pageAdapter;
 
-    public static CarsTabFragment tab1;
+    public static CarsTabFragment carTab;
 
-    public static CarModelsFragment tab2;
+    public static CarModelsFragment carModelTab;
 
-    public static BranchesFragment tab3;
+    public static BranchesFragment branchTab;
 
-    public static ClientTabFragment tab4;
-
-    private CarsTabFragment cars;
-    private CarModelsFragment carModels;
-    private BranchesFragment branches;
-    private ClientTabFragment clients;
+    public static ClientTabFragment clientTab;
 
     public TabFragments() {
-        if(tab1!=null)
+        if(carTab==null)
         {
-            //cars=new CarsTabFragment();
-           // tab1=cars;
-        }
-        else
-        {
-            tab1=new CarsTabFragment();
-        }
-        if(tab2!=null)
-        {
-            //carModels=new CarModelsFragment();
-           // tab2=carModels;
-        }
-        else
-        {
-            tab2=new CarModelsFragment();
-        }
-        if(tab3!=null)
-        {
-            //branches=new BranchesFragment();
-           // tab3=branches;
-        }
-        else {
-            tab3 =new BranchesFragment();
-        }
-
-        if(tab4!=null)
-        {
-           // clients=new ClientTabFragment();
-           // tab4=clients;
-        }
-        else {
-            tab4 =new ClientTabFragment();
+            carTab=new CarsTabFragment();
+            carModelTab=new CarModelsFragment();
+            branchTab =new BranchesFragment();
+            clientTab =new ClientTabFragment();
         }
     }
 
 
-    public CarsTabFragment getCarFragment()
-    {
-       return cars;
-    }
-    public CarModelsFragment getCarModelFragment()
-    {
-        return carModels;
-    }
-    public BranchesFragment getBranchesFragment()
-    {
-        return branches;
-    }
-    public ClientTabFragment getClientsFragment()
-    {
-        return clients;
-    }
+
 }
