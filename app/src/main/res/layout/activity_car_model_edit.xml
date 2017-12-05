@@ -176,6 +176,7 @@
                             android:layout_height="wrap_content"
                             android:text="Manual"
                             android:layout_marginLeft="4dp"
+
                             />
                     </RadioGroup>
                 </LinearLayout>
