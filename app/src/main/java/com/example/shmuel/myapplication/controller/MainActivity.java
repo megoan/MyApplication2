@@ -33,6 +33,7 @@ import com.example.shmuel.myapplication.controller.Clients.ClientTabFragment;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.branches.BranchEditActivity;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
+import com.example.shmuel.myapplication.controller.carmodels.CarModelEditActivity;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
 import com.example.shmuel.myapplication.controller.cars.CarsTabFragment;
@@ -176,6 +177,13 @@ public class MainActivity extends AppCompatActivity {
                     case BRANCHES:
                     {
                         Intent intent=new Intent(MainActivity.this,BranchEditActivity.class);
+                        intent.putExtra("update","false");
+                        startActivity(intent);
+                        return;
+                    }
+                    case CAR_MODELS:
+                    {
+                        Intent intent=new Intent(MainActivity.this,CarModelEditActivity.class);
                         intent.putExtra("update","false");
                         startActivity(intent);
                         return;

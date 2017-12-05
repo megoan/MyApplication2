@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
+import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -41,9 +43,10 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;
     ProgressDialog progDailog;
+    public ActionMode actionMode;
     Car car=new Car();
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
-    public ActionMode actionMode;
+
     boolean update=false;
     int carmodelID=0;
     Spinner yearSpinner;
@@ -52,6 +55,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     boolean inUse;
     double rating;
     int numOfRating;
+    int originalCarModel;
     EditText mileage;
     EditText idcar;
     EditText singleDayCost;
@@ -62,6 +66,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     FloatingActionButton left;
     ImageView imageView;
     CarModel carModel2;
+    ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +78,8 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter=new CarModelListAdapet(backEndFunc.getAllCarModels(),CarEditActivity.this,this);
         mRecyclerView.setAdapter(mAdapter);
+
+        scrollView=findViewById(R.id.car_scroll_view);
         yearSpinner =(Spinner) findViewById(R.id.yearSpinner);
         branchSpinner=(Spinner)findViewById(R.id.branchSpinner);
         idcar=(EditText)findViewById(R.id.id);
@@ -128,6 +135,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             rating=intent.getDoubleExtra("rating",0);
             numOfRating=intent.getIntExtra("numOfRating",0);
             carmodelID=intent.getIntExtra("carmodel",0);
+            originalCarModel=carmodelID;
             CarModel carModel=backEndFunc.getCarModel(carmodelID);
             pickedCarModel.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
             int index=backEndFunc.getAllCarModels().indexOf(carModel);
@@ -412,6 +420,10 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             }
             if (update)
             {
+                if(originalCarModel!=carmodelID)
+                {
+                    backEndFunc.updateCar(car,originalCarModel);
+                }
                 backEndFunc.updateCar(car);
             }
             else
@@ -436,6 +448,8 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                 BranchesFragment.mAdapter.notifyDataSetChanged();
                 CarsTabFragment.mAdapter.objects= backEndFunc.getAllCars();
                 CarsTabFragment.mAdapter.notifyDataSetChanged();
+                CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
+                CarModelsFragment.mAdapter.notifyDataSetChanged();
                  finish();
             }
             else
@@ -448,9 +462,12 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                 BranchesFragment.mAdapter.notifyDataSetChanged();
                 CarsTabFragment.mAdapter.objects= backEndFunc.getAllCars();
                 CarsTabFragment.mAdapter.notifyDataSetChanged();
+                CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
+                CarModelsFragment.mAdapter.notifyDataSetChanged();
                 resetView();
                 car=new Car();
                 progDailog.dismiss();
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
             }
 
         }

@@ -173,6 +173,7 @@ public class CarsTabFragment extends Fragment {
         //updateView();
      //   view1=inflater1.inflate(R.layout.recycle_view_layout, container1, false);
      //   recyclerView= view1.findViewById(R.id.recycleView);
+        if(mAdapter.objects.size()>backEndFunc.getAllCars().size())
         mAdapter.removeitem(position);
         //mAdapter.objects=cars;
         mAdapter.notifyDataSetChanged();

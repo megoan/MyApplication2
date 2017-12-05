@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +69,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
 
 
+    ScrollView scrollView;
     TextView numOfCarsText;
 
     EditText numOfSpotsText;
@@ -82,6 +84,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_branch_edit);
 
+        scrollView=findViewById(R.id.branch_scroll_view);
         numOfCarsText=(TextView) findViewById(R.id.numOfCars);
 
         numOfSpotsText=(EditText)findViewById(R.id.numOfSpots);
@@ -457,6 +460,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                 resetView();
                 branch=new Branch();
                 progDailog.dismiss();
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
 
             }
             actionMode.finish();

@@ -21,6 +21,7 @@ import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
+import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -229,6 +230,8 @@ public class CarActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
             BranchesFragment.mAdapter.notifyDataSetChanged();
+            CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
+            CarModelsFragment.mAdapter.notifyDataSetChanged();
             TabFragments.tab1.updateView2(position);
             Toast.makeText(CarActivity.this,
                     "car deleted", Toast.LENGTH_SHORT).show();

@@ -45,7 +45,9 @@ public class BackEndForList implements BackEndFunc {
     {
         if (addCar(car)) {
             addCarToBranch(car.getCarNum(),car.getBranchNum());
-           // return getBranch(branchID).getCarIds().add(car.getCarNum()) ;
+            CarModel carModel=getCarModel(car.getCarModel());
+            carModel.setInUse(true);
+            updateCarModel(carModel);
         }
         return false;
     }
@@ -83,6 +85,30 @@ public class BackEndForList implements BackEndFunc {
     }
 
     @Override
+    public void updateCar(Car car,int originalCarModel)
+    {
+        updateCar(car);
+
+        CarModel carModel=getCarModel(car.getCarModel());
+        {
+            if(carModel.isInUse()==false)
+            {
+                carModel.setInUse(true);
+                updateCarModel(carModel);
+            }
+        }
+
+        CarModel originalCarModelTmp=getCarModel(originalCarModel);
+        for(Car car1:ListDataSource.carList)
+        {
+            if(car1.getCarModel()==carModel.getCarModelCode()){
+                return;
+            }
+        }
+        carModel.setInUse(false);
+        updateCarModel(originalCarModelTmp);
+    }
+    @Override
     public boolean updateCar(Car car) {
         boolean sameBranch=false;
         for(Branch branch:ListDataSource.branchList)
@@ -105,6 +131,7 @@ public class BackEndForList implements BackEndFunc {
                 }
             }
         }
+
         for(int i=0;i< ListDataSource.carList.size();i++)
         {
             if(ListDataSource.carList.get(i).getCarNum()==car.getCarNum())
@@ -186,16 +213,29 @@ return false;
 
     @Override
     public boolean deleteCar(int carID) {
+        int carModelCode=0;
         Car carTmp=null;
         for (Car car: ListDataSource.carList
                 ) {
             if(car.getCarNum()==carID){
                 carTmp=car;
+                carModelCode=(car.getCarModel());
                 break;
-
             }
         }
-        return ListDataSource.carList.remove(carTmp);
+        ListDataSource.carList.remove(carTmp);
+
+        for (Car car: ListDataSource.carList)
+        {
+            if(car.getCarModel()==carModelCode)
+            {
+                return true;
+            }
+        }
+        CarModel carModel=getCarModel(carModelCode);
+        carModel.setInUse(false);
+        updateCarModel(carModel);
+        return true;
     }
 
     @Override

@@ -1,11 +1,14 @@
 package com.example.shmuel.myapplication.controller.carmodels;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
@@ -46,7 +50,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     public ActionMode actionMode;
     private int selectedPosition=-1;
     private MyFilter myFilter;
-
+    private ProgressDialog progDailog;
 
 
     public CarCompaniesInnerRecyclerViewAdapter(ArrayList<CarModel> objects, Context context) {
@@ -128,6 +132,23 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             @Override
             public void onClick(View v) {
                 notifyItemChanged(selectedPosition);
+                if(((MainActivity)mContext).car_model_is_in_action_mode==false){
+                    Intent intent=new Intent(mContext,CarModelActivity.class);
+                    CarModel carModel=objects.get(position);
+                    intent.putExtra("companyName",carModel.getCompanyName());
+                    intent.putExtra("modelName",carModel.getCarModelName());
+                    intent.putExtra("id",carModel.getCarModelCode());
+                    intent.putExtra("engine",carModel.getEngineDisplacement());
+                    intent.putExtra("transmission",carModel.getTransmission());
+                    intent.putExtra("passengers",carModel.getPassengers());
+                    intent.putExtra("luggage",carModel.getLuggage());
+                    intent.putExtra("ac",carModel.isAc());
+                    intent.putExtra("imgUrl",carModel.getImgURL());
+                    intent.putExtra("inUse",carModel.isInUse());
+                    intent.putExtra("position",position);
+
+                    ((Activity)mContext).startActivity(intent);
+                }
                 if (actionMode!=null) {
                     actionMode.finish();
                 }
@@ -152,6 +173,14 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                 holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use));
             }
         }
+        else
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_in_use, mContext.getTheme()));
+            } else {
+                holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_in_use));
+            }
+        }
         if(carModel.getTransmission()== Transmission.MANUAL)
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -160,12 +189,27 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                 holder.auto.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_manual));
             }
         }
+        else
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.auto.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_auto, mContext.getTheme()));
+            } else {
+                holder.auto.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_auto));
+            }
+        }
         if(carModel.isAc()==false)
         {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.ac.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
             } else {
                 holder.ac.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
+            }
+        }
+        else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.ac.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_ac, mContext.getTheme()));
+            } else {
+                holder.ac.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_ac));
             }
         }
     }
@@ -243,7 +287,8 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
-                                int objectsLengh=objects.size();
+                                new BackGroundDeleteCarModel().execute();
+                               /* int objectsLengh=objects.size();
                                 backEndFunc.deleteCarModel(objects.get(selectedPosition).getCarModelCode());
                                 if (objectsLengh==objects.size()) {
                                     objects.remove(selectedPosition);
@@ -254,7 +299,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
 
                                 selectedPosition=-1;
                                 notifyItemChanged(selectedPosition);
-                                actionMode.finish();
+                                actionMode.finish();*/
                             }
                         });
 
@@ -318,6 +363,55 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             objects=new ArrayList<CarModel>((ArrayList<CarModel>)results.values);
 
             notifyDataSetChanged();
+        }
+    }
+
+    public class BackGroundDeleteCarModel extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(mContext);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            CarModel carModel=objects.get(selectedPosition);
+            backEndFunc.deleteCarModel(carModel.getCarModelCode());
+            int objectsLengh=objects.size();
+            if (objectsLengh==objects.size()) {
+                objects.remove(selectedPosition);
+            }
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            int i=1;
+            selectedPosition=-1;
+            notifyItemChanged(selectedPosition);
+            notifyDataSetChanged();
+
+            TabFragments.tab2.updateView();
+            Toast.makeText(mContext,
+                    "car model deleted from source", Toast.LENGTH_SHORT).show();
+            actionMode.finish();
+            progDailog.dismiss();
+
+
         }
     }
 }
