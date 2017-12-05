@@ -360,7 +360,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
         @Override
         public void onDestroyActionMode(android.view.ActionMode actionMode) {
-            //finish();
+            finish();
         }
 
     }

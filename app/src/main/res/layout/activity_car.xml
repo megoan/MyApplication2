@@ -69,7 +69,7 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
         app:cardElevation="10dp"
         app:cardCornerRadius="5dp"
         android:layout_margin="10dp"
@@ -200,7 +200,7 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         app:cardElevation="10dp"
         app:cardCornerRadius="5dp"
         android:layout_margin="10dp"
@@ -263,7 +263,7 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         app:cardElevation="10dp"
         app:cardCornerRadius="5dp"
         android:layout_margin="10dp"
@@ -358,7 +358,7 @@
     </android.support.v7.widget.CardView>
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         app:cardElevation="10dp"
         app:cardCornerRadius="5dp"
         android:layout_margin="10dp"
@@ -445,20 +445,20 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="number of rating"
+                android:text="15"
                 android:textColor="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_bias="0.256"
                 app:layout_constraintStart_toEndOf="@+id/numOfRatings"
                 app:layout_constraintTop_toBottomOf="@+id/rating_car"
-                app:layout_constraintVertical_bias="0.16" />
+                app:layout_constraintVertical_bias="0.136" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         app:cardElevation="10dp"
         app:cardCornerRadius="5dp"
         android:layout_margin="10dp"

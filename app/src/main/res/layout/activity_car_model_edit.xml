@@ -33,132 +33,79 @@
             app:cardCornerRadius="5dp"
             android:layout_margin="10dp"
             android:layout_width="match_parent"
-            android:layout_height="190dp">
+            android:layout_height="wrap_content">
 
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+              <LinearLayout
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal">
+                  <ImageView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:src="@drawable/ic_base_car"
+                      android:layout_marginLeft="8dp"
+                      android:layout_marginTop="16dp"
+                      />
 
-                <TextView
-                    android:id="@+id/CompanyName_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Company Name:"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.203"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.160" />
-
-                <TextView
-                    android:id="@+id/Model_Name_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Model Name:"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/CompanyName_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/CompanyName_textView"
-                    app:layout_constraintVertical_bias="0.223" />
-
-                <TextView
-                    android:id="@+id/Model_Code_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Model Code:"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/Model_Name_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/Model_Name_textView"
-                    app:layout_constraintVertical_bias="0.38" />
-
-                <EditText
-                    android:id="@+id/CompanyName_display_textView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:hint="Company Name display:"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.862"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/CompanyName_textView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.119" />
-
-                <EditText
-                    android:id="@+id/ModelName_display_textView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:hint="Model Name display:"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/CompanyName_display_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/CompanyName_display_textView"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <EditText
-                    android:id="@+id/ModelCode_display_textView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:hint="Model Code display:"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/ModelName_display_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ModelName_display_textView"
-                    app:layout_constraintVertical_bias="0.0"
-                    android:inputType="number"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_base_car"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.153" />
-
-            </android.support.constraint.ConstraintLayout>
-
+                  <TableLayout
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_marginLeft="8dp"
+                      android:layout_marginTop="16dp">
+                      <TableRow>
+                          <TextView
+                              android:id="@+id/CompanyName_textView"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="Company Name:"
+                               />
+                          <EditText
+                              android:id="@+id/CompanyName_display_textView"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:hint="Company Name display:"
+                              android:textColor="@color/colorAccent"
+                              android:textSize="14sp"
+                              android:layout_marginLeft="8dp"
+                               />
+                      </TableRow>
+                      <TableRow>
+                          <TextView
+                              android:id="@+id/Model_Name_textView"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="Model Name:"
+                           />
+                          <EditText
+                              android:id="@+id/ModelName_display_textView"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:hint="Model Name display:"
+                              android:textColor="@color/colorAccent"
+                              android:textSize="14sp"
+                              android:layout_marginLeft="8dp"
+                             />
+                      </TableRow>
+                      <TableRow>
+                          <TextView
+                              android:id="@+id/Model_Code_textView"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="Model Code:"
+                           />
+                          <EditText
+                              android:id="@+id/ModelCode_display_textView"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:hint="Model Code display:"
+                              android:inputType="number"
+                              android:textColor="@color/colorAccent"
+                              android:textSize="14sp"
+                              android:layout_marginLeft="8dp"
+                              />
+                      </TableRow>
+                  </TableLayout>
+              </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -166,115 +113,74 @@
             app:cardCornerRadius="5dp"
             android:layout_margin="10dp"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
-
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/EngineDisplacement_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Engine Displacement:"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.229"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.239" />
-
-                <TextView
-                    android:id="@+id/Transmission_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Transmission:"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/EngineDisplacement_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/EngineDisplacement_textView"
-                    app:layout_constraintVertical_bias="0.163" />
-
-                <EditText
-                    android:id="@+id/EngineDisplacement_display_textView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:hint="Engine  display:"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.796"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/EngineDisplacement_textView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.187"
-                    android:inputType="numberDecimal"/>
-
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
                     android:src="@drawable/ic_engine"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.153" />
-<RadioGroup
-    android:id="@+id/transmission"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_marginBottom="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginRight="0dp"
-    android:layout_marginStart="0dp"
-    android:layout_marginLeft="0dp"
-    android:layout_marginTop="8dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.0"
-    app:layout_constraintStart_toStartOf="@+id/Transmission_textView"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.782">
-
-
-                <RadioButton
-                    android:id="@+id/radioButton"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"/>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Automatic"
-                     />
+                    android:orientation="vertical">
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="16dp">
+                        <TableRow>
+                            <TextView
+                                android:id="@+id/EngineDisplacement_textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Engine Displacement:" />
+                            <EditText
+                                android:id="@+id/EngineDisplacement_display_textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:hint="Engine  display:"
+                                android:inputType="numberDecimal"
+                                android:textColor="@color/colorAccent"
+                                android:textSize="14sp"
+                                android:layout_marginLeft="8dp"/>
+                        </TableRow>
+                        <TableRow android:layout_marginBottom="4dp">
+                            <TextView
+                                android:id="@+id/Transmission_textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Transmission:"/>
+                        </TableRow>
+                        <TableRow>
+                        </TableRow>
+                    </TableLayout>
+                    <RadioGroup
+                        android:id="@+id/transmission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:layout_marginBottom="16dp">
+                        <RadioButton
+                            android:id="@+id/radioButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Automatic"
+                            />
+                        <RadioButton
+                            android:id="@+id/radioButton2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Manual"
+                            android:layout_marginLeft="4dp"
+                            />
+                    </RadioGroup>
+                </LinearLayout>
 
-                <RadioButton
-                    android:id="@+id/radioButton2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Manual"
-                     />
-</RadioGroup>
-            </android.support.constraint.ConstraintLayout>
-
+            </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -282,129 +188,78 @@
             app:cardCornerRadius="5dp"
             android:layout_margin="10dp"
             android:layout_width="match_parent"
-            android:layout_height="220dp">
+            android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_car_model_settings"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"/>
+                <TableLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp">
+                    <TableRow>
+                        <TextView
+                            android:id="@+id/Passengers_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Passengers:"/>
+                        <EditText
+                            android:id="@+id/Passengers_display_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="Passengers display:"
+                            android:inputType="number"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="14sp"
+                            android:layout_marginLeft="8dp"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:id="@+id/Luggage_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Luggage:"/>
+                        <EditText
+                            android:id="@+id/Luggage_display_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:hint="Luggage dispaly:"
+                            android:inputType="number"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="14sp"
+                            android:layout_marginLeft="8dp"/>
+                    </TableRow>
+                    <TableRow android:layout_marginBottom="16dp">
+                        <TextView
+                            android:id="@+id/AC_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="AC:"/>
+
+                        <CheckBox
+                            android:id="@+id/AC_display_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Has Air conditioning"
+                            android:textColor="@color/colorAccent"
+                            android:layout_marginLeft="8dp"/>
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/Passengers_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Passengers:"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.194"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.119" />
 
-                <TextView
-                    android:id="@+id/Luggage_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Luggage:"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/Passengers_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/Passengers_textView"
-                    app:layout_constraintVertical_bias="0.183" />
-
-                <TextView
-                    android:id="@+id/AC_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="AC:"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/Luggage_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/Luggage_textView"
-                    app:layout_constraintVertical_bias="0.223" />
-
-                <EditText
-                    android:id="@+id/Passengers_display_textView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:hint="Passengers display:"
-                    android:inputType="number"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.699"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/Passengers_textView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.054" />
-
-                <EditText
-                    android:id="@+id/Luggage_display_textView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:hint="Luggage dispaly:"
-                    android:inputType="number"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/Passengers_display_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/Passengers_display_textView"
-                    app:layout_constraintVertical_bias="0.074" />
-
-                <CheckBox
-                    android:id="@+id/AC_display_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="7dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Has Air conditioning"
-                    android:textColor="@color/colorAccent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/Luggage_display_textView"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/Luggage_display_textView"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_car_model_settings"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.153" />
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
 

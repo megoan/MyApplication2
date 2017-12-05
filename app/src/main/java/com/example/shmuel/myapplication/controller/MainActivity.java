@@ -713,15 +713,14 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+    //activate class filters
     public void activateFilters()
     {
 
@@ -931,35 +930,6 @@ public class MainActivity extends AppCompatActivity {
                 fab.setImageResource(R.drawable.ic_madd);
                 fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.fab_darkorange)));
             }
-        }
-    }
-    public class BackGroundLoad extends AsyncTask<Void,Void,Void>{
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (ListDataSource.carList==null) {
-                listDataSource=new ListDataSource();
-            }
-
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            progressDialog.dismiss();
         }
     }
 }
