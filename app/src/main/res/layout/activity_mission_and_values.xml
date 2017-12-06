@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.shmuel.myapplication.controller.MissionAndValuesActivity"
+    android:padding="10dp">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Mission and Values"
+        android:textSize="36sp"
+        android:textColor="@color/black"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Read what Take and Go is all about!"
+        android:textSize="20dp"
+        android:textColor="@color/colorAccent"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Our Vision"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="We will lead our industry by defining service excellence and building unmatched customer loyalty."
+        />
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Our Mission"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="We will ensure a stress-free car rental experience by providing superior services that cater to our customers' individual needs...always conveying the 'We Try Harder®' spirit with knowledge, caring and a passion for excellence."
+        />
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Our Values"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Integrity"
+        android:textSize="15sp"
+        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will honor all commitments to our customers, employees and shareholders."        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will conduct business with unwavering high standards of honesty, trust, professionalism and ethical behavior."        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will communicate openly and frequently, sharing what we know, when we know it."
+        />
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Respect for the Individual"
+        android:textSize="15sp"
+        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will treat each person with whom we work with respect, professionalism and dignity."        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will communicate expectations to employees, and provide honest and timely feedback on performance."        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will embrace a diversity of ideas, cultures, ethnicities, and backgrounds to enhance our promise and value to customers."        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will provide career development opportunities for employees who show initiative, and performance results to help them individually manage their careers to maximize their potential."
+        />
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Quality"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will place the interests of our customers first."        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will be dedicated to providing an individualized rental experience that assures customer satisfaction and earns the unwavering loyalty of our customers"        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will ensure that the We Try Harder® philosophy underlies everything we do and shines through in our service to customers."
+        />
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Teamwork"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will work as one cohesive team from the smallest unit to the organization as a whole."/>
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will develop and retain leaders who continually raise the bar, provide direction, remove barriers and empower people to successfully accomplish goals."        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will maintain a caring and supportive work environment that fosters a sharing of ideas, skills and resources."
+        />
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Growth and Profitability"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will be dedicated to continuous innovation and pursue new ideas and opportunities to accelerate profitable growth."/>
+    <TextView
+        android:layout_marginLeft="5dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will deliver value in all we do to assure consistently high returns to our shareholders."
+        />
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will recognize and reward excellent performance, which drives superior results."
+        />
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Community Responsibility"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will be active participants in our communities and encourage employee involvement in civic and charitable activities."        /> <TextView
+
+    android:layout_marginLeft="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="* We will be role model business leaders in the countries and communities in which we operate."    />
+    <TextView
+
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="* We will develop and implement business practices consistent with safeguarding the environment."/>
+
+
+</LinearLayout>
+
+</ScrollView>

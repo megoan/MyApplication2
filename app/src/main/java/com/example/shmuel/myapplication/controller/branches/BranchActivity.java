@@ -36,13 +36,11 @@ import java.util.ArrayList;
 public class BranchActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ActionMode actionMode;
-
-    //private String address=new Address();
     private Address address=new Address();
     private MyDate myDate=new MyDate();
     private int parkingSpotsNum;
     private int numOfCars;
-    private int avaibaleSpots;
+    private int availableSpots;
     private int branchNum;
     private String imgUrl;
     private double branchRevenue;
@@ -69,7 +67,7 @@ public class BranchActivity extends AppCompatActivity {
         myDate.setDay(intent.getIntExtra("day",0));
         establishedDate=intent.getStringExtra("established");
         parkingSpotsNum=intent.getIntExtra("parkingSpotsNum",0);
-        avaibaleSpots=intent.getIntExtra("available",0);
+        availableSpots=intent.getIntExtra("available",0);
         inUse=intent.getBooleanExtra("inUse",false);
         imgUrl=intent.getStringExtra("imgUrl");
         branchRevenue=intent.getDoubleExtra("revenue",0);
@@ -88,7 +86,7 @@ public class BranchActivity extends AppCompatActivity {
         branchIDText.setText(String.valueOf("#"+branchNum));
         addressText.setText(address.getCity()+" "+address.getStreet()+" "+address.getNumber());
         numOfCarsText.setText(String.valueOf(numOfCars));
-        numOfSpotsText.setText(String.valueOf(String.valueOf(avaibaleSpots)));
+        numOfSpotsText.setText(String.valueOf(String.valueOf(availableSpots)));
         revenueText.setText(String.valueOf(branchRevenue));
         inUseText.setText(String.valueOf(inUse));
         establish.setText(establishedDate);
@@ -170,7 +168,7 @@ public class BranchActivity extends AppCompatActivity {
                     intent.putExtra("inUse",inUse);
                     intent.putExtra("established",establishedDate);
                     intent.putExtra("parkingSpotsNum",parkingSpotsNum);
-                    intent.putExtra("available",avaibaleSpots);
+                    intent.putExtra("available",availableSpots);
                     intent.putExtra("revenue",branchRevenue);
                     intent.putExtra("year",myDate.getYear());
                     intent.putExtra("month",myDate.getMonth());

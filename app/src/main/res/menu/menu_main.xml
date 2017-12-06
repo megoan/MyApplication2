@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.shmuel.myapplication.controller.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/MissionAndValues"
         android:orderInCategory="102"
-        android:title="@string/action_settings"
+        android:title="Mission and Values"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_statistics"

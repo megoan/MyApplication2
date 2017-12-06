@@ -189,6 +189,7 @@
                     android:src="@drawable/ic_gps_position"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="16dp"
+                    android:transitionName="branchImage"
                      />
                 <TableLayout
                     android:layout_width="wrap_content"

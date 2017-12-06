@@ -368,8 +368,6 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(BranchEditActivity.this);
         builder.setTitle("Invalid input!");
-        //builder.setIcon(getResources().getDrawable(android.R.drawable.stat_notify_error));
-        //builder.setIcon(android.R.drawable.stat_notify_error);
         builder.setMessage(message);
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
