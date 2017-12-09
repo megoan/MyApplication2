@@ -28,15 +28,11 @@ import android.widget.Toast;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
-import com.example.shmuel.myapplication.controller.cars.CarActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
-import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
-import com.example.shmuel.myapplication.model.entities.Car;
-import com.example.shmuel.myapplication.model.entities.CarModel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -135,12 +131,12 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 if(((MainActivity)mContext).branch_is_in_action_mode==false){
                     Intent intent=new Intent(mContext,BranchActivity.class);
                     Branch branch1=objects.get(position);
-                    intent.putExtra("country",branch1.getAddress().getCountry());
-                    intent.putExtra("addressName",branch1.getAddress().getAddressName());
-                    intent.putExtra("latitude",branch1.getAddress().getLatitude());
-                    intent.putExtra("longitude",branch1.getAddress().getLongitude());
+                    intent.putExtra("country",branch1.getMyAddress().getCountry());
+                    intent.putExtra("addressName",branch1.getMyAddress().getAddressName());
+                    intent.putExtra("latitude",branch1.getMyAddress().getLatitude());
+                    intent.putExtra("longitude",branch1.getMyAddress().getLongitude());
                     intent.putExtra("id",branch1.getBranchNum());
-                    //intent.putExtra("address",branch1.getAddress().getCity()+" "+branch1.getAddress().getStreet()+" "+branch1.getAddress().getNumber());
+                    //intent.putExtra("address",branch1.getMyAddress().getCity()+" "+branch1.getMyAddress().getStreet()+" "+branch1.getMyAddress().getNumber());
                     intent.putExtra("established",branch1.getEstablishedDate().toString());
                     intent.putExtra("parkingSpotsNum",branch1.getParkingSpotsNum());
                     intent.putExtra("numOfCars",branch1.getCarIds().size());
@@ -148,10 +144,10 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                     intent.putExtra("imgUrl",branch1.getImgURL());
                     intent.putExtra("inUse",branch1.isInUse());
                     intent.putExtra("revenue",branch1.getBranchRevenue());
-                    intent.putExtra("country",branch1.getAddress().getCountry());
-                    /*intent.putExtra("city",branch1.getAddress().getCity());
-                    intent.putExtra("street",branch1.getAddress().getStreet());
-                    intent.putExtra("number",branch1.getAddress().getNumber());*/
+                    intent.putExtra("country",branch1.getMyAddress().getCountry());
+                    /*intent.putExtra("city",branch1.getMyAddress().getCity());
+                    intent.putExtra("street",branch1.getMyAddress().getStreet());
+                    intent.putExtra("number",branch1.getMyAddress().getNumber());*/
                     intent.putExtra("year",branch1.getEstablishedDate().getYear());
                     intent.putExtra("month",branch1.getEstablishedDate().getMonth());
                     intent.putExtra("day",branch1.getEstablishedDate().getDay());
@@ -169,9 +165,9 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
         Drawable drawable=ContextCompat.getDrawable(mContext, defaultImage);
 
-        holder.branchCity.setText(branch.getAddress().getAddressName());
-       // holder.branchStreet.setText(branch.getAddress().getStreet());
-       // holder.branchAddressNumber.setText(branch.getAddress().getNumber());
+        holder.branchCity.setText(branch.getMyAddress().getAddressName());
+       // holder.branchStreet.setText(branch.getMyAddress().getStreet());
+       // holder.branchAddressNumber.setText(branch.getMyAddress().getNumber());
         holder.revenue.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(branch.getBranchRevenue())));
         holder.numberOfCars.setText(String.valueOf(branch.getCarIds().size()));
         //holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
@@ -317,8 +313,8 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 ArrayList<Branch> filteredBranches = new ArrayList<Branch>();
                 for (Branch branch : backEndFunc.getAllBranches()) {
 
-                    String s=(branch.getAddress().getCountry());
-                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains((branch.getAddress().getCountry().toLowerCase()))) {
+                    String s=(branch.getMyAddress().getCountry());
+                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains((branch.getMyAddress().getCountry().toLowerCase()))) {
                         // if `contains` == true then add it
                         // to our filtered list
                         filteredBranches.add(branch);

@@ -4,7 +4,7 @@ package com.example.shmuel.myapplication.model.entities;
  * Created by shmuel on 19/10/2017.
  */
 
-public class Address {
+public class MyAddress {
    //private String city;
    // private String street;
    // private String number;
@@ -13,10 +13,10 @@ public class Address {
     private double latitude;
     private double longitude;
 
-    public Address() {
+    public MyAddress() {
     }
 
-    public Address(String addressName,String country, double latitude, double longitude) {
+    public MyAddress(String addressName, String country, double latitude, double longitude) {
         this.addressName = addressName;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -24,14 +24,14 @@ public class Address {
     }
 
 
-    /*public Address(String city, String street, String number) {
+    /*public MyAddress(String city, String street, String number) {
         this.city = city;
         this.street = street;
         this.number = number;
     }*/
 
 
-    public Address(Address other) {
+    public MyAddress(MyAddress other) {
         this.country = other.country;
 
         this.addressName = other.addressName;

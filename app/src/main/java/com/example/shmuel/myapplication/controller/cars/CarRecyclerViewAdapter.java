@@ -32,11 +32,10 @@ import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
-import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
-import com.example.shmuel.myapplication.model.entities.Address;
+import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
@@ -140,7 +139,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                     Branch branch=backEndFunc.getBranch(car1.getBranchNum());
                     CarModel carModel=backEndFunc.getCarModel(car1.getCarModel());
                     intent.putExtra("carModel",carModel.getCompanyName()+" "+carModel.getCarModelName());
-                    intent.putExtra("branch",branch.getAddress().getAddressName());
+                    intent.putExtra("branch",branch.getMyAddress().getAddressName());
                     intent.putExtra("mileage",car1.getMileage());
                     intent.putExtra("id",car1.getCarNum());
                     intent.putExtra("rating",car1.getRating());
@@ -163,12 +162,12 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
         });
 
 
-        Address carAddress=backEndFunc.getBranch(car.getBranchNum()).getAddress();
+        MyAddress carMyAddress =backEndFunc.getBranch(car.getBranchNum()).getMyAddress();
         CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
         int defaultImage = mContext.getResources().getIdentifier(car.getImgURL(),null,mContext.getPackageName());
         Drawable drawable= ContextCompat.getDrawable(mContext, defaultImage);
         holder.imageView.setImageDrawable(drawable);
-        holder.branch.setText("Branch: "+carAddress.getAddressName());
+        holder.branch.setText("Branch: "+ carMyAddress.getAddressName());
         holder.carYear.setText(String.valueOf(car.getYear()));
         holder.companyName.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
         holder.dailyPrice.setText("USD "+String.valueOf(car.getOneDayCost()));
@@ -334,7 +333,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                 for (Car c : backEndFunc.getAllCars()) {
                     CarModel carModel=backEndFunc.getCarModel(c.getCarModel());
                     Branch branch=backEndFunc.getBranch(c.getBranchNum());
-                    String s=(carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getAddress().getAddressName()).toLowerCase();
+                    String s=(carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getMyAddress().getAddressName()).toLowerCase();
                     if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains(carModel.getCompanyName().toLowerCase())) {
                         // if `contains` == true then add it
                         // to our filtered list

@@ -7,15 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.example.shmuel.myapplication.controller.DividerItemDecoration;
 import com.example.shmuel.myapplication.R;
-import com.example.shmuel.myapplication.controller.MainActivity;
-import com.example.shmuel.myapplication.controller.TabFragments;
-import com.example.shmuel.myapplication.model.backend.BackEndForList;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
-import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
@@ -149,7 +144,7 @@ public class CarsTabFragment extends Fragment {
             public int compare(Car o1, Car o2){
                 Branch cm1=backEndFunc.getBranch(o1.getBranchNum());
                 Branch cm2=backEndFunc.getBranch(o2.getBranchNum());
-                return cm1.getAddress().compare().compareToIgnoreCase(cm2.getAddress().compare());
+                return cm1.getMyAddress().compare().compareToIgnoreCase(cm2.getMyAddress().compare());
             }
         });
         updateView();
@@ -187,7 +182,7 @@ public class CarsTabFragment extends Fragment {
     {
         CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
         Branch branch=backEndFunc.getBranch(car.getBranchNum());
-        return (carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getAddress().getAddressName()).toLowerCase();
+        return (carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getMyAddress().getAddressName()).toLowerCase();
     }
 
     public void filterCardsSearch(String string)

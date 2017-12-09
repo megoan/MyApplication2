@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
+import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
@@ -26,18 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
-import com.example.shmuel.myapplication.controller.MainActivity;
-import com.example.shmuel.myapplication.controller.TabFragments;
-import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
-import com.example.shmuel.myapplication.model.backend.BackEndForList;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
-import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
-import com.example.shmuel.myapplication.model.entities.Address;
+import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.Branch;
-import com.example.shmuel.myapplication.model.entities.Car;
-import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.MyDate;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
@@ -47,9 +41,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class BranchEditActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
@@ -68,7 +62,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
     ProgressDialog progDailog;
     private boolean inUse;
     private MyDate myDate=new MyDate();
-    private Address address=new Address();
+    private MyAddress myAddress =new MyAddress();
     private ArrayList<Integer>carList=new ArrayList<>();
 
 
@@ -134,14 +128,14 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             numOfSpotsText.setText(String.valueOf(parkingSpotsNum));
             carList=intent.getIntegerArrayListExtra("carList");
 
-            //branch address
-            address.setAddressName(intent.getStringExtra("addressName"));
-            address.setLatitude(intent.getDoubleExtra("latitude",0));
-            address.setLongitude(intent.getDoubleExtra("longitude",0));
-            address.setCountry(intent.getStringExtra("country"));
-           // address.setStreet(intent.getStringExtra("street"));
-           // address.setNumber(intent.getStringExtra("number"));
-            addressText.setText(address.getAddressName());
+            //branch myAddress
+            myAddress.setAddressName(intent.getStringExtra("addressName"));
+            myAddress.setLatitude(intent.getDoubleExtra("latitude",0));
+            myAddress.setLongitude(intent.getDoubleExtra("longitude",0));
+            myAddress.setCountry(intent.getStringExtra("country"));
+           // myAddress.setStreet(intent.getStringExtra("street"));
+           // myAddress.setNumber(intent.getStringExtra("number"));
+            addressText.setText(myAddress.getAddressName());
 
             //branch revenue
             branchRevenue=intent.getDoubleExtra("revenue",0);
@@ -190,28 +184,41 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                 LatLng latLng=place.getLatLng();
                 double lan=latLng.latitude;
                 double lon=latLng.longitude;
-                address.setAddressName(place.getAddress().toString());
-                address.setLatitude(lan);
-                address.setLongitude(lon);
-                address.setCountry(place.getLocale().getDisplayCountry());
+                myAddress.setAddressName(place.getAddress().toString());
+                myAddress.setLatitude(lan);
+                myAddress.setLongitude(lon);
+                Locale locale=place.getLocale();
+
+                Geocoder geocoder = new Geocoder(BranchEditActivity.this, Locale.getDefault());
+                List<Address> addresses = null;
+                try {
+                    addresses = geocoder.getFromLocation(lan, lon, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                myAddress.setAddressName(addresses.get(0).getAddressLine(0));
+                String stateName = addresses.get(0).getAddressLine(1);
+                String countryName = addresses.get(0).getCountryName();
+                myAddress.setCountry(countryName);
+                addressText.setText(myAddress.getAddressName());
 
                 /*// TODO: Get info about the selected place.
                 Log.i(TAG, "Place: " + place.getName());
-                String a=place.getAddress().toString();
+                String a=place.getMyAddress().toString();
                 String[] addresssArray = a.split(",");
                 String[] streetArray=addresssArray[0].split(" ");
                 if (streetArray.length == 3)
                 {
-                    address.setNumber(streetArray[2]);
-                    address.setStreet(streetArray[0]+" "+streetArray[1]);
-                    address.setCity(addresssArray[1]);
+                    myAddress.setNumber(streetArray[2]);
+                    myAddress.setStreet(streetArray[0]+" "+streetArray[1]);
+                    myAddress.setCity(addresssArray[1]);
                 }
                 else {
-                    address.setCity(addresssArray[1]);
-                    address.setStreet(addresssArray[0]);
-                    address.setNumber("");
+                    myAddress.setCity(addresssArray[1]);
+                    myAddress.setStreet(addresssArray[0]);
+                    myAddress.setNumber("");
                 }
-                addressText.setText(address.toString());*/
+                */
             }
 
             @Override
@@ -281,14 +288,14 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                         branch.setBranchNum(Integer.valueOf(id1));
                     }
                     branch.setInUse(inUse);
-                    //TODO fix address
-                    //branch.setAddress(new Address());
+                    //TODO fix myAddress
+                    //branch.setMyAddress(new MyAddress());
                     branch.setBranchRevenue(branchRevenueString);
                     //TODO fix myDate
                     branch.setEstablishedDate(myDate);
                     branch.setParkingSpotsNum(parkingSpotsNum);
 
-                    branch.setAddress(address);
+                    branch.setMyAddress(myAddress);
                     branch.setCarIds(carList);
 
 

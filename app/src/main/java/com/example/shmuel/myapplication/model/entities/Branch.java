@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 public class Branch {
-    private Address address;
+    private MyAddress myAddress;
     private int parkingSpotsNum;
     private int branchNum;
     private String imgURL;
@@ -19,8 +19,8 @@ public class Branch {
     public Branch() {
     }
 
-    public Branch(Address address, int parkingSpotsNum, int branchNum, String imgURL, double branchRevenue, MyDate establishedDate, boolean inUse) {
-        this.address = address;
+    public Branch(MyAddress myAddress, int parkingSpotsNum, int branchNum, String imgURL, double branchRevenue, MyDate establishedDate, boolean inUse) {
+        this.myAddress = myAddress;
         this.parkingSpotsNum = parkingSpotsNum;
         this.branchNum = branchNum;
         this.imgURL=imgURL;
@@ -31,7 +31,7 @@ public class Branch {
     }
 
     public Branch(Branch other) {
-        this.address = new Address(other.address);
+        this.myAddress = new MyAddress(other.myAddress);
         this.parkingSpotsNum = other.parkingSpotsNum;
         this.branchNum = other.branchNum;
         this.imgURL=other.imgURL;
@@ -41,12 +41,12 @@ public class Branch {
         this.carIdsList=other.carIdsList;
     }
 
-    public Address getAddress() {
-        return new Address(address);
+    public MyAddress getMyAddress() {
+        return new MyAddress(myAddress);
     }
 
-    public void setAddress(Address address) {
-        this.address = new Address(address);
+    public void setMyAddress(MyAddress myAddress) {
+        this.myAddress = new MyAddress(myAddress);
     }
 
     public int getParkingSpotsNum() {

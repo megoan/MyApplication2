@@ -13,22 +13,14 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
-import com.example.shmuel.myapplication.controller.MainActivity;
-import com.example.shmuel.myapplication.controller.TabFragments;
-import com.example.shmuel.myapplication.controller.cars.CarActivity;
-import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
-import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
-import com.example.shmuel.myapplication.model.datasource.ListDataSource;
-import com.example.shmuel.myapplication.model.entities.Address;
-import com.example.shmuel.myapplication.model.entities.Branch;
+import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.MyDate;
 
 import java.util.ArrayList;
@@ -37,8 +29,8 @@ public class BranchActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ActionMode actionMode;
 
-    //private String address=new Address();
-    private Address address=new Address();
+    //private String myAddress=new MyAddress();
+    private MyAddress myAddress =new MyAddress();
     private MyDate myDate=new MyDate();
     private int parkingSpotsNum;
     private int numOfCars;
@@ -61,13 +53,13 @@ public class BranchActivity extends AppCompatActivity {
 
         Intent intent =getIntent();
         branchNum=intent.getIntExtra("id",0);
-        address.setCountry(intent.getStringExtra("country"));
-        address.setAddressName(intent.getStringExtra("addressName"));
-        address.setLatitude(intent.getDoubleExtra("latitude",0));
-        address.setLongitude(intent.getDoubleExtra("longitude",0));
-        //address.setCity(intent.getStringExtra("city"));
-        //address.setStreet(intent.getStringExtra("street"));
-        //address.setNumber(intent.getStringExtra("number"));
+        myAddress.setCountry(intent.getStringExtra("country"));
+        myAddress.setAddressName(intent.getStringExtra("addressName"));
+        myAddress.setLatitude(intent.getDoubleExtra("latitude",0));
+        myAddress.setLongitude(intent.getDoubleExtra("longitude",0));
+        //myAddress.setCity(intent.getStringExtra("city"));
+        //myAddress.setStreet(intent.getStringExtra("street"));
+        //myAddress.setNumber(intent.getStringExtra("number"));
         myDate.setYear(intent.getIntExtra("year",0));
         myDate.setMonth(intent.getStringExtra("month"));
         myDate.setDay(intent.getIntExtra("day",0));
@@ -90,7 +82,7 @@ public class BranchActivity extends AppCompatActivity {
         TextView establish=(TextView)findViewById(R.id.established);
 
         branchIDText.setText(String.valueOf("#"+branchNum));
-        addressText.setText(address.getAddressName());
+        addressText.setText(myAddress.getAddressName());
         numOfCarsText.setText(String.valueOf(numOfCars));
         numOfSpotsText.setText(String.valueOf(String.valueOf(avaibaleSpots)));
         revenueText.setText(String.valueOf(branchRevenue));
@@ -100,7 +92,7 @@ public class BranchActivity extends AppCompatActivity {
         Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
         imageView.setImageDrawable(drawable);
 
-        actionMode.setTitle(address.getAddressName());
+        actionMode.setTitle(myAddress.getAddressName());
     }
 
     public class MyActionModeCallbackClient implements ActionMode.Callback{
@@ -166,12 +158,12 @@ public class BranchActivity extends AppCompatActivity {
                     }
                     Intent intent=new Intent(BranchActivity.this, BranchEditActivity.class);
                     intent.putExtra("update","true");
-                    intent.putExtra("addressName",address.getAddressName());
-                    intent.putExtra("latitude",address.getLatitude());
-                    intent.putExtra("longitude",address.getLongitude());
-                    intent.putExtra("country",address.getCountry());
-                    // intent.putExtra("street",address.getStreet());
-                   // intent.putExtra("number",address.getNumber());
+                    intent.putExtra("addressName", myAddress.getAddressName());
+                    intent.putExtra("latitude", myAddress.getLatitude());
+                    intent.putExtra("longitude", myAddress.getLongitude());
+                    intent.putExtra("country", myAddress.getCountry());
+                    // intent.putExtra("street",myAddress.getStreet());
+                   // intent.putExtra("number",myAddress.getNumber());
                     intent.putExtra("branchID",branchNum);
                     intent.putExtra("imgUrl",imgUrl);
                     intent.putExtra("inUse",inUse);

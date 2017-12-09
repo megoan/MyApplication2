@@ -10,9 +10,7 @@ import android.view.ViewGroup;
 
 import com.example.shmuel.myapplication.controller.DividerItemDecoration;
 import com.example.shmuel.myapplication.R;
-import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
-import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
@@ -51,7 +49,7 @@ public class BranchesFragment extends Fragment {
         ArrayList<Branch> tmp=new ArrayList<>();
         for (int j = 0; j < carCompanies.length; j++) {
             for (Branch branch:branches) {
-                if(branch.getAddress().getCountry()==carCompanies[j])
+                if(branch.getMyAddress().getCountry()==carCompanies[j])
                 {
                     if (carCompaniesChecked[j]==false) {
                         tmp.add(branch);
@@ -68,7 +66,7 @@ public class BranchesFragment extends Fragment {
         Collections.sort(branches, new Comparator<Branch>(){
             public int compare(Branch o1, Branch o2){
 
-                return o1.getAddress().compare().compareToIgnoreCase(o2.getAddress().compare());
+                return o1.getMyAddress().compare().compareToIgnoreCase(o2.getMyAddress().compare());
             }
         });
         updateView();
@@ -129,7 +127,7 @@ public class BranchesFragment extends Fragment {
 
     public String BranchSearchString(Branch branch)
     {
-        return (branch.getAddress().getAddressName().toLowerCase());
+        return (branch.getMyAddress().getAddressName().toLowerCase());
     }
     public void filterCardsSearch(String string)
     {

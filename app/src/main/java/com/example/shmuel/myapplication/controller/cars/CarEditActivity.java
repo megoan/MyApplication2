@@ -26,12 +26,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
-import com.example.shmuel.myapplication.controller.MainActivity;
-import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
-import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
@@ -104,7 +101,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         int j=0;
         for(Branch branch:backEndFunc.getAllBranches())
         {
-            branches[j]=branch.getAddress().getAddressName();
+            branches[j]=branch.getMyAddress().getAddressName();
             j++;
         }
         ArrayAdapter<String> branchAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, branches);
@@ -247,7 +244,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                     String brasnch1=branchSpinner.getSelectedItem().toString();
                     int branchID=0;
                     for(Branch branch:backEndFunc.getAllBranches()){
-                        if(brasnch1.contains(branch.getAddress().getAddressName()))
+                        if(brasnch1.contains(branch.getMyAddress().getAddressName()))
                         {
                             branchID=branch.getBranchNum();
                         }
