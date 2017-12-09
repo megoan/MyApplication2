@@ -140,7 +140,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                     Branch branch=backEndFunc.getBranch(car1.getBranchNum());
                     CarModel carModel=backEndFunc.getCarModel(car1.getCarModel());
                     intent.putExtra("carModel",carModel.getCompanyName()+" "+carModel.getCarModelName());
-                    intent.putExtra("branch",branch.getAddress().getCity()+" "+branch.getAddress().getStreet()+" "+branch.getAddress().getNumber());
+                    intent.putExtra("branch",branch.getAddress().getAddressName());
                     intent.putExtra("mileage",car1.getMileage());
                     intent.putExtra("id",car1.getCarNum());
                     intent.putExtra("rating",car1.getRating());
@@ -168,7 +168,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
         int defaultImage = mContext.getResources().getIdentifier(car.getImgURL(),null,mContext.getPackageName());
         Drawable drawable= ContextCompat.getDrawable(mContext, defaultImage);
         holder.imageView.setImageDrawable(drawable);
-        holder.branch.setText("Branch: "+carAddress.getStreet()+", "+carAddress.getCity());
+        holder.branch.setText("Branch: "+carAddress.getAddressName());
         holder.carYear.setText(String.valueOf(car.getYear()));
         holder.companyName.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
         holder.dailyPrice.setText("USD "+String.valueOf(car.getOneDayCost()));
@@ -334,7 +334,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
                 for (Car c : backEndFunc.getAllCars()) {
                     CarModel carModel=backEndFunc.getCarModel(c.getCarModel());
                     Branch branch=backEndFunc.getBranch(c.getBranchNum());
-                    String s=(carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getAddress().getCity()+" "+branch.getAddress().getStreet()).toLowerCase();
+                    String s=(carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getAddress().getAddressName()).toLowerCase();
                     if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains(carModel.getCompanyName().toLowerCase())) {
                         // if `contains` == true then add it
                         // to our filtered list
@@ -393,7 +393,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             BranchesFragment.mAdapter.notifyDataSetChanged();
             CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
             CarModelsFragment.mAdapter.notifyDataSetChanged();
-            TabFragments.carTab.updateView();
+            TabFragments.carsTab.updateView();
             Toast.makeText(mContext,
                     "car deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();

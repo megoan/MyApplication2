@@ -187,7 +187,7 @@ public class CarsTabFragment extends Fragment {
     {
         CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
         Branch branch=backEndFunc.getBranch(car.getBranchNum());
-        return (carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getAddress().getCity()+" "+branch.getAddress().getStreet()).toLowerCase();
+        return (carModel.getCompanyName()+" "+carModel.getCarModelName()+" "+ branch.getAddress().getAddressName()).toLowerCase();
     }
 
     public void filterCardsSearch(String string)

@@ -273,7 +273,7 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
-            TabFragments.clientTab.updateView();
+            TabFragments.clientsTab.updateView();
             Toast.makeText(mContext,
                     "client deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();

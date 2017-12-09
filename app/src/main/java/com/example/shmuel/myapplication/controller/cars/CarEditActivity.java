@@ -104,7 +104,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         int j=0;
         for(Branch branch:backEndFunc.getAllBranches())
         {
-            branches[j]=branch.getAddress().getCity()+" "+branch.getAddress().getStreet()+" "+branch.getAddress().getNumber();
+            branches[j]=branch.getAddress().getAddressName();
             j++;
         }
         ArrayAdapter<String> branchAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, branches);
@@ -247,7 +247,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                     String brasnch1=branchSpinner.getSelectedItem().toString();
                     int branchID=0;
                     for(Branch branch:backEndFunc.getAllBranches()){
-                        if(brasnch1.contains(branch.getAddress().getCity()+" "+branch.getAddress().getStreet()+" "+branch.getAddress().getNumber()))
+                        if(brasnch1.contains(branch.getAddress().getAddressName()))
                         {
                             branchID=branch.getBranchNum();
                         }

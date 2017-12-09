@@ -93,12 +93,6 @@ public class ClientActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
                             new BackGroundDeleteClient().execute();
-                           /*backEndFunc.deleteClient(id);
-                           TabFragments.clientTab.updateView2();*/
-
-                           /* Toast.makeText(ClientActivity.this,
-                                    "client deleted", Toast.LENGTH_SHORT).show();
-                            actionMode.finish();*/
                         }
                     });
 
@@ -124,7 +118,6 @@ public class ClientActivity extends AppCompatActivity {
                     intent.putExtra("email",email);
                     intent.putExtra("credit",creditCardNum);
                     finish();
-                    //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     break;
                 }
@@ -170,7 +163,7 @@ public class ClientActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             ClientTabFragment.mAdapter.objects=backEndFunc.getAllClients();
             ClientTabFragment.mAdapter.notifyDataSetChanged();
-            TabFragments.clientTab.updateView2();
+            TabFragments.clientsTab.updateView2();
             Toast.makeText(ClientActivity.this,
                     "client deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();

@@ -36,11 +36,13 @@ import java.util.ArrayList;
 public class BranchActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ActionMode actionMode;
+
+    //private String address=new Address();
     private Address address=new Address();
     private MyDate myDate=new MyDate();
     private int parkingSpotsNum;
     private int numOfCars;
-    private int availableSpots;
+    private int avaibaleSpots;
     private int branchNum;
     private String imgUrl;
     private double branchRevenue;
@@ -59,15 +61,19 @@ public class BranchActivity extends AppCompatActivity {
 
         Intent intent =getIntent();
         branchNum=intent.getIntExtra("id",0);
-        address.setCity(intent.getStringExtra("city"));
-        address.setStreet(intent.getStringExtra("street"));
-        address.setNumber(intent.getStringExtra("number"));
+        address.setCountry(intent.getStringExtra("country"));
+        address.setAddressName(intent.getStringExtra("addressName"));
+        address.setLatitude(intent.getDoubleExtra("latitude",0));
+        address.setLongitude(intent.getDoubleExtra("longitude",0));
+        //address.setCity(intent.getStringExtra("city"));
+        //address.setStreet(intent.getStringExtra("street"));
+        //address.setNumber(intent.getStringExtra("number"));
         myDate.setYear(intent.getIntExtra("year",0));
         myDate.setMonth(intent.getStringExtra("month"));
         myDate.setDay(intent.getIntExtra("day",0));
         establishedDate=intent.getStringExtra("established");
         parkingSpotsNum=intent.getIntExtra("parkingSpotsNum",0);
-        availableSpots=intent.getIntExtra("available",0);
+        avaibaleSpots=intent.getIntExtra("available",0);
         inUse=intent.getBooleanExtra("inUse",false);
         imgUrl=intent.getStringExtra("imgUrl");
         branchRevenue=intent.getDoubleExtra("revenue",0);
@@ -84,9 +90,9 @@ public class BranchActivity extends AppCompatActivity {
         TextView establish=(TextView)findViewById(R.id.established);
 
         branchIDText.setText(String.valueOf("#"+branchNum));
-        addressText.setText(address.getCity()+" "+address.getStreet()+" "+address.getNumber());
+        addressText.setText(address.getAddressName());
         numOfCarsText.setText(String.valueOf(numOfCars));
-        numOfSpotsText.setText(String.valueOf(String.valueOf(availableSpots)));
+        numOfSpotsText.setText(String.valueOf(String.valueOf(avaibaleSpots)));
         revenueText.setText(String.valueOf(branchRevenue));
         inUseText.setText(String.valueOf(inUse));
         establish.setText(establishedDate);
@@ -94,7 +100,7 @@ public class BranchActivity extends AppCompatActivity {
         Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
         imageView.setImageDrawable(drawable);
 
-        actionMode.setTitle(address.getCity()+" "+address.getStreet());
+        actionMode.setTitle(address.getAddressName());
     }
 
     public class MyActionModeCallbackClient implements ActionMode.Callback{
@@ -134,7 +140,7 @@ public class BranchActivity extends AppCompatActivity {
                             // TODO Auto-generated method stub
                           //backEndFunc.deleteBranch(branchNum);
                            new BackGroundDeleteBranch().execute();
-                            //TabFragments.branchTab.updateView2(position);
+                            //TabFragments.branchesTab.updateView2(position);
 
                         }
                     });
@@ -160,15 +166,18 @@ public class BranchActivity extends AppCompatActivity {
                     }
                     Intent intent=new Intent(BranchActivity.this, BranchEditActivity.class);
                     intent.putExtra("update","true");
-                    intent.putExtra("city",address.getCity());
-                    intent.putExtra("street",address.getStreet());
-                    intent.putExtra("number",address.getNumber());
+                    intent.putExtra("addressName",address.getAddressName());
+                    intent.putExtra("latitude",address.getLatitude());
+                    intent.putExtra("longitude",address.getLongitude());
+                    intent.putExtra("country",address.getCountry());
+                    // intent.putExtra("street",address.getStreet());
+                   // intent.putExtra("number",address.getNumber());
                     intent.putExtra("branchID",branchNum);
                     intent.putExtra("imgUrl",imgUrl);
                     intent.putExtra("inUse",inUse);
                     intent.putExtra("established",establishedDate);
                     intent.putExtra("parkingSpotsNum",parkingSpotsNum);
-                    intent.putExtra("available",availableSpots);
+                    intent.putExtra("available",avaibaleSpots);
                     intent.putExtra("revenue",branchRevenue);
                     intent.putExtra("year",myDate.getYear());
                     intent.putExtra("month",myDate.getMonth());

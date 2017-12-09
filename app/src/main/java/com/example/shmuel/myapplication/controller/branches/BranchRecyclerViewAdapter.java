@@ -135,8 +135,12 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 if(((MainActivity)mContext).branch_is_in_action_mode==false){
                     Intent intent=new Intent(mContext,BranchActivity.class);
                     Branch branch1=objects.get(position);
+                    intent.putExtra("country",branch1.getAddress().getCountry());
+                    intent.putExtra("addressName",branch1.getAddress().getAddressName());
+                    intent.putExtra("latitude",branch1.getAddress().getLatitude());
+                    intent.putExtra("longitude",branch1.getAddress().getLongitude());
                     intent.putExtra("id",branch1.getBranchNum());
-                    intent.putExtra("address",branch1.getAddress().getCity()+" "+branch1.getAddress().getStreet()+" "+branch1.getAddress().getNumber());
+                    //intent.putExtra("address",branch1.getAddress().getCity()+" "+branch1.getAddress().getStreet()+" "+branch1.getAddress().getNumber());
                     intent.putExtra("established",branch1.getEstablishedDate().toString());
                     intent.putExtra("parkingSpotsNum",branch1.getParkingSpotsNum());
                     intent.putExtra("numOfCars",branch1.getCarIds().size());
@@ -144,9 +148,10 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                     intent.putExtra("imgUrl",branch1.getImgURL());
                     intent.putExtra("inUse",branch1.isInUse());
                     intent.putExtra("revenue",branch1.getBranchRevenue());
-                    intent.putExtra("city",branch1.getAddress().getCity());
+                    intent.putExtra("country",branch1.getAddress().getCountry());
+                    /*intent.putExtra("city",branch1.getAddress().getCity());
                     intent.putExtra("street",branch1.getAddress().getStreet());
-                    intent.putExtra("number",branch1.getAddress().getNumber());
+                    intent.putExtra("number",branch1.getAddress().getNumber());*/
                     intent.putExtra("year",branch1.getEstablishedDate().getYear());
                     intent.putExtra("month",branch1.getEstablishedDate().getMonth());
                     intent.putExtra("day",branch1.getEstablishedDate().getDay());
@@ -164,12 +169,12 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
         Drawable drawable=ContextCompat.getDrawable(mContext, defaultImage);
 
-        holder.branchCity.setText(branch.getAddress().getCity());
-        holder.branchStreet.setText(branch.getAddress().getStreet());
-        holder.branchAddressNumber.setText(branch.getAddress().getNumber());
+        holder.branchCity.setText(branch.getAddress().getAddressName());
+       // holder.branchStreet.setText(branch.getAddress().getStreet());
+       // holder.branchAddressNumber.setText(branch.getAddress().getNumber());
         holder.revenue.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(branch.getBranchRevenue())));
         holder.numberOfCars.setText(String.valueOf(branch.getCarIds().size()));
-        holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
+        //holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
         holder.imageView.setImageDrawable(drawable);
 
         if(!branch.isInUse())
@@ -196,12 +201,12 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView branchCity;
-        TextView branchStreet;
+       // TextView branchStreet;
         TextView branchAddressNumber;
         ImageView imageView;
         TextView revenue;
         TextView numberOfCars;
-        TextView branchNumber;
+       // TextView branchNumber;
         ImageButton inUse;
 
         public ViewHolder(View itemView) {
@@ -209,9 +214,9 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             branchCity=(TextView)itemView.findViewById(R.id.cardBranchCity);
             revenue=(TextView)itemView.findViewById(R.id.cardBranchRevenue);
             numberOfCars=(TextView)itemView.findViewById(R.id.cardBranchCarNum);
-            branchStreet=(TextView)itemView.findViewById(R.id.cardBranchStreet);
-            branchNumber=(TextView)itemView.findViewById(R.id.cardBranchNumber);
-            branchAddressNumber=(TextView)itemView.findViewById(R.id.cardBranchAddressNumber);
+           // branchStreet=(TextView)itemView.findViewById(R.id.cardBranchStreet);
+           // branchNumber=(TextView)itemView.findViewById(R.id.cardBranchNumber);
+            //branchAddressNumber=(TextView)itemView.findViewById(R.id.cardBranchAddressNumber);
             imageView=(ImageView)itemView.findViewById(R.id.imageView2);
             inUse=(ImageButton)itemView.findViewById(R.id.cardBranchInUse);
 
@@ -312,8 +317,8 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 ArrayList<Branch> filteredBranches = new ArrayList<Branch>();
                 for (Branch branch : backEndFunc.getAllBranches()) {
 
-                    String s=(branch.getAddress().getCity()+" "+branch.getAddress().getStreet()).toLowerCase();
-                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains((branch.getAddress().getCity().toLowerCase()))) {
+                    String s=(branch.getAddress().getCountry());
+                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains((branch.getAddress().getCountry().toLowerCase()))) {
                         // if `contains` == true then add it
                         // to our filtered list
                         filteredBranches.add(branch);
@@ -365,7 +370,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
-            TabFragments.branchTab.updateView();
+            TabFragments.branchesTab.updateView();
             Toast.makeText(mContext,
                     "branch deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();

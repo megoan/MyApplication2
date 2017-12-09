@@ -18,24 +18,72 @@ public class TabFragments {
 
     public static PageAdapter pageAdapter;
 
-    public static CarsTabFragment carTab;
+    public static CarsTabFragment carsTab;
 
-    public static CarModelsFragment carModelTab;
+    public static CarModelsFragment carModelsTab;
 
-    public static BranchesFragment branchTab;
+    public static BranchesFragment branchesTab;
 
-    public static ClientTabFragment clientTab;
+    public static ClientTabFragment clientsTab;
+
+    private CarsTabFragment cars;
+    private CarModelsFragment carModels;
+    private BranchesFragment branches;
+    private ClientTabFragment clients;
 
     public TabFragments() {
-        if(carTab==null)
+        if(carsTab!=null)
         {
-            carTab=new CarsTabFragment();
-            carModelTab=new CarModelsFragment();
-            branchTab =new BranchesFragment();
-            clientTab =new ClientTabFragment();
+            //cars=new CarsTabFragment();
+           // carsTab=cars;
+        }
+        else
+        {
+            carsTab=new CarsTabFragment();
+        }
+        if(carModelsTab!=null)
+        {
+            //carModels=new CarModelsFragment();
+           // carModelsTab=carModels;
+        }
+        else
+        {
+            carModelsTab=new CarModelsFragment();
+        }
+        if(branchesTab!=null)
+        {
+            //branches=new BranchesFragment();
+           // branchesTab=branches;
+        }
+        else {
+            branchesTab =new BranchesFragment();
+        }
+
+        if(clientsTab!=null)
+        {
+           // clients=new ClientTabFragment();
+           // clientsTab=clients;
+        }
+        else {
+            clientsTab =new ClientTabFragment();
         }
     }
 
 
-
+    public CarsTabFragment getCarFragment()
+    {
+       return cars;
+    }
+    public CarModelsFragment getCarModelFragment()
+    {
+        return carModels;
+    }
+    public BranchesFragment getBranchesFragment()
+    {
+        return branches;
+    }
+    public ClientTabFragment getClientsFragment()
+    {
+        return clients;
+    }
 }

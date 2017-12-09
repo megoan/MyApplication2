@@ -51,7 +51,7 @@ public class BranchesFragment extends Fragment {
         ArrayList<Branch> tmp=new ArrayList<>();
         for (int j = 0; j < carCompanies.length; j++) {
             for (Branch branch:branches) {
-                if(branch.getAddress().getCity()==carCompanies[j])
+                if(branch.getAddress().getCountry()==carCompanies[j])
                 {
                     if (carCompaniesChecked[j]==false) {
                         tmp.add(branch);
@@ -129,7 +129,7 @@ public class BranchesFragment extends Fragment {
 
     public String BranchSearchString(Branch branch)
     {
-        return (branch.getAddress().getCity()+" "+branch.getAddress().getStreet()).toLowerCase();
+        return (branch.getAddress().getAddressName().toLowerCase());
     }
     public void filterCardsSearch(String string)
     {

@@ -5,34 +5,49 @@ package com.example.shmuel.myapplication.model.entities;
  */
 
 public class Address {
-    private String city;
-    private String street;
-    private String number;
+   //private String city;
+   // private String street;
+   // private String number;
+    String country;
+    private String addressName;
+    private double latitude;
+    private double longitude;
 
     public Address() {
     }
 
-    public Address(String city, String street, String number) {
+    public Address(String addressName,String country, double latitude, double longitude) {
+        this.addressName = addressName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.country=country;
+    }
+
+
+    /*public Address(String city, String street, String number) {
         this.city = city;
         this.street = street;
         this.number = number;
-    }
+    }*/
 
-    public String getCity() {
-        return city;
-    }
 
     public Address(Address other) {
-        this.city = other.city;
-        this.street = other.street;
-        this.number = other.number;
+        this.country = other.country;
+
+        this.addressName = other.addressName;
+        this.latitude = other.latitude;
+        this.longitude = other.longitude;
     }
 
-    public void setCity(String city) {
+   /* public void setCity(String city) {
         this.city = city;
     }
+    public String getCity() {
+        return city;
+    }*/
 
-    public String getStreet() {
+
+    /* public String getStreet() {
         return street;
     }
 
@@ -46,15 +61,46 @@ public class Address {
 
     public void setNumber(String number) {
         this.number = number;
-    }
-
+    }*/
     public String compare()
     {
-        return city+street+number;
+        return getAddressName();
     }
 
     @Override
     public String toString() {
-        return city+" "+street+" "+number;
+        return addressName+"~~"+country+"~~"+latitude+" "+longitude;
+    }
+
+    public String getAddressName() {
+        return addressName;
+    }
+
+    public void setAddressName(String addressName) {
+        this.addressName = addressName;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

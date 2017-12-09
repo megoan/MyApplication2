@@ -143,7 +143,7 @@ public class CarActivity extends AppCompatActivity {
                                 backEndFunc.removeCarFromBranch(carNum,branchid);
                                 BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
                                 BranchesFragment.mAdapter.notifyDataSetChanged();
-                                TabFragments.carTab.updateView2(position);
+                                TabFragments.carsTab.updateView2(position);
                                 Toast.makeText(CarActivity.this,
                                         "car deleted", Toast.LENGTH_SHORT).show();
                                 actionMode.finish();*/
@@ -232,7 +232,7 @@ public class CarActivity extends AppCompatActivity {
             BranchesFragment.mAdapter.notifyDataSetChanged();
             CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
             CarModelsFragment.mAdapter.notifyDataSetChanged();
-            TabFragments.carTab.updateView2(position);
+            TabFragments.carsTab.updateView2(position);
             Toast.makeText(CarActivity.this,
                     "car deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();
