@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 public interface BackEndFunc {
-    public boolean clientExists(int clientID);
+
 
     public boolean addClient(Client client);
     public boolean addCarModel(CarModel carModel);

@@ -14,14 +14,7 @@ import java.util.List;
  */
 
 public class BackEndForList implements BackEndFunc {
-    @Override
-    public boolean clientExists(int clientID) {
-        for (Client client: ListDataSource.clientList
-             ) {
-            if(clientID==client.getId())return true;
-        }
-        return false;
-    }
+
 
     @Override
     public boolean addClient(Client client) {
