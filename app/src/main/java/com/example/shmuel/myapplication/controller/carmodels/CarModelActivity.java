@@ -3,12 +3,15 @@ package com.example.shmuel.myapplication.controller.carmodels;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,12 +25,14 @@ import android.widget.Toast;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.Transmission;
 
 public class CarModelActivity extends AppCompatActivity {
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
 
     private int position;
@@ -41,6 +46,7 @@ public class CarModelActivity extends AppCompatActivity {
     private int luggage;
     private boolean ac;
     private boolean inUse;
+
     private String imgUrl;
 
     @Override
@@ -51,6 +57,7 @@ public class CarModelActivity extends AppCompatActivity {
         actionMode=startActionMode(callback);
 
         Intent intent =getIntent();
+
 
         companyName=intent.getStringExtra("companyName");
         modelName=intent.getStringExtra("modelName");
@@ -76,7 +83,10 @@ public class CarModelActivity extends AppCompatActivity {
         TextView luggageText=findViewById(R.id.Luggage_display_textView);
         TextView acBox=findViewById(R.id.AC_display_textView);
         TextView inUseText=findViewById(R.id.InUse_display_textView);
+
+
         ImageView imageView1=(ImageView)findViewById(R.id.Car_imageView);
+
 
 
         companyNameText.setText(companyName);
@@ -88,9 +98,21 @@ public class CarModelActivity extends AppCompatActivity {
         luggageText.setText(String.valueOf(luggage));
         acBox.setText(String.valueOf(ac));
         inUseText.setText(String.valueOf(inUse));
-        int defaultImage = getResources().getIdentifier(imgUrl,null,getApplicationContext().getPackageName());
-        Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
-        imageView1.setImageDrawable(drawable);
+
+
+
+        if(imgUrl.equals("@drawable/default_car_image"))
+        {
+            int defaultImage = getResources().getIdentifier("@drawable/default_car_image",null,getApplicationContext().getPackageName());
+            Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
+            imageView1.setImageDrawable(drawable);
+        }
+        else {
+            byte[] byteArray= Base64.decode(imgUrl,Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            imageView1.setImageBitmap(bitmap);
+        }
+
 
 
         actionMode.setTitle(companyName+ " "+modelName);
@@ -182,6 +204,7 @@ public class CarModelActivity extends AppCompatActivity {
                     intent.putExtra("luggage",luggage);
                     intent.putExtra("ac",ac);
                     intent.putExtra("imgUrl",imgUrl);
+
                     finish();
                     startActivity(intent);
                     break;
@@ -217,6 +240,7 @@ public class CarModelActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             backEndFunc.deleteCarModel(id);
+            MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
             return null;
         }
 

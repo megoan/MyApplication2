@@ -42,7 +42,7 @@ public class Branch {
     }
 
     public MyAddress getMyAddress() {
-        return new MyAddress(myAddress);
+        return myAddress;
     }
 
     public void setMyAddress(MyAddress myAddress) {
@@ -116,5 +116,15 @@ public class Branch {
     }
     public void removeCar(int carID){
         if(carIdsList.contains(carID))carIdsList.remove(carID);
+    }
+
+    public String convertCarIDtoString()
+    {
+        String carIDs=null;
+        for(Integer id:carIdsList)
+        {
+            carIDs+=id+"~~";
+        }
+        return carIDs;
     }
 }

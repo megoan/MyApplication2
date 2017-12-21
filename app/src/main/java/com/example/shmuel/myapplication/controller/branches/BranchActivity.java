@@ -18,15 +18,17 @@ import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.MyDate;
 
 import java.util.ArrayList;
 
 public class BranchActivity extends AppCompatActivity {
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
 
     //private String myAddress=new MyAddress();
@@ -211,6 +213,7 @@ public class BranchActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             backEndFunc.deleteBranch(branchNum);
+            MySqlDataSource.branchList=backEndFunc.getAllBranches();
 
             return null;
         }

@@ -12,28 +12,21 @@ import com.example.shmuel.myapplication.model.entities.Transmission;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.*;
+
 /**
  * Created by shmuel on 19/10/2017.
  */
 
-public class ListDataSource {
-    public static List<CarModel> carModelList;
-    public static List<Client>clientList;
-    public static List<Branch>branchList;
-    public static List<Car>carList;
-    public static List<Order>orderList;
+public class ListDataSource extends DataSource {
 
     public ListDataSource() {
-        carList=new ArrayList<>();
-        carModelList=new ArrayList<>();
-        branchList=new ArrayList<>();
-        orderList=new ArrayList<>();
-        clientList=new ArrayList<>();
+        super();
         initialize();
     }
     public void initialize()
     {
-        carModelList.add(new CarModel(111,"Audi","R8",32.1, Transmission.AUTOMATIC,2,2,true,"@drawable/audi8_model",true));
+        /*carModelList.add(new CarModel(111,"Audi","R8",32.1, Transmission.AUTOMATIC,2,2,true,"@drawable/audi8_model",true));
         carModelList.add(new CarModel(112,"Ford","Fusion Sedan",32.1, Transmission.AUTOMATIC,4,3,true,"@drawable/ford_2018",false));
         carModelList.add(new CarModel(113,"Jeep","Compass",32.1, Transmission.MANUAL,5,4,true,"@drawable/jeep_compass",true));
         carModelList.add(new CarModel(114,"lamborghini","aventador",32.1, Transmission.MANUAL,2,1,true,"@drawable/lambergini_aventador",true));
@@ -86,6 +79,6 @@ public class ListDataSource {
         branchList.get(2).addCar(3);
         branchList.get(3).addCar(4);
         branchList.get(4).addCar(5);
-        branchList.get(5).addCar(6);
+        branchList.get(5).addCar(6);*/
     }
 }

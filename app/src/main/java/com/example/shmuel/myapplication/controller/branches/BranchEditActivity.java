@@ -1,19 +1,28 @@
 package com.example.shmuel.myapplication.controller.branches;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -27,9 +36,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.Utility;
+import com.example.shmuel.myapplication.controller.carmodels.CarModelEditActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.MyDate;
@@ -39,6 +52,8 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +64,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
     DatePickerDialog datePickerDialog;
     Branch branch=new Branch();
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
 
     boolean update=false;
@@ -64,6 +79,13 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
     private MyDate myDate=new MyDate();
     private MyAddress myAddress =new MyAddress();
     private ArrayList<Integer>carList=new ArrayList<>();
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private String userChoosenTask;
+    File file;
+    Uri uri;
+    Intent CropIntent;
+    boolean imageSelected=false;
+    Bitmap mBitmap;
 
 
 
@@ -79,6 +101,8 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_branch_edit);
 
@@ -95,7 +119,12 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         MyActionModeCallbackCar callback=new MyActionModeCallbackCar();
         actionMode=startActionMode(callback);
 
-
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
+            }
+        });
 
         ((FloatingActionButton) findViewById(R.id.dateButton))
                 .setOnClickListener(new View.OnClickListener() {
@@ -158,10 +187,17 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             inUse=intent.getBooleanExtra("inUse",false);
             numOfCars=intent.getIntExtra("numOfCars",0);
 
-            int defaultImage = BranchEditActivity.this.getResources().getIdentifier(imgUrl,null,BranchEditActivity.this.getPackageName());
-            Drawable drawable= ContextCompat.getDrawable(BranchEditActivity.this, defaultImage);
-            imageView.setImageDrawable(drawable);
-
+            if(imgUrl.equals("@drawable/default_car_image"))
+            {
+                int defaultImage = getResources().getIdentifier("@drawable/default_car_image",null,getApplicationContext().getPackageName());
+                Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
+                imageView.setImageDrawable(drawable);
+            }
+            else {
+                byte[] byteArray= Base64.decode(imgUrl,Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                imageView.setImageBitmap(bitmap);
+            }
 
         }
         else {
@@ -202,23 +238,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                 myAddress.setCountry(countryName);
                 addressText.setText(myAddress.getAddressName());
 
-                /*// TODO: Get info about the selected place.
-                Log.i(TAG, "Place: " + place.getName());
-                String a=place.getMyAddress().toString();
-                String[] addresssArray = a.split(",");
-                String[] streetArray=addresssArray[0].split(" ");
-                if (streetArray.length == 3)
-                {
-                    myAddress.setNumber(streetArray[2]);
-                    myAddress.setStreet(streetArray[0]+" "+streetArray[1]);
-                    myAddress.setCity(addresssArray[1]);
-                }
-                else {
-                    myAddress.setCity(addresssArray[1]);
-                    myAddress.setStreet(addresssArray[0]);
-                    myAddress.setNumber("");
-                }
-                */
+
             }
 
             @Override
@@ -268,7 +288,15 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     String establishedString= establishedDateText.getText().toString();
                     parkingSpotsNum= Integer.parseInt(numOfSpotsText.getText().toString());
 
-
+                    if(!imageSelected){
+                        inputWarningDialog("don't be shy and upload a picture!");return false;}
+                    else {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        //carModel.setByteArray(stream.toByteArray());
+                        byte[] byteArray=stream.toByteArray();
+                        branch.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
+                    }
 
                     if(id1.equals("")||parkingSpotsNum==0|| addressString==null || establishedString==null ||myDate==null)
                     {
@@ -294,20 +322,19 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     //TODO fix myDate
                     branch.setEstablishedDate(myDate);
                     branch.setParkingSpotsNum(parkingSpotsNum);
-
                     branch.setMyAddress(myAddress);
                     branch.setCarIds(carList);
 
 
 
 
-                    if (imgUrl!=null) {
+                    /*if (imgUrl!=null) {
                         branch.setImgURL(imgUrl);
                     }
                     else
                     {
                         branch.setImgURL("@drawable/rental");
-                    }
+                    }*/
 
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(BranchEditActivity.this);
@@ -409,6 +436,9 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         branchRevenueText.setText("");
         establishedDateText.setText("");
         branchIDText.setText("");
+        int defaultImage = BranchEditActivity.this.getResources().getIdentifier("@drawable/rental",null,BranchEditActivity.this.getPackageName());
+        Drawable drawable= ContextCompat.getDrawable(BranchEditActivity.this, defaultImage);
+        imageView.setImageDrawable(drawable);
 
     }
     int tryParseInt(String value) {
@@ -442,18 +472,17 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             if (update)
             {
                 backEndFunc.updateBranch(branch);
+                MySqlDataSource.branchList=backEndFunc.getAllBranches();
             }
             else
             {
+
                 backEndFunc.addBranch(branch);
+                MySqlDataSource.branchList=backEndFunc.getAllBranches();
             }
             return null;
         }
@@ -468,14 +497,14 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
                 Toast.makeText(BranchEditActivity.this,
                         "branch updated", Toast.LENGTH_SHORT).show();
-                BranchesFragment.mAdapter.objects = backEndFunc.getAllBranches();
+                BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
                 BranchesFragment.mAdapter.notifyDataSetChanged();
                 finish();
             }
             else
             {
                 Toast.makeText(BranchEditActivity.this,"new bramch added", Toast.LENGTH_SHORT).show();
-                BranchesFragment.mAdapter.objects= backEndFunc.getAllBranches();
+                BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
                 BranchesFragment.mAdapter.notifyDataSetChanged();
                 resetView();
                 branch=new Branch();
@@ -485,5 +514,125 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             }
             actionMode.finish();
         }
+    }
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(BranchEditActivity.this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                boolean result= Utility.checkPermission(BranchEditActivity.this);
+
+                if (items[item].equals("Take Photo")) {
+                    userChoosenTask ="Take Photo";
+                    if(result)
+                        cameraIntent();
+
+                } else if (items[item].equals("Choose from Library")) {
+                    userChoosenTask ="Choose from Library";
+                    if(result)
+                        galleryIntent();
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+    private void galleryIntent()
+    {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        //intent.setType("image/*");
+        //intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+    }
+
+    private void cameraIntent()
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        file=new File(Environment.getExternalStorageDirectory(),"file"+String.valueOf(System.currentTimeMillis())+".jpg");
+        uri=Uri.fromFile(file);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+        intent.putExtra("return-data",true);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE){
+                if(data!=null)
+                {
+                    uri=data.getData();
+                    CropImage();
+                }
+                //onSelectFromGalleryResult(data);
+            }
+            else if (requestCode == REQUEST_CAMERA){
+                CropImage();
+            }
+            else {
+                Bundle bundle=data.getExtras();
+                Bitmap bitmap=bundle.getParcelable("data");
+                imageView.setImageBitmap(bitmap);
+                imageSelected=true;
+                mBitmap=bitmap;
+            }
+            // onCaptureImageResult(data);
+        }
+    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        CropImage();
+
+
+
+
+        imageView.setImageBitmap(thumbnail);
+    }
+
+    private void CropImage() {
+        try {
+            CropIntent =new Intent("com.android.camera.action.CROP");
+            CropIntent.setDataAndType(uri,"image/*");
+            CropIntent.putExtra("crop",true);
+            CropIntent.putExtra("outputX",180);
+            CropIntent.putExtra("outputY",180);
+            CropIntent.putExtra("aspectX",1);
+            CropIntent.putExtra("aspectY",1);
+            CropIntent.putExtra("scaleUpIfNeeded",true);
+            CropIntent.putExtra("return-data",true);
+            startActivityForResult(CropIntent,2);
+
+
+
+        }catch (ActivityNotFoundException e)
+        {
+
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void onSelectFromGalleryResult(Intent data) {
+
+        Bitmap bm=null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        imageView.setImageBitmap(bm);
     }
 }

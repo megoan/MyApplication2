@@ -7,6 +7,7 @@ package com.example.shmuel.myapplication.model.backend;
 
 public class FactoryMethod {
     private static BackEndFunc backEndFunc=null;
+    private static BackEndFunc backEndFuncSQL=null;
 
     private FactoryMethod(DataSourceType dataSourceType) {
 
@@ -16,7 +17,11 @@ public class FactoryMethod {
         switch (dataSourceType){
             case DATA_INTERNET:
             {
-
+                if(backEndFuncSQL==null)
+                {
+                    backEndFuncSQL=new BackEndForSql();
+                }
+                return backEndFuncSQL;
             }
             case DATA_LIST:
             {

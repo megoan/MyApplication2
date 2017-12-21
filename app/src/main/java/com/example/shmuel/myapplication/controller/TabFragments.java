@@ -26,64 +26,14 @@ public class TabFragments {
 
     public static ClientTabFragment clientsTab;
 
-    private CarsTabFragment cars;
-    private CarModelsFragment carModels;
-    private BranchesFragment branches;
-    private ClientTabFragment clients;
 
     public TabFragments() {
-        if(carsTab!=null)
-        {
-            //cars=new CarsTabFragment();
-           // carsTab=cars;
-        }
-        else
-        {
-            carsTab=new CarsTabFragment();
-        }
-        if(carModelsTab!=null)
-        {
-            //carModels=new CarModelsFragment();
-           // carModelsTab=carModels;
-        }
-        else
-        {
-            carModelsTab=new CarModelsFragment();
-        }
-        if(branchesTab!=null)
-        {
-            //branches=new BranchesFragment();
-           // branchesTab=branches;
-        }
-        else {
-            branchesTab =new BranchesFragment();
-        }
-
-        if(clientsTab!=null)
-        {
-           // clients=new ClientTabFragment();
-           // clientsTab=clients;
-        }
-        else {
-            clientsTab =new ClientTabFragment();
+        if (carsTab == null) {
+            carsTab = new CarsTabFragment();
+            carModelsTab = new CarModelsFragment();
+            branchesTab = new BranchesFragment();
+            clientsTab = new ClientTabFragment();
         }
     }
 
-
-    public CarsTabFragment getCarFragment()
-    {
-       return cars;
-    }
-    public CarModelsFragment getCarModelFragment()
-    {
-        return carModels;
-    }
-    public BranchesFragment getBranchesFragment()
-    {
-        return branches;
-    }
-    public ClientTabFragment getClientsFragment()
-    {
-        return clients;
-    }
 }

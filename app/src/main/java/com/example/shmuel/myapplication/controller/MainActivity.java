@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public MainActivity() {
     }
 
-    /**
+       /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             listDataSource=new ListDataSource();
         }*/
 
-        activateFilters();
+       // activateFilters ();
 
         backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
         setContentView(R.layout.activity_main);
@@ -721,39 +721,45 @@ public class MainActivity extends AppCompatActivity {
     public void activateFilters()
     {
 
+
         //activate car filter
-        for (Car car:backEndFunc.getAllCars()
-                ) {
-            CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
-            carCompanySet.add(carModel.getCompanyName());
-        }
+        if (ListDataSource.carList.size()>0) {
+            for (Car car:ListDataSource.carList
+                    ) {
+                CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
+                carCompanySet.add(carModel.getCompanyName());
+            }
 
-        s = new LinkedHashSet<>(carCompanySet);
-        carCompanySet.clear();
-        carCompanySet.addAll(s);
+            s = new LinkedHashSet<>(carCompanySet);
+            carCompanySet.clear();
+            carCompanySet.addAll(s);
 
-        for (int i = 0; i < carCompanySet.size(); i++) {
-            carCom.put(carCompanySet.get(i),true);
+            for (int i = 0; i < carCompanySet.size(); i++) {
+                carCom.put(carCompanySet.get(i),true);
+            }
         }
 
         //activate cae model filter
-        for (CarModel carmodel:ListDataSource.carModelList
-                ) {
-            carModelCompanySet.add(carmodel.getCompanyName());
-        }
 
-        s = new LinkedHashSet<>(carModelCompanySet);
-        carModelCompanySet.clear();
-        carModelCompanySet.addAll(s);
+        if (ListDataSource.carModelList.size()>0) {
+            for (CarModel carmodel:ListDataSource.carModelList
+                    ) {
+                carModelCompanySet.add(carmodel.getCompanyName());
+            }
 
-        carModelCompanies=new String[carModelCompanySet.size()];
-        for (int i = 0; i < carModelCompanies.length; i++) {
-            carModelCompanies[i]=  carModelCompanySet.get(i);
+            s = new LinkedHashSet<>(carModelCompanySet);
+            carModelCompanySet.clear();
+            carModelCompanySet.addAll(s);
 
-        }
-        carModelCompaniesChecked=new boolean[carModelCompanies.length];
-        for (int i = 0; i < carModelCompaniesChecked.length; i++) {
-            carModelCompaniesChecked[i]=true;
+            carModelCompanies=new String[carModelCompanySet.size()];
+            for (int i = 0; i < carModelCompanies.length; i++) {
+                carModelCompanies[i]=  carModelCompanySet.get(i);
+
+            }
+            carModelCompaniesChecked=new boolean[carModelCompanies.length];
+            for (int i = 0; i < carModelCompaniesChecked.length; i++) {
+                carModelCompaniesChecked[i]=true;
+            }
         }
 
 

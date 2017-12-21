@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 
 /**
  * Created by shmuel on 28/11/2017.
@@ -13,6 +14,7 @@ import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 
 public class SplashActivity extends AppCompatActivity {
     ListDataSource listDataSource;
+    MySqlDataSource sqlDataSource;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,8 +25,12 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (ListDataSource.carList==null) {
+
+           /* if (ListDataSource.carList==null) {
                 listDataSource=new ListDataSource();
+            }*/
+            if (MySqlDataSource.carList==null) {
+                sqlDataSource=new MySqlDataSource();
             }
             return null;
         }

@@ -21,9 +21,13 @@ import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
+import com.example.shmuel.myapplication.model.entities.Client;
+
+import java.util.ArrayList;
 
 public class ClientActivity extends AppCompatActivity {
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
     int id;
     String name;
@@ -146,14 +150,9 @@ public class ClientActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             backEndFunc.deleteClient(id);
-
-
+            MySqlDataSource.clientList = backEndFunc.getAllClients();
             return null;
         }
 
@@ -161,7 +160,7 @@ public class ClientActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            ClientTabFragment.mAdapter.objects=backEndFunc.getAllClients();
+            ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
             ClientTabFragment.mAdapter.notifyDataSetChanged();
             TabFragments.clientsTab.updateView2();
             Toast.makeText(ClientActivity.this,

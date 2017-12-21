@@ -134,5 +134,9 @@ public class MyDate {
         }
         return "no month";
     }
+    public String saveDate()
+    {
+        return year+"~~"+month+"~~"+day;
+    }
 }
 

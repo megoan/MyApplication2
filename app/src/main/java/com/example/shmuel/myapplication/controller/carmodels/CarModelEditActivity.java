@@ -1,17 +1,29 @@
 package com.example.shmuel.myapplication.controller.carmodels;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,22 +34,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.Utility;
 import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.Transmission;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class CarModelEditActivity extends AppCompatActivity {
     ProgressDialog progDailog;
     public ActionMode actionMode;
     CarModel carModel=new CarModel();
-
+    String ret = "";
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private String userChoosenTask;
+    File file;
+    Uri uri;
+    Intent CropIntent;
+    boolean imageSelected=false;
+    Bitmap mBitmap;
     boolean update=false;
     private boolean inUse;
     private String imgUrl;
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     EditText companyNameText;
     EditText modelNameText;
     EditText modelIdText;
@@ -50,9 +77,12 @@ public class CarModelEditActivity extends AppCompatActivity {
     CheckBox acBox;
     ImageView imageView;
     ScrollView scrollView;
+    //byte[] byteArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_model_edit);
         carModel.setImgURL("@drawable/default_car_image");
@@ -73,6 +103,13 @@ public class CarModelEditActivity extends AppCompatActivity {
         acBox=findViewById(R.id.AC_display_textView);
         imageView=findViewById(R.id.Car_imageView);
 
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
+            }
+        });
+
         automaticRadio.setChecked(true);
         Intent intent =getIntent();
         String update1=intent.getStringExtra("update");
@@ -89,9 +126,21 @@ public class CarModelEditActivity extends AppCompatActivity {
             passengersText.setText(String.valueOf(intent.getIntExtra("passengers",0)));
             luggageText.setText(String.valueOf(intent.getIntExtra("luggage",0)));
             imgUrl=intent.getStringExtra("imgUrl");
-            int defaultImage = CarModelEditActivity.this.getResources().getIdentifier(imgUrl,null,CarModelEditActivity.this.getPackageName());
-            Drawable drawable= ContextCompat.getDrawable(CarModelEditActivity.this, defaultImage);
-            imageView.setImageDrawable(drawable);
+
+
+            if(imgUrl.equals("@drawable/default_car_image"))
+            {
+                int defaultImage = getResources().getIdentifier("@drawable/default_car_image",null,getApplicationContext().getPackageName());
+                Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
+                imageView.setImageDrawable(drawable);
+            }
+            else {
+                byte[] byteArray= Base64.decode(imgUrl,Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                imageView.setImageBitmap(bitmap);
+            }
+
+
             acBox.setChecked(intent.getBooleanExtra("ac",false));
             if(transmission==Transmission.AUTOMATIC)
             {
@@ -150,7 +199,15 @@ public class CarModelEditActivity extends AppCompatActivity {
                     int passengers= Integer.parseInt(passengersText.getText().toString());
                     int luggage= Integer.parseInt(luggageText.getText().toString());
                     boolean ac=acBox.isChecked();
-
+                     if(!imageSelected){
+                         inputWarningDialog("don't be shy and upload a picture!");return false;}
+                         else {
+                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                         mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                         //carModel.setByteArray(stream.toByteArray());
+                         byte[] byteArray=stream.toByteArray();
+                         carModel.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
+                     }
 
 
                     if(id1.equals("")|| companyName.equals("")||modelName.equals("")||engine==0||passengers==0|| luggage==0)
@@ -175,9 +232,11 @@ public class CarModelEditActivity extends AppCompatActivity {
                     carModel.setTransmission(mTransmission);
                     carModel.setLuggage(luggage);
                     carModel.setInUse(inUse);
-                    if (imgUrl!=null) {
+                    /*if (imgUrl!=null) {
                         carModel.setImgURL(imgUrl);
-                    }
+                    }*/
+
+
 
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(CarModelEditActivity.this);
@@ -283,6 +342,10 @@ public class CarModelEditActivity extends AppCompatActivity {
         luggageText.setText("");
         acBox.setChecked(false);
         engineText.setText("");
+        int defaultImage = CarModelEditActivity.this.getResources().getIdentifier("@drawable/default_car_image",null,CarModelEditActivity.this.getPackageName());
+        Drawable drawable= ContextCompat.getDrawable(CarModelEditActivity.this, defaultImage);
+        imageView.setImageDrawable(drawable);
+
     }
     int tryParseInt(String value) {
         try {
@@ -323,10 +386,12 @@ public class CarModelEditActivity extends AppCompatActivity {
             if (update)
             {
                 backEndFunc.updateCarModel(carModel);
+                MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
             }
             else
             {
                 backEndFunc.addCarModel(carModel);
+                MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
 
             }
             return null;
@@ -342,7 +407,7 @@ public class CarModelEditActivity extends AppCompatActivity {
                 Toast.makeText(CarModelEditActivity.this,
                         "car model updated", Toast.LENGTH_SHORT).show();
 
-                CarModelsFragment.mAdapter.objects= backEndFunc.getAllCarModels();
+                CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
                 CarModelsFragment.mAdapter.notifyDataSetChanged();
                 finish();
             }
@@ -352,7 +417,7 @@ public class CarModelEditActivity extends AppCompatActivity {
                         "new car model added", Toast.LENGTH_SHORT).show();
 
 
-                CarModelsFragment.mAdapter.objects= backEndFunc.getAllCarModels();
+                CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
                 CarModelsFragment.mAdapter.notifyDataSetChanged();
                 resetView();
                 carModel=new CarModel();
@@ -360,5 +425,154 @@ public class CarModelEditActivity extends AppCompatActivity {
                 scrollView.fullScroll(ScrollView.FOCUS_UP);
             }
         }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Utility.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(userChoosenTask.equals("Take Photo"))
+                        cameraIntent();
+                    else if(userChoosenTask.equals("Choose from Library"))
+                        galleryIntent();
+                } else {
+                    //code for deny
+                }
+                break;
+        }
+    }
+
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(CarModelEditActivity .this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                boolean result=Utility.checkPermission(CarModelEditActivity  .this);
+
+                if (items[item].equals("Take Photo")) {
+                    userChoosenTask ="Take Photo";
+                    if(result)
+                        cameraIntent();
+
+                } else if (items[item].equals("Choose from Library")) {
+                    userChoosenTask ="Choose from Library";
+                    if(result)
+                        galleryIntent();
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+    private void galleryIntent()
+    {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        //intent.setType("image/*");
+        //intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+    }
+
+    private void cameraIntent()
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        file=new File(Environment.getExternalStorageDirectory(),"file"+String.valueOf(System.currentTimeMillis())+".jpg");
+        uri=Uri.fromFile(file);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+        intent.putExtra("return-data",true);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE){
+                if(data!=null)
+                {
+                    uri=data.getData();
+                    CropImage();
+                }
+                //onSelectFromGalleryResult(data);
+            }
+            else if (requestCode == REQUEST_CAMERA){
+                CropImage();
+            }
+            else {
+                Bundle bundle=data.getExtras();
+                Bitmap bitmap=bundle.getParcelable("data");
+                imageView.setImageBitmap(bitmap);
+                imageSelected=true;
+                mBitmap=bitmap;
+            }
+            // onCaptureImageResult(data);
+        }
+    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        CropImage();
+
+
+        /*File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        imageView.setImageBitmap(thumbnail);
+    }
+
+    private void CropImage() {
+        try {
+            CropIntent =new Intent("com.android.camera.action.CROP");
+            CropIntent.setDataAndType(uri,"image/*");
+            CropIntent.putExtra("crop",true);
+            CropIntent.putExtra("outputX",180);
+            CropIntent.putExtra("outputY",180);
+            CropIntent.putExtra("aspectX",1);
+            CropIntent.putExtra("aspectY",1);
+            CropIntent.putExtra("scaleUpIfNeeded",true);
+            CropIntent.putExtra("return-data",true);
+            startActivityForResult(CropIntent,2);
+
+
+
+        }catch (ActivityNotFoundException e)
+        {
+
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void onSelectFromGalleryResult(Intent data) {
+
+        Bitmap bm=null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        imageView.setImageBitmap(bm);
     }
 }

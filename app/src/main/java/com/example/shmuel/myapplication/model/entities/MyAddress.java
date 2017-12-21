@@ -69,7 +69,7 @@ public class MyAddress {
 
     @Override
     public String toString() {
-        return addressName+"~~"+country+"~~"+latitude+" "+longitude;
+        return addressName+"~~"+country+"~~"+latitude+"~~"+longitude;
     }
 
     public String getAddressName() {

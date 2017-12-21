@@ -2,6 +2,8 @@ package com.example.shmuel.myapplication.model.entities;
 
 import android.content.ContentValues;
 
+import java.util.ArrayList;
+
 
 /**
  * Created by fotij on 03/12/2017.
@@ -28,6 +30,7 @@ public class TakeNGoConst {
         public static final String AC = "ac";
         public static final String IMAGEURL = "imgURL";
         public static final String INUSE = "inUse";
+        public  static final String BYTEARRAY="byteArray";
     }
 
     public static class BranchConst {
@@ -39,6 +42,7 @@ public class TakeNGoConst {
         public static final String ESTABLISHEDDATE = "establishedDate";
         public static final String INUSE = "inUse";
         public static final String CARIDSLIST = "carIdsList";
+
     }
 
     public static class CarConst {
@@ -53,6 +57,38 @@ public class TakeNGoConst {
         public static final String IMAGEURL = "imgURL";
         public static final String YEAR = "year";
         public static final String INUSE = "inUse";
+    }
+
+    public static ContentValues CarToContentValues(Car car) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CarConst.CARNUM, car.getCarNum());
+        contentValues.put(CarConst.BRANCHNUM, car.getBranchNum());
+        contentValues.put(CarConst.CARMODEL, car.getCarModel());
+        contentValues.put(CarConst.MILEAGE, car.getMileage());
+        contentValues.put(CarConst.RATING, car.getRating());
+        contentValues.put(CarConst.NUMOFRATINGS, car.getNumOfRatings());
+        contentValues.put(CarConst.ONEDAYCOST, car.getOneDayCost());
+        contentValues.put(CarConst.ONEKILOMETERCOST, car.getOneKilometerCost());
+        contentValues.put(CarConst.IMAGEURL, car.getImgURL());
+        contentValues.put(CarConst.YEAR, car.getYear());
+        contentValues.put(CarConst.INUSE, car.isInUse());
+        return contentValues;
+    }
+
+    public static Car ContentValuesToCar(ContentValues contentValues) {
+        Car car = new Car();
+        car.setCarNum(contentValues.getAsInteger(CarConst.CARNUM));
+        car.setBranchNum(contentValues.getAsInteger(CarConst.BRANCHNUM));
+        car.setCarModel(contentValues.getAsInteger(CarConst.CARMODEL));
+        car.setMileage(contentValues.getAsDouble(CarConst.MILEAGE));
+        car.setRating(contentValues.getAsDouble(CarConst.RATING));
+        car.setNumOfRatings((contentValues.getAsInteger(CarConst.NUMOFRATINGS)));
+        car.setOneDayCost((contentValues.getAsDouble(CarConst.ONEDAYCOST)));
+        car.setOneKilometerCost((contentValues.getAsDouble(CarConst.ONEKILOMETERCOST)));
+        car.setImgURL((contentValues.getAsString(CarConst.IMAGEURL)));
+        car.setYear((contentValues.getAsInteger(CarConst.YEAR)));
+        car.setInUse((contentValues.getAsBoolean(CarConst.INUSE)));
+        return car;
     }
 
     public static ContentValues ClientToContentValues(Client client) {
@@ -89,6 +125,7 @@ public class TakeNGoConst {
         contentValues.put(CarModelConst.AC, carModel.isAc());
         contentValues.put(CarModelConst.IMAGEURL, carModel.getImgURL());
         contentValues.put(CarModelConst.INUSE, carModel.isInUse());
+
         return contentValues;
     }
 
@@ -107,10 +144,6 @@ public class TakeNGoConst {
         return carModel;
     }
 
-
-
-
-
     public static ContentValues BranchToContentValues(Branch branch) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(BranchConst.ID, branch.getBranchNum());
@@ -118,35 +151,24 @@ public class TakeNGoConst {
         contentValues.put(BranchConst.PARKINGSPOTSNUM, branch.getParkingSpotsNum());
         contentValues.put(BranchConst.IMAGEURL, branch.getImgURL());
         contentValues.put(BranchConst.BRANCHREVENUE, branch.getBranchRevenue());
-        contentValues.put(BranchConst.ESTABLISHEDDATE, branch.getEstablishedDate().toString());
+        contentValues.put(BranchConst.ESTABLISHEDDATE, branch.getEstablishedDate().saveDate());
         contentValues.put(BranchConst.INUSE, branch.isInUse());
-        contentValues.put(BranchConst.CARIDSLIST, branch.getCarIds().toString());
+        contentValues.put(BranchConst.CARIDSLIST, branch.convertCarIDtoString());
         return contentValues;
     }
 
     public static Branch ContentValuesToBranch(ContentValues contentValues) {
         Branch branch = new Branch();
         branch.setBranchNum(contentValues.getAsInteger(BranchConst.ID));
-        //branch.setAddress(contentValues.getAsString(BranchConst.NAME));
+        branch.setMyAddress(getAddressFromString(contentValues.getAsString(BranchConst.NAME)));
         branch.setParkingSpotsNum(contentValues.getAsInteger(BranchConst.PARKINGSPOTSNUM));
         branch.setImgURL(contentValues.getAsString(BranchConst.IMAGEURL));
         branch.setBranchRevenue(contentValues.getAsDouble(BranchConst.BRANCHREVENUE));
-       // branch.setEstablishedDate((contentValues.getAsString(BranchConst.ESTABLISHEDDATE)));
+        branch.setEstablishedDate(getDateFromString(contentValues.getAsString(BranchConst.ESTABLISHEDDATE)));
         branch.setInUse(contentValues.getAsBoolean(BranchConst.INUSE));
-       // branch.setCarIds((contentValues.getAsString(BranchConst.CARIDSLIST)));
+        branch.setCarIds(getCarsFromString((contentValues.getAsString(BranchConst.CARIDSLIST))));
         return branch;
     }
-
-
-
-
-
-
-
-
-
-
-
 
     public static ContentValues ClientIdToContentValues(int clientID) {
         ContentValues contentValues = new ContentValues();
@@ -165,9 +187,40 @@ public class TakeNGoConst {
         contentValues.put(CarConst.CARNUM, carID);
         return contentValues;
     }
+
     public static ContentValues BranchIdToContentValues(int branchID) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(BranchConst.ID, branchID);
         return contentValues;
+    }
+
+    public static MyAddress getAddressFromString(String address)
+    {
+        MyAddress myAddress=new MyAddress();
+        String[] list=address.split("~~");
+        myAddress.setAddressName(list[0]);
+        myAddress.setCountry(list[1]);
+        myAddress.setLatitude(Double.parseDouble(list[2]));
+        myAddress.setLongitude(Double.parseDouble(list[3]));
+        return myAddress;
+    }
+    public static MyDate getDateFromString(String date)
+    {
+        MyDate myDate=new MyDate();
+        String[] list=date.split("~~");
+        myDate.setYear(Integer.parseInt(list[0]));
+        myDate.setMonth(list[1]);
+        myDate.setDay(Integer.parseInt(list[2]));
+        return myDate;
+    }
+    public static ArrayList<Integer> getCarsFromString(String cars)
+    {
+        ArrayList<Integer>carids=new ArrayList<>();
+        String[] list=cars.split("~~");
+        for (int i=0;i<list.length;i++)
+        {
+            carids.add(Integer.valueOf(list[i]));
+        }
+        return carids;
     }
 }

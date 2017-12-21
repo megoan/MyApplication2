@@ -2,6 +2,7 @@ package com.example.shmuel.myapplication.model.backend;
 
 import android.content.ContentValues;
 
+import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.datasource.PHPtools;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
@@ -22,7 +23,6 @@ import java.util.List;
 
 public class BackEndForSql implements BackEndFunc {
     private static final String WEB_URL = "http://ymehrzad.vlab.jct.ac.il";
-
 
     @Override
     public boolean addClient(Client client) {
@@ -58,11 +58,28 @@ public class BackEndForSql implements BackEndFunc {
 
     @Override
     public boolean addCar(Car car) {
+        ContentValues contentValues = TakeNGoConst.CarToContentValues(car);
+        try {
+            String result = PHPtools.POST(WEB_URL + "/addnewcar.php", contentValues);
+            long id = Long.parseLong(result);
+            if (id > 0)
+                return true;
+        } catch (IOException e) {
+            //TODO implement the exception!!!
+            //printLog("addStudent Exception:\n" + e);
+            return false;
+        }
         return false;
     }
 
-    @Override
+    @Override//todo check why this method returns falls and/or the value of updatecarmodel.
     public boolean addCar(Car car, int branchID) {
+        if (addCar(car)) {
+            addCarToBranch(car.getCarNum(), car.getBranchNum());
+            CarModel carModel = getCarModel(car.getCarModel());
+            carModel.setInUse(true);
+            updateCarModel(carModel);
+        }
         return false;
     }
 
@@ -87,8 +104,7 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.ClientToContentValues(client);
         try {
             String result = PHPtools.POST(WEB_URL + "/updateclient.php", contentValues);
-            long id = Long.parseLong(result);
-            if (id > 0)
+            if (result.compareTo("DONE") ==0)
                 return true;
         } catch (IOException e) {
             //TODO implement the exception!!!
@@ -103,8 +119,7 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.CarModelToContentValues(carModel);
         try {
             String result = PHPtools.POST(WEB_URL + "/updatecarmodel.php", contentValues);
-            long id = Long.parseLong(result);
-            if (id > 0)
+            if (result.compareTo("DONE") ==0)
                 return true;
         } catch (IOException e) {
             //TODO implement the exception!!!
@@ -115,12 +130,78 @@ public class BackEndForSql implements BackEndFunc {
     }
 
     @Override
-    public boolean updateCar(Car car) {
-        return false;
+    public void updateCar(Car car, int originalCarModel) {
+        updateCar(car);
+        CarModel carModel = getCarModel(car.getCarModel());
+        if (carModel.isInUse() == false) {
+            carModel.setInUse(true);
+            updateCarModel(carModel);
+        }
+        CarModel originalCarModelTmp = getCarModel(originalCarModel);
+        ArrayList<Car> carArrayList = getAllCars();
+        for (Car car1 : carArrayList) {
+            if (car1.getCarModel() == carModel.getCarModelCode()) {
+                return;
+            }
+        }
+        carModel.setInUse(false);
+        updateCarModel(originalCarModelTmp);
     }
 
     @Override
-    public void updateCar(Car car, int originalCarModel) {
+    public boolean updateCar(Car car) {
+        boolean sameBranch = false;
+        ArrayList<Branch> branchArrayList = getAllBranches();
+        for (Branch branch : branchArrayList) {
+            if (car.getBranchNum() == branch.getBranchNum()) {
+                for (int i = 0; i < branch.getCarIds().size(); i++) {
+                    if (car.getCarNum() == branch.getCarIds().get(i)) {
+                        sameBranch = true;
+                        break;
+                    }
+                }
+                if (sameBranch == true) break;
+                else {
+                    removeCarFromBranch(car.getCarNum());
+                    addCarToBranch(car.getCarNum(), branch.getBranchNum());
+                }
+            }
+        }
+
+        ContentValues contentValues = TakeNGoConst.CarToContentValues(car);
+        try {
+            String result = PHPtools.POST(WEB_URL + "/updatecar.php", contentValues);
+            if (result.compareTo("DONE") ==0)
+                return true;
+        } catch (IOException e) {
+            //TODO implement the exception!!!
+            //printLog("addStudent Exception:\n" + e);
+            return false;
+        }
+        return false;
+    }
+//TODO there is no need for this function.
+    private void removeCarFromBranch(int carNum) {
+        boolean remove = false;
+        Branch branch1 = null;
+        ArrayList<Branch> branchArrayList = getAllBranches();
+        for (Branch branch : branchArrayList) {
+            branch1 = branch;
+            for (int i = 0; i < branch.getCarIds().size(); i++) {
+                if (carNum == branch.getCarIds().get(i)) {
+                    remove = true;
+                    break;
+                }
+            }
+            if (remove == true) break;
+        }
+        if (remove == true) {
+            branch1.getCarIds().remove(new Integer(carNum));
+            if (branch1.getCarIds().size() == 0) {
+                branch1.setInUse(false);
+                updateBranch(branch1);
+            }
+        }
 
     }
 
@@ -129,8 +210,7 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.BranchToContentValues(branch);
         try {
             String result = PHPtools.POST(WEB_URL + "/updatebranch.php", contentValues);
-            long id = Long.parseLong(result);
-            if (id > 0)
+            if (result.compareTo("DONE") ==0)
                 return true;
         } catch (IOException e) {
             //TODO implement the exception!!!
@@ -145,8 +225,7 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.ClientIdToContentValues(clientID);
         try {
             String result = PHPtools.POST(WEB_URL + "/deleteclient.php", contentValues);
-            long id = Long.parseLong(result);
-            if (id > 0)
+            if (result.compareTo("DONE") ==0)
                 return true;
         } catch (IOException e) {
             //TODO implement the exception!!!
@@ -161,8 +240,7 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.CarModelIdToContentValues(carModelID);
         try {
             String result = PHPtools.POST(WEB_URL + "/deletecarmodel.php", contentValues);
-            long id = Long.parseLong(result);
-            if (id > 0)
+            if (result.compareTo("DONE") ==0)
                 return true;
         } catch (IOException e) {
             //TODO implement the exception!!!
@@ -177,8 +255,7 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.CarIdToContentValues(carID);
         try {
             String result = PHPtools.POST(WEB_URL + "/deletecar.php", contentValues);
-            long id = Long.parseLong(result);
-            if (id > 0)
+            if (result.compareTo("DONE") ==0)
                 return true;
         } catch (IOException e) {
             //TODO implement the exception!!!
@@ -193,8 +270,7 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.BranchIdToContentValues(branchID);
         try {
             String result = PHPtools.POST(WEB_URL + "/deletebranch.php", contentValues);
-            long id = Long.parseLong(result);
-            if (id > 0)
+            if (result.compareTo("DONE") ==0)
                 return true;
         } catch (IOException e) {
             //TODO implement the exception!!!
@@ -208,8 +284,11 @@ public class BackEndForSql implements BackEndFunc {
     public Client getClient(int id) {
         List<Client> result = new ArrayList<Client>();
         try {
-            String str = PHPtools.GET(WEB_URL + "/findoneclient.php");
-            JSONArray array = new JSONObject(str).getJSONArray("Clients");
+            ContentValues contentValuesid = TakeNGoConst.ClientIdToContentValues(id);
+            String str = PHPtools.POST(WEB_URL + "/findoneclient.php", contentValuesid);
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
+            JSONArray array = new JSONObject(str).getJSONArray("Client");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
                 ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
@@ -219,15 +298,18 @@ public class BackEndForSql implements BackEndFunc {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  result.get(0);
+        return result.get(0);
     }
 
     @Override
     public CarModel getCarModel(int carModelNumber) {
         List<CarModel> result = new ArrayList<CarModel>();
         try {
-            String str = PHPtools.GET(WEB_URL + "/findonecarmodel.php");
-            JSONArray array = new JSONObject(str).getJSONArray("CarModels");
+            ContentValues contentValuesid = TakeNGoConst.CarModelIdToContentValues(carModelNumber);
+            String str = PHPtools.POST(WEB_URL + "/findonecarmodel.php", contentValuesid);
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
+            JSONArray array = new JSONObject(str).getJSONArray("CarModel");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
                 ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
@@ -242,14 +324,34 @@ public class BackEndForSql implements BackEndFunc {
 
     @Override
     public Car getCar(int carNumber) {
-        return null;
+        List<Car> result = new ArrayList<Car>();
+        try {
+            ContentValues contentValuesid = TakeNGoConst.CarIdToContentValues(carNumber);
+            String str = PHPtools.POST(WEB_URL + "/findonecar.php", contentValuesid);
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
+            JSONArray array = new JSONObject(str).getJSONArray("Car");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
+                Car car = TakeNGoConst.ContentValuesToCar(contentValues);
+                result.add(car);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result.get(0);
     }
 
     @Override
     public Branch getBranch(int branchNumber) {
         List<Branch> result = new ArrayList<Branch>();
         try {
-            String str = PHPtools.GET(WEB_URL + "/findonebranch.php");
+            ContentValues contentValuesid = TakeNGoConst.BranchIdToContentValues(branchNumber);
+            String str = PHPtools.POST(WEB_URL + "/findonebranch.php", contentValuesid);
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
             JSONArray array = new JSONObject(str).getJSONArray("Branch");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
@@ -269,6 +371,8 @@ public class BackEndForSql implements BackEndFunc {
         List<CarModel> result = new ArrayList<CarModel>();
         try {
             String str = PHPtools.GET(WEB_URL + "/findallcarmodels.php");
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
             JSONArray array = new JSONObject(str).getJSONArray("CarModels");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
@@ -287,6 +391,8 @@ public class BackEndForSql implements BackEndFunc {
         List<Client> result = new ArrayList<Client>();
         try {
             String str = PHPtools.GET(WEB_URL + "/findallclients.php");
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
             JSONArray array = new JSONObject(str).getJSONArray("Clients");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
@@ -297,6 +403,7 @@ public class BackEndForSql implements BackEndFunc {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return (ArrayList<Client>) result;
     }
 
@@ -305,6 +412,8 @@ public class BackEndForSql implements BackEndFunc {
         List<Branch> result = new ArrayList<Branch>();
         try {
             String str = PHPtools.GET(WEB_URL + "/findallbranches.php");
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
             JSONArray array = new JSONObject(str).getJSONArray("Branches");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
@@ -320,7 +429,22 @@ public class BackEndForSql implements BackEndFunc {
 
     @Override
     public ArrayList<Car> getAllCars() {
-        return null;
+        List<Car> result = new ArrayList<Car>();
+        try {
+            String str = PHPtools.GET(WEB_URL + "/findallcars.php");
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
+            JSONArray array = new JSONObject(str).getJSONArray("Cars");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
+                Car car = TakeNGoConst.ContentValuesToCar(contentValues);
+                result.add(car);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (ArrayList<Car>) result;
     }
 
     @Override
@@ -341,7 +465,7 @@ public class BackEndForSql implements BackEndFunc {
             branch1.setInUse(true);
         }
         branch1.getCarIds().add(new Integer(carID));
-        return updateBranch(branch1) ;
+        return updateBranch(branch1);
     }
 
 }

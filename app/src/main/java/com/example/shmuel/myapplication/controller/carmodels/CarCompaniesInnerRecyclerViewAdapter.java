@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,6 +15,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,22 +47,22 @@ import java.util.ArrayList;
  */
 
 public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<CarCompaniesInnerRecyclerViewAdapter.ViewHolder> implements Filterable {
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFunc = FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     public ArrayList<CarModel> objects;
     private Context mContext;
     public ActionMode actionMode;
-    private int selectedPosition=-1;
+    private int selectedPosition = -1;
     private MyFilter myFilter;
     private ProgressDialog progDailog;
+    CarModel carModel;
 
 
     public CarCompaniesInnerRecyclerViewAdapter(ArrayList<CarModel> objects, Context context) {
-        this.objects=objects;
-        this.mContext=context;
+        this.objects = objects;
+        this.mContext = context;
     }
 
-    public void removeitem(int position)
-    {
+    public void removeitem(int position) {
         objects.remove(position);
     }
 
@@ -71,23 +74,20 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     }
 
     @Override
-    public void onBindViewHolder(CarCompaniesInnerRecyclerViewAdapter.ViewHolder holder,final int position) {
-        CarModel carModel = objects.get(position);
+    public void onBindViewHolder(CarCompaniesInnerRecyclerViewAdapter.ViewHolder holder, final int position) {
+        carModel = objects.get(position);
 
 
-        if(selectedPosition==position){
-            if(((MainActivity)mContext).car_model_is_in_action_mode==true){
+        if (selectedPosition == position) {
+            if (((MainActivity) mContext).car_model_is_in_action_mode == true) {
                 holder.itemView.setBackgroundColor(Color.parseColor("#a3a3a3"));
-                if(!carModel.isInUse())
-                {
+                if (!carModel.isInUse()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use, mContext.getTheme()));
                     } else {
                         holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use));
                     }
-                }
-                else
-                {
+                } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_in_use, mContext.getTheme()));
                     } else {
@@ -95,20 +95,15 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
-            if(!carModel.isInUse())
-            {
+            if (!carModel.isInUse()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use, mContext.getTheme()));
                 } else {
                     holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use));
                 }
-            }
-            else
-            {
+            } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_in_use, mContext.getTheme()));
                 } else {
@@ -119,11 +114,11 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                MyActionModeCallbackCarModel callback=new MyActionModeCallbackCarModel();
-                actionMode=((Activity)mContext).startActionMode(callback);
+                MyActionModeCallbackCarModel callback = new MyActionModeCallbackCarModel();
+                actionMode = ((Activity) mContext).startActionMode(callback);
                 actionMode.setTitle("delete car model");
-                selectedPosition=position;
-                ((MainActivity)mContext).car_model_is_in_action_mode=true;
+                selectedPosition = position;
+                ((MainActivity) mContext).car_model_is_in_action_mode = true;
                 notifyDataSetChanged();
                 return true;
             }
@@ -132,80 +127,83 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             @Override
             public void onClick(View v) {
                 notifyItemChanged(selectedPosition);
-                if(((MainActivity)mContext).car_model_is_in_action_mode==false){
-                    Intent intent=new Intent(mContext,CarModelActivity.class);
-                    CarModel carModel=objects.get(position);
-                    intent.putExtra("companyName",carModel.getCompanyName());
-                    intent.putExtra("modelName",carModel.getCarModelName());
-                    intent.putExtra("id",carModel.getCarModelCode());
-                    intent.putExtra("engine",carModel.getEngineDisplacement());
-                    intent.putExtra("transmission",carModel.getTransmission());
-                    intent.putExtra("passengers",carModel.getPassengers());
-                    intent.putExtra("luggage",carModel.getLuggage());
-                    intent.putExtra("ac",carModel.isAc());
-                    intent.putExtra("imgUrl",carModel.getImgURL());
-                    intent.putExtra("inUse",carModel.isInUse());
-                    intent.putExtra("position",position);
+                if (((MainActivity) mContext).car_model_is_in_action_mode == false) {
+                    Intent intent = new Intent(mContext, CarModelActivity.class);
+                    //CarModel carModel = objects.get(position);
+                    intent.putExtra("companyName", carModel.getCompanyName());
+                    intent.putExtra("modelName", carModel.getCarModelName());
+                    intent.putExtra("id", carModel.getCarModelCode());
+                    intent.putExtra("engine", carModel.getEngineDisplacement());
+                    intent.putExtra("transmission", carModel.getTransmission());
+                    intent.putExtra("passengers", carModel.getPassengers());
+                    intent.putExtra("luggage", carModel.getLuggage());
+                    intent.putExtra("ac", carModel.isAc());
+                    intent.putExtra("imgUrl", carModel.getImgURL());
+                    intent.putExtra("inUse", carModel.isInUse());
+                    intent.putExtra("position", position);
 
-                    ((Activity)mContext).startActivity(intent);
+
+                    ((Activity) mContext).startActivity(intent);
                 }
-                if (actionMode!=null) {
+                if (actionMode != null) {
                     actionMode.finish();
                 }
-                selectedPosition=-1;
+                selectedPosition = -1;
             }
         });
 
 
-        int defaultImage = mContext.getResources().getIdentifier(carModel.getImgURL(),null,mContext.getPackageName());
-        Drawable drawable= ContextCompat.getDrawable(mContext, defaultImage);
+
+        if (carModel.getImgURL().equals("@drawable/default_car_image")) {
+            int defaultImage = mContext.getResources().getIdentifier("@drawable/default_car_image", null, mContext.getPackageName());
+            Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
+            holder.imageView.setImageDrawable(drawable);
+        } else {
+            byte[] imageBytes= Base64.decode(carModel.getImgURL(),Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            holder.imageView.setImageBitmap(bitmap);
+        }
+
+
         holder.carModel.setText(carModel.getCarModelName());
         holder.companyName.setText(carModel.getCompanyName());
-        holder.imageView.setImageDrawable(drawable);
-        holder.passengers.setText("+"+String.valueOf(carModel.getPassengers()));
-        holder.luggage.setText("+"+String.valueOf(carModel.getLuggage()));
 
-        if(!carModel.isInUse())
-        {
+        holder.passengers.setText("+" + String.valueOf(carModel.getPassengers()));
+        holder.luggage.setText("+" + String.valueOf(carModel.getLuggage()));
+
+        if (!carModel.isInUse()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use, mContext.getTheme()));
             } else {
                 holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_not_in_use));
             }
-        }
-        else
-        {
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_in_use, mContext.getTheme()));
             } else {
                 holder.inUse.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_in_use));
             }
         }
-        if(carModel.getTransmission()== Transmission.MANUAL)
-        {
+        if (carModel.getTransmission() == Transmission.MANUAL) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.auto.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_manual, mContext.getTheme()));
             } else {
                 holder.auto.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_manual));
             }
-        }
-        else
-        {
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.auto.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_auto, mContext.getTheme()));
             } else {
                 holder.auto.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_auto));
             }
         }
-        if(carModel.isAc()==false)
-        {
+        if (carModel.isAc() == false) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.ac.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
             } else {
                 holder.ac.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
             }
-        }
-        else {
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.ac.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_ac, mContext.getTheme()));
             } else {
@@ -215,7 +213,6 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     }
 
 
-
     @Override
     public int getItemCount() {
         return objects.size();
@@ -223,7 +220,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
 
     @Override
     public Filter getFilter() {
-        if(myFilter==null)myFilter=new MyFilter();
+        if (myFilter == null) myFilter = new MyFilter();
         return myFilter;
     }
 
@@ -238,25 +235,24 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         ImageButton inUse;
 
 
-
         public ViewHolder(View itemView) {
             super(itemView);
-            companyName=(TextView)itemView.findViewById(R.id.carModelCardCompany);
-            carModel=(TextView)itemView.findViewById(R.id.carModelCardModelName);
-            imageView=(ImageView)itemView.findViewById(R.id.carModelCardImage);
-            passengers=(TextView)itemView.findViewById(R.id.badge_notification_1);
-            luggage=(TextView)itemView.findViewById(R.id.badge_notification_2);
-            ac=(ImageButton)itemView.findViewById(R.id.carModelCardAc);
-            auto=(ImageButton)itemView.findViewById(R.id.carModelCardAuto);
-            inUse=(ImageButton)itemView.findViewById(R.id.carModelCardInUseButton);
+            companyName = (TextView) itemView.findViewById(R.id.carModelCardCompany);
+            carModel = (TextView) itemView.findViewById(R.id.carModelCardModelName);
+            imageView = (ImageView) itemView.findViewById(R.id.carModelCardImage);
+            passengers = (TextView) itemView.findViewById(R.id.badge_notification_1);
+            luggage = (TextView) itemView.findViewById(R.id.badge_notification_2);
+            ac = (ImageButton) itemView.findViewById(R.id.carModelCardAc);
+            auto = (ImageButton) itemView.findViewById(R.id.carModelCardAuto);
+            inUse = (ImageButton) itemView.findViewById(R.id.carModelCardInUseButton);
         }
     }
 
-    public class MyActionModeCallbackCarModel implements ActionMode.Callback{
+    public class MyActionModeCallbackCarModel implements ActionMode.Callback {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.context,menu);
+            mode.getMenuInflater().inflate(R.menu.context, menu);
             return true;
         }
 
@@ -267,16 +263,13 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId())
-            {
-                case R.id.delete_item:{
-                    if(selectedPosition>-1 && objects.get(selectedPosition).isInUse())
-                    {
+            switch (item.getItemId()) {
+                case R.id.delete_item: {
+                    if (selectedPosition > -1 && objects.get(selectedPosition).isInUse()) {
                         Toast.makeText(mContext,
                                 "cannot delete car model, car model in use", Toast.LENGTH_SHORT).show();
                         return false;
-                    }
-                   else{
+                    } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
                         builder.setTitle("Delete Car Model");
@@ -321,32 +314,31 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         }
 
 
-
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            selectedPosition=-1;
+            selectedPosition = -1;
             notifyItemChanged(selectedPosition);
-            ((MainActivity)mContext).car_model_is_in_action_mode=false;
+            ((MainActivity) mContext).car_model_is_in_action_mode = false;
             notifyDataSetChanged();
         }
 
     }
+
     private class MyFilter extends Filter {
         FilterResults results;
+
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             results = new FilterResults();
             if (charSequence == null || charSequence.length() == 0) {
                 results.values = ListDataSource.carModelList;
                 results.count = ListDataSource.carModelList.size();
-            }
-            else
-            {
+            } else {
                 ArrayList<CarModel> filteredCars = new ArrayList<CarModel>();
                 for (CarModel carModel : backEndFunc.getAllCarModels()) {
 
-                    String s=(carModel.getCompanyName()+" "+carModel.getCarModelName());
-                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains(carModel.getCompanyName().toLowerCase())) {
+                    String s = (carModel.getCompanyName() + " " + carModel.getCarModelName());
+                    if (s.contains(charSequence.toString().toLowerCase()) || charSequence.toString().toLowerCase().contains(carModel.getCompanyName().toLowerCase())) {
                         // if `contains` == true then add it
                         // to our filtered list
                         filteredCars.add(carModel);
@@ -360,13 +352,13 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            objects=new ArrayList<CarModel>((ArrayList<CarModel>)results.values);
+            objects = new ArrayList<CarModel>((ArrayList<CarModel>) results.values);
 
             notifyDataSetChanged();
         }
     }
 
-    public class BackGroundDeleteCarModel extends AsyncTask<Void,Void,Void> {
+    public class BackGroundDeleteCarModel extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -386,10 +378,10 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            CarModel carModel=objects.get(selectedPosition);
+            CarModel carModel = objects.get(selectedPosition);
             backEndFunc.deleteCarModel(carModel.getCarModelCode());
-            int objectsLengh=objects.size();
-            if (objectsLengh==objects.size()) {
+            int objectsLengh = objects.size();
+            if (objectsLengh == objects.size()) {
                 objects.remove(selectedPosition);
             }
 
@@ -400,8 +392,8 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            int i=1;
-            selectedPosition=-1;
+            int i = 1;
+            selectedPosition = -1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
 

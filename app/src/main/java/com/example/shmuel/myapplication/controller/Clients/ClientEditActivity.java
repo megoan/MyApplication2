@@ -19,14 +19,16 @@ import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.Client;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ClientEditActivity extends AppCompatActivity {
     Client client=new Client();
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
     boolean update=false;
     EditText nameclient;
@@ -244,21 +246,16 @@ public class ClientEditActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             if (update)
             {
                 backEndFunc.updateClient(client);
-
+                MySqlDataSource.clientList = backEndFunc.getAllClients();
 
             }
             else
             {
                 backEndFunc.addClient(client);
-
+                MySqlDataSource.clientList = backEndFunc.getAllClients();
 
 
             }
@@ -275,8 +272,7 @@ public class ClientEditActivity extends AppCompatActivity {
 
                 Toast.makeText(ClientEditActivity.this,
                         "client updated", Toast.LENGTH_SHORT).show();
-
-                ClientTabFragment.mAdapter.objects= backEndFunc.getAllClients();
+                ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
                 ClientTabFragment.mAdapter.notifyDataSetChanged();
                 finish();
             }
@@ -286,7 +282,7 @@ public class ClientEditActivity extends AppCompatActivity {
                         "new client added", Toast.LENGTH_SHORT).show();
                 //actionMode.finish();
 
-                ClientTabFragment.mAdapter.objects= backEndFunc.getAllClients();
+                ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
                 ClientTabFragment.mAdapter.notifyDataSetChanged();
                 resetView();
                 client=new Client();

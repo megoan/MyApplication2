@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -12,6 +14,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -161,9 +164,9 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             }
         });
         
-        int defaultImage = mContext.getResources().getIdentifier(branch.getImgURL(),null,mContext.getPackageName());
+        /*int defaultImage = mContext.getResources().getIdentifier(branch.getImgURL(),null,mContext.getPackageName());
 
-        Drawable drawable=ContextCompat.getDrawable(mContext, defaultImage);
+        Drawable drawable=ContextCompat.getDrawable(mContext, defaultImage);*/
 
         holder.branchCity.setText(branch.getMyAddress().getAddressName());
        // holder.branchStreet.setText(branch.getMyAddress().getStreet());
@@ -171,7 +174,16 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         holder.revenue.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(branch.getBranchRevenue())));
         holder.numberOfCars.setText(String.valueOf(branch.getCarIds().size()));
         //holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
-        holder.imageView.setImageDrawable(drawable);
+        if (branch.getImgURL().equals("@drawable/rental")) {
+            int defaultImage = mContext.getResources().getIdentifier("@drawable/rental", null, mContext.getPackageName());
+            Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
+            holder.imageView.setImageDrawable(drawable);
+        } else {
+            byte[] imageBytes= Base64.decode(branch.getImgURL(),Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            holder.imageView.setImageBitmap(bitmap);
+        }
+
 
         if(!branch.isInUse())
         {
