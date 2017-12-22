@@ -36,12 +36,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+
+
 import com.example.shmuel.myapplication.controller.Utility;
-import com.example.shmuel.myapplication.controller.carmodels.CarModelEditActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
-import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.Branch;
@@ -76,7 +76,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
     private double branchRevenue;
     ProgressDialog progDailog;
     private boolean inUse;
-    private MyDate myDate=new MyDate();
+    private MyDate myDate;
     private MyAddress myAddress =new MyAddress();
     private ArrayList<Integer>carList=new ArrayList<>();
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
@@ -171,6 +171,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             branchRevenueText.setText(String.valueOf(branchRevenue));
 
             //branch established date
+            myDate=new MyDate();
             myDate.setYear(intent.getIntExtra("year",0));
             myDate.setMonth(intent.getStringExtra("month"));
             myDate.setDay(intent.getIntExtra("day",0));
@@ -252,6 +253,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        myDate=new MyDate();
         myDate.setYear(year);
         myDate.setMonth(month);
         myDate.setDay(dayOfMonth);

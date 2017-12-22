@@ -39,7 +39,7 @@ public class TakeNGoConst {
         public static final String PARKINGSPOTSNUM = "parkingSpotsNum";
         public static final String IMAGEURL = "imgURL";
         public static final String BRANCHREVENUE = "branchRevenue";
-        public static final String ESTABLISHEDDATE = "establishedDate";
+        public static final String ESTABLISHEDDATE = "MyDate";
         public static final String INUSE = "inUse";
         public static final String CARIDSLIST = "carIdsList";
 
@@ -216,6 +216,7 @@ public class TakeNGoConst {
     public static ArrayList<Integer> getCarsFromString(String cars)
     {
         ArrayList<Integer>carids=new ArrayList<>();
+        if(cars.equals("null"))return carids;
         String[] list=cars.split("~~");
         for (int i=0;i<list.length;i++)
         {

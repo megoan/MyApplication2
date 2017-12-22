@@ -3,12 +3,15 @@ package com.example.shmuel.myapplication.controller.branches;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -90,9 +93,17 @@ public class BranchActivity extends AppCompatActivity {
         revenueText.setText(String.valueOf(branchRevenue));
         inUseText.setText(String.valueOf(inUse));
         establish.setText(establishedDate);
-        int defaultImage = getResources().getIdentifier(imgUrl,null,getApplicationContext().getPackageName());
-        Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
-        imageView.setImageDrawable(drawable);
+        if(imgUrl.equals("@drawable/rental"))
+        {
+            int defaultImage = getResources().getIdentifier("@drawable/rental",null,getApplicationContext().getPackageName());
+            Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
+            imageView.setImageDrawable(drawable);
+        }
+        else {
+            byte[] byteArray= Base64.decode(imgUrl,Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            imageView.setImageBitmap(bitmap);
+        }
 
         actionMode.setTitle(myAddress.getAddressName());
     }
