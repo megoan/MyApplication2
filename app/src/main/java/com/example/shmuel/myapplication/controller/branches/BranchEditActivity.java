@@ -483,7 +483,11 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             else
             {
 
-                backEndFunc.addBranch(branch);
+                try {
+                    backEndFunc.addBranch(branch);
+                } catch (Exception e) {
+                   inputWarningDialog("try uploading again soon!");
+                }
                 MySqlDataSource.branchList=backEndFunc.getAllBranches();
             }
             return null;
@@ -636,5 +640,12 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         }
 
         imageView.setImageBitmap(bm);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progDailog!=null) {
+            progDailog.dismiss();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.shmuel.myapplication.controller;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
@@ -18,6 +19,8 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
         new loadInfo().execute();
 
     }

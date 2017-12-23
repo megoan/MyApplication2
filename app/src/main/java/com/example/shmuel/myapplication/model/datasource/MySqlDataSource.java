@@ -82,8 +82,14 @@ public class MySqlDataSource extends DataSource {
         branchList.get(4).addCar(5);
         branchList.get(5).addCar(6);
 
-        clientList = backEndFunc.getAllClients();
+
         carModelList=backEndFunc.getAllCarModels();
+        clientList = backEndFunc.getAllClients();
+
+
+
+        int i=0;
+        i++;
         //carList = backEndFunc.getAllCars();
         //carModelList = backEndFunc.getAllCarModels();
        // branchList = backEndFunc.getAllBranches();

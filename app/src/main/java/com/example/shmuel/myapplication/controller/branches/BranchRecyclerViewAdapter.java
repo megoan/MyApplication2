@@ -173,7 +173,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
        // holder.branchAddressNumber.setText(branch.getMyAddress().getNumber());
         holder.revenue.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(branch.getBranchRevenue())));
         holder.numberOfCars.setText(String.valueOf(branch.getCarIds().size()));
-        //holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
+        holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
         if (branch.getImgURL().equals("@drawable/rental")) {
             int defaultImage = mContext.getResources().getIdentifier("@drawable/rental", null, mContext.getPackageName());
             Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
@@ -214,7 +214,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         ImageView imageView;
         TextView revenue;
         TextView numberOfCars;
-       // TextView branchNumber;
+        TextView branchNumber;
         ImageButton inUse;
 
         public ViewHolder(View itemView) {
@@ -223,7 +223,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             revenue=(TextView)itemView.findViewById(R.id.cardBranchRevenue);
             numberOfCars=(TextView)itemView.findViewById(R.id.cardBranchCarNum);
            // branchStreet=(TextView)itemView.findViewById(R.id.cardBranchStreet);
-           // branchNumber=(TextView)itemView.findViewById(R.id.cardBranchNumber);
+            branchNumber=(TextView)itemView.findViewById(R.id.cardBranchNumber);
             //branchAddressNumber=(TextView)itemView.findViewById(R.id.cardBranchAddressNumber);
             imageView=(ImageView)itemView.findViewById(R.id.imageView2);
             inUse=(ImageButton)itemView.findViewById(R.id.cardBranchInUse);

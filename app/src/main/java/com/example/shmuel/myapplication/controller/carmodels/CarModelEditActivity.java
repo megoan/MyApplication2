@@ -545,9 +545,9 @@ public class CarModelEditActivity extends AppCompatActivity {
             CropIntent =new Intent("com.android.camera.action.CROP");
             CropIntent.setDataAndType(uri,"image/*");
             CropIntent.putExtra("crop",true);
-            CropIntent.putExtra("outputX",180);
+            CropIntent.putExtra("outputX",360);
             CropIntent.putExtra("outputY",180);
-            CropIntent.putExtra("aspectX",1);
+            CropIntent.putExtra("aspectX",2);
             CropIntent.putExtra("aspectY",1);
             CropIntent.putExtra("scaleUpIfNeeded",true);
             CropIntent.putExtra("return-data",true);

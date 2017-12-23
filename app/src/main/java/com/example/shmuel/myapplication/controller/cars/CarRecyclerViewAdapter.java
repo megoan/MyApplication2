@@ -169,7 +169,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
         holder.imageView.setImageDrawable(drawable);
         holder.branch.setText("Branch: "+ carMyAddress.getAddressName());
         holder.carYear.setText(String.valueOf(car.getYear()));
-        holder.companyName.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
+//        holder.companyName.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
         holder.dailyPrice.setText("USD "+String.valueOf(car.getOneDayCost()));
         holder.milePrice.setText("USD "+String.valueOf(car.getOneKilometerCost()));
         holder.ratingBar.setRating((float) car.getRating());

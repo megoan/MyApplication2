@@ -64,7 +64,7 @@
                         android:layout_marginBottom="4dp"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="4dp"
-                        android:text="Bet Shemesh hatziporen 11a"
+                        android:text="Click on search and select address"
                         android:textColor="@color/colorAccent"
                         android:textSize="18sp" />
                 </LinearLayout>
