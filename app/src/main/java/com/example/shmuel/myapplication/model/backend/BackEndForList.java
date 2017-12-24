@@ -2,8 +2,10 @@ package com.example.shmuel.myapplication.model.backend;
 
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
+import com.example.shmuel.myapplication.model.entities.BranchImage;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
+import com.example.shmuel.myapplication.model.entities.CarModelImage;
 import com.example.shmuel.myapplication.model.entities.Client;
 
 import java.util.ArrayList;
@@ -48,6 +50,16 @@ public class BackEndForList implements BackEndFunc {
     @Override
     public boolean addBranch(Branch branch) {
        return ListDataSource.branchList.add(branch);
+    }
+
+    @Override
+    public boolean addBranchImage(BranchImage branchImage) {
+        return false;
+    }
+
+    @Override
+    public boolean addCarModelImage(CarModelImage carModelImage) {
+        return false;
     }
 
     @Override
@@ -178,6 +190,16 @@ return false;
     }
 
     @Override
+    public boolean updateBranchImage(BranchImage branchImage) {
+        return false;
+    }
+
+    @Override
+    public boolean updateCarModelImage(CarModelImage carModelImage) {
+        return false;
+    }
+
+    @Override
     public boolean deleteClient(int clientID) {
         Client clientTmp=null;
         for (Client client: ListDataSource.clientList
@@ -277,6 +299,16 @@ return false;
                 ) {
             if(branchNumber==branch.getBranchNum())return branch;
         }
+        return null;
+    }
+
+    @Override
+    public BranchImage getBranchImage(int _branchID) {
+        return null;
+    }
+
+    @Override
+    public CarModelImage getCarModelImage(int carModelID) {
         return null;
     }
 

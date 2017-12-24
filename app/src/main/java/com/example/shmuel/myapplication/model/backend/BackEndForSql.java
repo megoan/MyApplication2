@@ -5,8 +5,10 @@ import android.content.ContentValues;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.datasource.PHPtools;
 import com.example.shmuel.myapplication.model.entities.Branch;
+import com.example.shmuel.myapplication.model.entities.BranchImage;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
+import com.example.shmuel.myapplication.model.entities.CarModelImage;
 import com.example.shmuel.myapplication.model.entities.Client;
 import com.example.shmuel.myapplication.model.entities.TakeNGoConst;
 
@@ -94,6 +96,38 @@ public class BackEndForSql implements BackEndFunc {
         } catch (IOException e) {
             //TODO implement the exception!!!
             //printLog("addStudent Exception:\n" + e);
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean addBranchImage(BranchImage branchImage) {
+        ContentValues contentValues = TakeNGoConst.BranchImageToContentValues(branchImage);
+        try {
+            String result = PHPtools.POST(WEB_URL + "/addnewbranchimage.php", contentValues);
+            long id = Long.parseLong(result);
+            if (id > 0)
+                return true;
+        } catch (IOException e) {
+            //TODO implement the exception!!!
+
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean addCarModelImage(CarModelImage carModelImage) {
+        ContentValues contentValues = TakeNGoConst.CarModelImageToContentValues(carModelImage);
+        try {
+            String result = PHPtools.POST(WEB_URL + "/addnewcarmodelimage.php", contentValues);
+            long id = Long.parseLong(result);
+            if (id > 0)
+                return true;
+        } catch (IOException e) {
+            //TODO implement the exception!!!
+
             return false;
         }
         return false;
@@ -210,6 +244,36 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.BranchToContentValues(branch);
         try {
             String result = PHPtools.POST(WEB_URL + "/updatebranch.php", contentValues);
+            if (result.compareTo("DONE") ==0)
+                return true;
+        } catch (IOException e) {
+            //TODO implement the exception!!!
+            //printLog("addStudent Exception:\n" + e);
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateBranchImage(BranchImage branchImage) {
+        ContentValues contentValues = TakeNGoConst.BranchImageToContentValues(branchImage);
+        try {
+            String result = PHPtools.POST(WEB_URL + "/updatebranchimage.php", contentValues);
+            if (result.compareTo("DONE") ==0)
+                return true;
+        } catch (IOException e) {
+            //TODO implement the exception!!!
+            //printLog("addStudent Exception:\n" + e);
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateCarModelImage(CarModelImage carModelImage) {
+        ContentValues contentValues = TakeNGoConst.CarModelImageToContentValues(carModelImage);
+        try {
+            String result = PHPtools.POST(WEB_URL + "/updatecarmodelimage.php", contentValues);
             if (result.compareTo("DONE") ==0)
                 return true;
         } catch (IOException e) {
@@ -358,6 +422,50 @@ public class BackEndForSql implements BackEndFunc {
                 ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
                 Branch branch = TakeNGoConst.ContentValuesToBranch(contentValues);
                 result.add(branch);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result.get(0);
+    }
+
+    @Override
+    public BranchImage getBranchImage(int _branchID) {
+        List<BranchImage> result = new ArrayList<BranchImage>();
+        try {
+            ContentValues contentValuesid = TakeNGoConst.BranchImageIdToContentValues(_branchID);
+            String str = PHPtools.POST(WEB_URL + "/findonebranchimage.php", contentValuesid);
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
+            JSONArray array = new JSONObject(str).getJSONArray("BranchImage");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
+                BranchImage branchImage = TakeNGoConst.ContentValuesToBranchImage(contentValues);
+                result.add(branchImage);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result.get(0);
+    }
+
+    @Override
+    public CarModelImage getCarModelImage(int carModelID) {
+        List<CarModelImage> result = new ArrayList<CarModelImage>();
+        try {
+            ContentValues contentValuesid = TakeNGoConst.CarModelImageIdToContentValues(carModelID);
+            String str = PHPtools.POST(WEB_URL + "/findonecarmodelimage.php", contentValuesid);
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
+            JSONArray array = new JSONObject(str).getJSONArray("CarModelImage");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
+                CarModelImage CarModelImage = TakeNGoConst.ContentValuesToCarModelImage(contentValues);
+                result.add(CarModelImage);
             }
         } catch (Exception e) {
             e.printStackTrace();

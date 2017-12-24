@@ -29,10 +29,12 @@ import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
+import com.example.shmuel.myapplication.model.entities.CarModelImage;
 import com.example.shmuel.myapplication.model.entities.Transmission;
 
 public class CarModelActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
+    BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
 
     private int position;
@@ -46,8 +48,9 @@ public class CarModelActivity extends AppCompatActivity {
     private int luggage;
     private boolean ac;
     private boolean inUse;
-
-    private String imgUrl;
+    CarModelImage carModelImage=new CarModelImage();
+    ImageView imageView1;
+    //private String imgUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,17 +60,20 @@ public class CarModelActivity extends AppCompatActivity {
         actionMode=startActionMode(callback);
 
         Intent intent =getIntent();
-
+        id=intent.getIntExtra("id",0);
+        carModelImage.set_carModelID(id);
+        imageView1=(ImageView)findViewById(R.id.Car_imageView);
+        new DownloadImage().execute();
 
         companyName=intent.getStringExtra("companyName");
         modelName=intent.getStringExtra("modelName");
-        id=intent.getIntExtra("id",0);
+
         engine=intent.getDoubleExtra("engine",0);
         transmission=(Transmission)intent.getSerializableExtra("transmission");
         passengers=intent.getIntExtra("passengers",0);
         luggage=intent.getIntExtra("luggage",0);
         ac=intent.getBooleanExtra("ac",false);
-        imgUrl=intent.getStringExtra("imgUrl");
+        //imgUrl=intent.getStringExtra("imgUrl");
         inUse=intent.getBooleanExtra("inUse",false);
         position=intent.getIntExtra("position",0);
 
@@ -85,7 +91,7 @@ public class CarModelActivity extends AppCompatActivity {
         TextView inUseText=findViewById(R.id.InUse_display_textView);
 
 
-        ImageView imageView1=(ImageView)findViewById(R.id.Car_imageView);
+
 
 
 
@@ -98,30 +104,7 @@ public class CarModelActivity extends AppCompatActivity {
         luggageText.setText(String.valueOf(luggage));
         acBox.setText(String.valueOf(ac));
         inUseText.setText(String.valueOf(inUse));
-
-
-
-        if(imgUrl.equals("@drawable/default_car_image"))
-        {
-            int defaultImage = getResources().getIdentifier("@drawable/default_car_image",null,getApplicationContext().getPackageName());
-            Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
-            imageView1.setImageDrawable(drawable);
-        }
-        else {
-            byte[] byteArray= Base64.decode(imgUrl,Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-            imageView1.setImageBitmap(bitmap);
-        }
-
-
-
         actionMode.setTitle(companyName+ " "+modelName);
-
-
-
-
-
-
 
     }
     public class MyActionModeCallbackCarModel implements ActionMode.Callback{
@@ -163,14 +146,6 @@ public class CarModelActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
                             new BackGroundDeleteCar().execute();
-                               /* backEndFunc.deleteCar(carNum);
-                                backEndFunc.removeCarFromBranch(carNum,branchid);
-                                BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
-                                BranchesFragment.mAdapter.notifyDataSetChanged();
-                                TabFragments.carsTab.updateView2(position);
-                                Toast.makeText(CarActivity.this,
-                                        "car deleted", Toast.LENGTH_SHORT).show();
-                                actionMode.finish();*/
                         }
                     });
 
@@ -203,7 +178,7 @@ public class CarModelActivity extends AppCompatActivity {
                     intent.putExtra("passengers",passengers);
                     intent.putExtra("luggage",luggage);
                     intent.putExtra("ac",ac);
-                    intent.putExtra("imgUrl",imgUrl);
+                    //intent.putExtra("imgUrl",imgUrl);
 
                     finish();
                     startActivity(intent);
@@ -234,11 +209,7 @@ public class CarModelActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             backEndFunc.deleteCarModel(id);
             MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
             return null;
@@ -254,6 +225,29 @@ public class CarModelActivity extends AppCompatActivity {
                     "car model deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();
             progDailog.dismiss();
+        }
+    }
+    public class DownloadImage extends AsyncTask<Void,Void,Void>
+    {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            carModelImage=backEndForSql.getCarModelImage(carModelImage.get_carModelID());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (carModelImage.getImgURL()==null|| carModelImage.getImgURL().equals("@drawable/rental")) {
+                int defaultImage = CarModelActivity.this.getResources().getIdentifier("@drawable/rental", null, CarModelActivity.this.getPackageName());
+                Drawable drawable = ContextCompat.getDrawable(CarModelActivity.this, defaultImage);
+                imageView1.setImageDrawable(drawable);
+            } else {
+                byte[] imageBytes= Base64.decode(carModelImage.getImgURL(),Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                imageView1.setImageBitmap(bitmap);
+            }
         }
     }
 }

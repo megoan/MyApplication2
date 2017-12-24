@@ -45,6 +45,11 @@ public class TakeNGoConst {
 
     }
 
+    public static class BranchImageConst {
+        public static final String ID = "_branchNum";
+        public static final String IMAGEURL = "imgURL";
+    }
+
     public static class CarConst {
         public static final String CARNUM = "_carNum";
         public static final String BRANCHNUM = "branchNum";
@@ -149,7 +154,7 @@ public class TakeNGoConst {
         contentValues.put(BranchConst.ID, branch.getBranchNum());
         contentValues.put(BranchConst.NAME, branch.getMyAddress().toString());
         contentValues.put(BranchConst.PARKINGSPOTSNUM, branch.getParkingSpotsNum());
-        contentValues.put(BranchConst.IMAGEURL, branch.getImgURL());
+        //contentValues.put(BranchConst.IMAGEURL, branch.getImgURL());
         contentValues.put(BranchConst.BRANCHREVENUE, branch.getBranchRevenue());
         contentValues.put(BranchConst.ESTABLISHEDDATE, branch.getEstablishedDate().saveDate());
         contentValues.put(BranchConst.INUSE, branch.isInUse());
@@ -162,13 +167,43 @@ public class TakeNGoConst {
         branch.setBranchNum(contentValues.getAsInteger(BranchConst.ID));
         branch.setMyAddress(getAddressFromString(contentValues.getAsString(BranchConst.NAME)));
         branch.setParkingSpotsNum(contentValues.getAsInteger(BranchConst.PARKINGSPOTSNUM));
-        branch.setImgURL(contentValues.getAsString(BranchConst.IMAGEURL));
+        //branch.setImgURL(contentValues.getAsString(BranchConst.IMAGEURL));
         branch.setBranchRevenue(contentValues.getAsDouble(BranchConst.BRANCHREVENUE));
         branch.setEstablishedDate(getDateFromString(contentValues.getAsString(BranchConst.ESTABLISHEDDATE)));
         branch.setInUse(contentValues.getAsBoolean(BranchConst.INUSE));
         branch.setCarIds(getCarsFromString((contentValues.getAsString(BranchConst.CARIDSLIST))));
         return branch;
     }
+
+
+    public static ContentValues BranchImageToContentValues(BranchImage branchImage) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BranchConst.ID, branchImage.getBranchID());
+        contentValues.put(BranchConst.IMAGEURL, branchImage.getImgURL());
+        return contentValues;
+    }
+
+    public static BranchImage ContentValuesToBranchImage(ContentValues contentValues) {
+        BranchImage branchImage = new BranchImage();
+        branchImage.setBranchID(contentValues.getAsInteger(BranchConst.ID));
+        branchImage.setImgURL(contentValues.getAsString(BranchConst.IMAGEURL));
+        return branchImage;
+    }
+
+    public static ContentValues CarModelImageToContentValues(CarModelImage carModelImage) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CarModelConst.CARMODELCODE, carModelImage.get_carModelID());
+        contentValues.put(CarModelConst.IMAGEURL, carModelImage.getImgURL());
+        return contentValues;
+    }
+
+    public static CarModelImage ContentValuesToCarModelImage(ContentValues contentValues) {
+        CarModelImage carModelImage = new CarModelImage();
+        carModelImage.set_carModelID(contentValues.getAsInteger(CarModelConst.CARMODELCODE));
+        carModelImage.setImgURL(contentValues.getAsString(CarModelConst.IMAGEURL));
+        return carModelImage;
+    }
+
 
     public static ContentValues ClientIdToContentValues(int clientID) {
         ContentValues contentValues = new ContentValues();
@@ -191,6 +226,18 @@ public class TakeNGoConst {
     public static ContentValues BranchIdToContentValues(int branchID) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(BranchConst.ID, branchID);
+        return contentValues;
+    }
+
+    public static ContentValues BranchImageIdToContentValues(int branchID) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BranchConst.ID, branchID);
+        return contentValues;
+    }
+
+    public static ContentValues CarModelImageIdToContentValues(int carModelID) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CarModelConst.CARMODELCODE, carModelID);
         return contentValues;
     }
 

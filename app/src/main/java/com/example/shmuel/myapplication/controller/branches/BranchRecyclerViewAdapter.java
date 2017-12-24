@@ -31,11 +31,14 @@ import android.widget.Toast;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
+import com.example.shmuel.myapplication.model.backend.BackEndForSql;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
+import com.example.shmuel.myapplication.model.entities.BranchImage;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -49,9 +52,13 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
     public ArrayList<Branch> objects;
     private Context mContext;
     public ActionMode actionMode;
+    BranchImage branchImage;
     private int selectedPosition=-1;
     MyFilter myFilter;
+    Branch branch;
+    ViewHolder viewHolder2;
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     private ProgressDialog progDailog;
 
     public BranchRecyclerViewAdapter(ArrayList<Branch> objects, Context context) {
@@ -70,8 +77,8 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        final Branch branch = objects.get(position);
-
+        branch=objects.get(position);
+        viewHolder2=holder;
 
         if(selectedPosition==position){
             if(((MainActivity)mContext).branch_is_in_action_mode==true){
@@ -144,7 +151,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                     intent.putExtra("parkingSpotsNum",branch1.getParkingSpotsNum());
                     intent.putExtra("numOfCars",branch1.getCarIds().size());
                     intent.putExtra("available",branch1.numberOfParkingSpotsAvailable());
-                    intent.putExtra("imgUrl",branch1.getImgURL());
+                    //intent.putExtra("imgUrl",branch1.getImgURL());
                     intent.putExtra("inUse",branch1.isInUse());
                     intent.putExtra("revenue",branch1.getBranchRevenue());
                     intent.putExtra("country",branch1.getMyAddress().getCountry());
@@ -174,7 +181,10 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         holder.revenue.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(branch.getBranchRevenue())));
         holder.numberOfCars.setText(String.valueOf(branch.getCarIds().size()));
         holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
-        if (branch.getImgURL().equals("@drawable/rental")) {
+        if (objects.size()>0) {
+            new DownloadImage().execute();
+        }
+       /* if (branch.getImgURL().equals("@drawable/rental")) {
             int defaultImage = mContext.getResources().getIdentifier("@drawable/rental", null, mContext.getPackageName());
             Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
             holder.imageView.setImageDrawable(drawable);
@@ -182,7 +192,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             byte[] imageBytes= Base64.decode(branch.getImgURL(),Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
             holder.imageView.setImageBitmap(bitmap);
-        }
+        }*/
 
 
         if(!branch.isInUse())
@@ -268,14 +278,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                                 // TODO Auto-generated method stub
                                 int objectsLengh=objects.size();
                                 new BackGroundDeleteBranch().execute();
-                                //backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
-                               /* if (objects.size()==objectsLengh) {
-                                    objects.remove(selectedPosition);
-                                }*/
-                               /* notifyDataSetChanged();
-                                Toast.makeText(mContext,
-                                        "branch deleted", Toast.LENGTH_SHORT).show();
-                                actionMode.finish();*/
+
                             }
                         });
 
@@ -385,6 +388,29 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             progDailog.dismiss();
 
 
+        }
+    }
+    public class DownloadImage extends AsyncTask<Void,Void,Void>
+    {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            branchImage=backEndForSql.getBranchImage(branch.getBranchNum());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+             if (branchImage.getImgURL()==null|| branchImage.getImgURL().equals("@drawable/rental")) {
+            int defaultImage = mContext.getResources().getIdentifier("@drawable/rental", null, mContext.getPackageName());
+            Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
+            viewHolder2.imageView.setImageDrawable(drawable);
+        } else {
+            byte[] imageBytes= Base64.decode(branchImage.getImgURL(),Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            viewHolder2.imageView.setImageBitmap(bitmap);
+        }
         }
     }
 }

@@ -25,6 +25,7 @@ import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
+import com.example.shmuel.myapplication.model.entities.BranchImage;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.MyDate;
 
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 public class BranchActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
-
+    BranchImage branchImage=new BranchImage();
     //private String myAddress=new MyAddress();
     private MyAddress myAddress =new MyAddress();
     private MyDate myDate=new MyDate();
@@ -41,12 +42,13 @@ public class BranchActivity extends AppCompatActivity {
     private int numOfCars;
     private int avaibaleSpots;
     private int branchNum;
-    private String imgUrl;
+    //private String imgUrl;
     private double branchRevenue;
     private String establishedDate;
     private boolean inUse;
     private ArrayList<Integer>carList=new ArrayList<>();
     private ProgressDialog progDailog;
+    ImageView imageView;
 
 
     @Override
@@ -58,6 +60,9 @@ public class BranchActivity extends AppCompatActivity {
 
         Intent intent =getIntent();
         branchNum=intent.getIntExtra("id",0);
+        branchImage.setBranchID(branchNum);
+        imageView=(ImageView)findViewById(R.id.mainImage);
+        new DownloadImage().execute();
         myAddress.setCountry(intent.getStringExtra("country"));
         myAddress.setAddressName(intent.getStringExtra("addressName"));
         myAddress.setLatitude(intent.getDoubleExtra("latitude",0));
@@ -72,7 +77,7 @@ public class BranchActivity extends AppCompatActivity {
         parkingSpotsNum=intent.getIntExtra("parkingSpotsNum",0);
         avaibaleSpots=intent.getIntExtra("available",0);
         inUse=intent.getBooleanExtra("inUse",false);
-        imgUrl=intent.getStringExtra("imgUrl");
+        //imgUrl=intent.getStringExtra("imgUrl");
         branchRevenue=intent.getDoubleExtra("revenue",0);
         numOfCars=intent.getIntExtra("numOfCars",0);
         carList=intent.getIntegerArrayListExtra("carList");
@@ -82,7 +87,7 @@ public class BranchActivity extends AppCompatActivity {
         TextView numOfCarsText =(TextView)findViewById(R.id.numOfCars);
         TextView numOfSpotsText =(TextView)findViewById(R.id.numOfSpots);
         TextView revenueText =(TextView)findViewById(R.id.revenue);
-        ImageView imageView=(ImageView)findViewById(R.id.mainImage);
+
         TextView inUseText=(TextView)findViewById(R.id.inUse_branch);
         TextView establish=(TextView)findViewById(R.id.established);
 
@@ -93,17 +98,9 @@ public class BranchActivity extends AppCompatActivity {
         revenueText.setText(String.valueOf(branchRevenue));
         inUseText.setText(String.valueOf(inUse));
         establish.setText(establishedDate);
-        if(imgUrl.equals("@drawable/rental"))
-        {
-            int defaultImage = getResources().getIdentifier("@drawable/rental",null,getApplicationContext().getPackageName());
-            Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
-            imageView.setImageDrawable(drawable);
-        }
-        else {
-            byte[] byteArray= Base64.decode(imgUrl,Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-            imageView.setImageBitmap(bitmap);
-        }
+
+
+
 
         actionMode.setTitle(myAddress.getAddressName());
     }
@@ -178,7 +175,7 @@ public class BranchActivity extends AppCompatActivity {
                     // intent.putExtra("street",myAddress.getStreet());
                    // intent.putExtra("number",myAddress.getNumber());
                     intent.putExtra("branchID",branchNum);
-                    intent.putExtra("imgUrl",imgUrl);
+                    //intent.putExtra("imgUrl",imgUrl);
                     intent.putExtra("inUse",inUse);
                     intent.putExtra("established",establishedDate);
                     intent.putExtra("parkingSpotsNum",parkingSpotsNum);
@@ -218,11 +215,7 @@ public class BranchActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             backEndFunc.deleteBranch(branchNum);
             MySqlDataSource.branchList=backEndFunc.getAllBranches();
 
@@ -237,6 +230,28 @@ public class BranchActivity extends AppCompatActivity {
                     "branch deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();
             progDailog.dismiss();
+        }
+    }
+    public class DownloadImage extends AsyncTask<Void,Void,Void>
+    {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            branchImage=backEndFunc.getBranchImage(branchImage.getBranchID());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (branchImage.getImgURL()==null|| branchImage.getImgURL().equals("@drawable/rental")) {
+                int defaultImage = BranchActivity.this.getResources().getIdentifier("@drawable/rental", null, BranchActivity.this.getPackageName());
+                Drawable drawable = ContextCompat.getDrawable(BranchActivity.this, defaultImage);
+                imageView.setImageDrawable(drawable);
+            } else {
+                byte[] imageBytes= Base64.decode(branchImage.getImgURL(),Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                imageView.setImageBitmap(bitmap);
+            }
         }
     }
 }

@@ -43,6 +43,7 @@ import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
+import com.example.shmuel.myapplication.model.entities.BranchImage;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.MyDate;
@@ -64,6 +65,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
     DatePickerDialog datePickerDialog;
     Branch branch=new Branch();
+    BranchImage branchImage=new BranchImage();
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
 
@@ -147,6 +149,9 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             //id
             branchID=(intent.getIntExtra("branchID",0));
             branchIDText.setText("#"+String.valueOf(branchID));
+            branchImage.setBranchID(branchID);
+            new DownloadImage().execute();
+
 
             //number of parking spots
             parkingSpotsNum=intent.getIntExtra("parkingSpotsNum",0);
@@ -188,17 +193,8 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             inUse=intent.getBooleanExtra("inUse",false);
             numOfCars=intent.getIntExtra("numOfCars",0);
 
-            if(imgUrl.equals("@drawable/default_car_image"))
-            {
-                int defaultImage = getResources().getIdentifier("@drawable/default_car_image",null,getApplicationContext().getPackageName());
-                Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
-                imageView.setImageDrawable(drawable);
-            }
-            else {
-                byte[] byteArray= Base64.decode(imgUrl,Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                imageView.setImageBitmap(bitmap);
-            }
+
+
 
         }
         else {
@@ -290,14 +286,15 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     String establishedString= establishedDateText.getText().toString();
                     parkingSpotsNum= Integer.parseInt(numOfSpotsText.getText().toString());
 
-                    if(!imageSelected){
+                    if(!imageSelected && update==false){
                         inputWarningDialog("don't be shy and upload a picture!");return false;}
                     else {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         //carModel.setByteArray(stream.toByteArray());
                         byte[] byteArray=stream.toByteArray();
-                        branch.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
+                        //branch.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
+                        branchImage.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
                     }
 
                     if(id1.equals("")||parkingSpotsNum==0|| addressString==null || establishedString==null ||myDate==null)
@@ -312,10 +309,13 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
                     if (update) {
                         branch.setBranchNum(Integer.valueOf(id1.substring(1)));
+                        branchImage.setBranchID(branch.getBranchNum());
                     }
                     else
                     {
                         branch.setBranchNum(Integer.valueOf(id1));
+                        branchImage.setBranchID(branch.getBranchNum());
+
                     }
                     branch.setInUse(inUse);
                     //TODO fix myAddress
@@ -356,11 +356,6 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
                                 try {
                                     new BackGroundDeleteBranch().execute();
-                                   /* backEndFunc.updateBranch(branch);
-                                    Toast.makeText(BranchEditActivity.this,
-                                            "branch updated", Toast.LENGTH_SHORT).show();*/
-
-
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -377,12 +372,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                                 try {
 
                                     new BackGroundDeleteBranch().execute();
-                                   /* backEndFunc.addBranch(branch);
-                                    BranchesFragment.mAdapter.notifyDataSetChanged();
 
-                                    Toast.makeText(BranchEditActivity.this,
-                                            "new bramch added", Toast.LENGTH_SHORT).show();
-                                    //actionMode.finish();*/
 
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
@@ -479,14 +469,18 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             {
                 backEndFunc.updateBranch(branch);
                 MySqlDataSource.branchList=backEndFunc.getAllBranches();
+                if(update==true && imageSelected==true)
+                {
+                    backEndFunc.updateBranchImage(branchImage);
+                }
             }
             else
             {
-
                 try {
                     backEndFunc.addBranch(branch);
+                    backEndFunc.addBranchImage(branchImage);
                 } catch (Exception e) {
-                   inputWarningDialog("try uploading again soon!");
+                   //inputWarningDialog("try uploading again soon!");
                 }
                 MySqlDataSource.branchList=backEndFunc.getAllBranches();
             }
@@ -497,10 +491,8 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-
             if(update)
             {
-
                 Toast.makeText(BranchEditActivity.this,
                         "branch updated", Toast.LENGTH_SHORT).show();
                 BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
@@ -618,9 +610,6 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             CropIntent.putExtra("scaleUpIfNeeded",true);
             CropIntent.putExtra("return-data",true);
             startActivityForResult(CropIntent,2);
-
-
-
         }catch (ActivityNotFoundException e)
         {
 
@@ -646,6 +635,29 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         super.onDestroy();
         if (progDailog!=null) {
             progDailog.dismiss();
+        }
+    }
+
+    public class DownloadImage extends AsyncTask<Void,Void,Void>
+    {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            branchImage=backEndFunc.getBranchImage(branchImage.getBranchID());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (branchImage.getImgURL()==null|| branchImage.getImgURL().equals("@drawable/rental")) {
+                int defaultImage = BranchEditActivity.this.getResources().getIdentifier("@drawable/rental", null, BranchEditActivity.this.getPackageName());
+                Drawable drawable = ContextCompat.getDrawable(BranchEditActivity.this, defaultImage);
+                imageView.setImageDrawable(drawable);
+            } else {
+                byte[] imageBytes= Base64.decode(branchImage.getImgURL(),Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                imageView.setImageBitmap(bitmap);
+            }
         }
     }
 }

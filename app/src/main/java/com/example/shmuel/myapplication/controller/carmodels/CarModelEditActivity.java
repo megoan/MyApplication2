@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -30,18 +29,16 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.Utility;
-import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
-import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
+import com.example.shmuel.myapplication.model.entities.CarModelImage;
 import com.example.shmuel.myapplication.model.entities.Transmission;
 
 import java.io.ByteArrayOutputStream;
@@ -63,7 +60,7 @@ public class CarModelEditActivity extends AppCompatActivity {
     Bitmap mBitmap;
     boolean update=false;
     private boolean inUse;
-    private String imgUrl;
+    //private String imgUrl;
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     EditText companyNameText;
     EditText modelNameText;
@@ -78,6 +75,7 @@ public class CarModelEditActivity extends AppCompatActivity {
     ImageView imageView;
     ScrollView scrollView;
     //byte[] byteArray;
+    CarModelImage carModelImage =new CarModelImage();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +83,7 @@ public class CarModelEditActivity extends AppCompatActivity {
         StrictMode.setVmPolicy(builder.build());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_model_edit);
-        carModel.setImgURL("@drawable/default_car_image");
+
         MyActionModeCallbackCarModel callback=new MyActionModeCallbackCarModel();
         actionMode=startActionMode(callback);
         transmission=findViewById(R.id.transmission);
@@ -116,6 +114,9 @@ public class CarModelEditActivity extends AppCompatActivity {
         if(update1.equals("true"))
         {
             update=true;
+
+
+
             modelIdText.setEnabled(false);
             actionMode.setTitle("Update car");
             modelIdText.setText("#"+String.valueOf(intent.getIntExtra("id",0)));
@@ -125,20 +126,11 @@ public class CarModelEditActivity extends AppCompatActivity {
             Transmission transmission=(Transmission)intent.getSerializableExtra("transmission") ;
             passengersText.setText(String.valueOf(intent.getIntExtra("passengers",0)));
             luggageText.setText(String.valueOf(intent.getIntExtra("luggage",0)));
-            imgUrl=intent.getStringExtra("imgUrl");
+
+            carModelImage.set_carModelID(intent.getIntExtra("id",0));
+            new DownloadImage().execute();
 
 
-            if(imgUrl.equals("@drawable/default_car_image"))
-            {
-                int defaultImage = getResources().getIdentifier("@drawable/default_car_image",null,getApplicationContext().getPackageName());
-                Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
-                imageView.setImageDrawable(drawable);
-            }
-            else {
-                byte[] byteArray= Base64.decode(imgUrl,Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                imageView.setImageBitmap(bitmap);
-            }
 
 
             acBox.setChecked(intent.getBooleanExtra("ac",false));
@@ -206,7 +198,7 @@ public class CarModelEditActivity extends AppCompatActivity {
                          mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                          //carModel.setByteArray(stream.toByteArray());
                          byte[] byteArray=stream.toByteArray();
-                         carModel.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
+                         carModelImage.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
                      }
 
 
@@ -256,11 +248,6 @@ public class CarModelEditActivity extends AppCompatActivity {
 
                                 try {
                                     new  BackGroundUpdateCar().execute();
-                                    /*backEndFunc.updateCar(car);
-
-                                    Toast.makeText(CarEditActivity.this,
-                                            "car updated", Toast.LENGTH_SHORT).show();
-                                    actionMode.finish();*/
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -276,14 +263,7 @@ public class CarModelEditActivity extends AppCompatActivity {
 
                                 try {
                                     new  BackGroundUpdateCar().execute();
-                                    /*backEndFunc.addCar(car);
-                                    backEndFunc.addCarToBranch(car.getCarNum(),car.getBranchNum());
-                                    BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
-                                    BranchesFragment.mAdapter.notifyDataSetChanged();
 
-                                    Toast.makeText(CarEditActivity.this,
-                                            "new car added", Toast.LENGTH_SHORT).show();
-                                    //actionMode.finish();*/
 
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
@@ -305,7 +285,6 @@ public class CarModelEditActivity extends AppCompatActivity {
                     alert.show();
                     break;
                 }
-
             }
             return true;
         }
@@ -345,7 +324,6 @@ public class CarModelEditActivity extends AppCompatActivity {
         int defaultImage = CarModelEditActivity.this.getResources().getIdentifier("@drawable/default_car_image",null,CarModelEditActivity.this.getPackageName());
         Drawable drawable= ContextCompat.getDrawable(CarModelEditActivity.this, defaultImage);
         imageView.setImageDrawable(drawable);
-
     }
     int tryParseInt(String value) {
         try {
@@ -378,11 +356,7 @@ public class CarModelEditActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             if (update)
             {
                 backEndFunc.updateCarModel(carModel);
@@ -392,7 +366,6 @@ public class CarModelEditActivity extends AppCompatActivity {
             {
                 backEndFunc.addCarModel(carModel);
                 MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
-
             }
             return null;
         }
@@ -403,10 +376,8 @@ public class CarModelEditActivity extends AppCompatActivity {
 
             if(update)
             {
-
                 Toast.makeText(CarModelEditActivity.this,
                         "car model updated", Toast.LENGTH_SHORT).show();
-
                 CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
                 CarModelsFragment.mAdapter.notifyDataSetChanged();
                 finish();
@@ -520,23 +491,6 @@ public class CarModelEditActivity extends AppCompatActivity {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         CropImage();
-
-
-        /*File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
-
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
         imageView.setImageBitmap(thumbnail);
     }
 
@@ -574,5 +528,29 @@ public class CarModelEditActivity extends AppCompatActivity {
         }
 
         imageView.setImageBitmap(bm);
+    }
+
+    public class DownloadImage extends AsyncTask<Void,Void,Void>
+    {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            carModelImage=backEndFunc.getCarModelImage(carModelImage.get_carModelID());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (carModelImage.getImgURL()==null|| carModelImage.getImgURL().equals("@drawable/default_car_image")) {
+                int defaultImage = CarModelEditActivity.this.getResources().getIdentifier("@drawable/default_car_image", null, CarModelEditActivity.this.getPackageName());
+                Drawable drawable = ContextCompat.getDrawable(CarModelEditActivity.this, defaultImage);
+                imageView.setImageDrawable(drawable);
+            } else {
+                byte[] imageBytes= Base64.decode(carModelImage.getImgURL(),Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                imageView.setImageBitmap(bitmap);
+            }
+        }
     }
 }

@@ -38,6 +38,7 @@ import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
+import com.example.shmuel.myapplication.model.entities.CarModelImage;
 import com.example.shmuel.myapplication.model.entities.Transmission;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import java.util.ArrayList;
 
 public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<CarCompaniesInnerRecyclerViewAdapter.ViewHolder> implements Filterable {
     BackEndFunc backEndFunc = FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ArrayList<CarModel> objects;
     private Context mContext;
     public ActionMode actionMode;
@@ -55,7 +57,8 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     private MyFilter myFilter;
     private ProgressDialog progDailog;
     CarModel carModel;
-
+    CarModelImage carModelImage=new CarModelImage();
+    ViewHolder viewHolder2;
 
     public CarCompaniesInnerRecyclerViewAdapter(ArrayList<CarModel> objects, Context context) {
         this.objects = objects;
@@ -76,7 +79,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     @Override
     public void onBindViewHolder(CarCompaniesInnerRecyclerViewAdapter.ViewHolder holder, final int position) {
         carModel = objects.get(position);
-
+        viewHolder2=holder;
 
         if (selectedPosition == position) {
             if (((MainActivity) mContext).car_model_is_in_action_mode == true) {
@@ -138,7 +141,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                     intent.putExtra("passengers", carModel.getPassengers());
                     intent.putExtra("luggage", carModel.getLuggage());
                     intent.putExtra("ac", carModel.isAc());
-                    intent.putExtra("imgUrl", carModel.getImgURL());
+                    //intent.putExtra("imgUrl", carModel.getImgURL());
                     intent.putExtra("inUse", carModel.isInUse());
                     intent.putExtra("position", position);
 
@@ -154,15 +157,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
 
 
 
-        if (carModel.getImgURL().equals("@drawable/default_car_image")) {
-            int defaultImage = mContext.getResources().getIdentifier("@drawable/default_car_image", null, mContext.getPackageName());
-            Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
-            holder.imageView.setImageDrawable(drawable);
-        } else {
-            byte[] imageBytes= Base64.decode(carModel.getImgURL(),Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            holder.imageView.setImageBitmap(bitmap);
-        }
+       new DownloadImage().execute();
 
 
         holder.carModel.setText(carModel.getCarModelName());
@@ -281,18 +276,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                             public void onClick(DialogInterface dialog, int which) {
                                 // TODO Auto-generated method stub
                                 new BackGroundDeleteCarModel().execute();
-                               /* int objectsLengh=objects.size();
-                                backEndFunc.deleteCarModel(objects.get(selectedPosition).getCarModelCode());
-                                if (objectsLengh==objects.size()) {
-                                    objects.remove(selectedPosition);
-                                }
-                                notifyDataSetChanged();
-                                Toast.makeText(mContext,
-                                        "car model deleted", Toast.LENGTH_SHORT).show();
 
-                                selectedPosition=-1;
-                                notifyItemChanged(selectedPosition);
-                                actionMode.finish();*/
                             }
                         });
 
@@ -373,11 +357,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             CarModel carModel = objects.get(selectedPosition);
             backEndFunc.deleteCarModel(carModel.getCarModelCode());
             int objectsLengh = objects.size();
@@ -403,7 +383,29 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             actionMode.finish();
             progDailog.dismiss();
 
+        }
+    }
+    public class DownloadImage extends AsyncTask<Void,Void,Void>
+    {
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            carModelImage=backEndForSql.getCarModelImage(carModel.getCarModelCode());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (carModelImage.getImgURL()==null|| carModelImage.getImgURL().equals("@drawable/rental")) {
+                int defaultImage = mContext.getResources().getIdentifier("@drawable/rental", null, mContext.getPackageName());
+                Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
+                viewHolder2.imageView.setImageDrawable(drawable);
+            } else {
+                byte[] imageBytes= Base64.decode(carModelImage.getImgURL(),Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+               viewHolder2.imageView.setImageBitmap(bitmap);
+            }
         }
     }
 }

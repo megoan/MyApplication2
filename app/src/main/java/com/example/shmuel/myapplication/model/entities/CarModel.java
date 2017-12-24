@@ -13,7 +13,7 @@ public class CarModel {
     private int passengers;
     private int luggage;
     private boolean ac;
-    private String imgURL;
+    //private String imgURL;
     private boolean inUse;
 
     public CarModel() {
@@ -28,7 +28,7 @@ public class CarModel {
         this.passengers = passengers;
         this.luggage = luggage;
         this.ac = ac;
-        this.imgURL=imgURL;
+        //this.imgURL=imgURL;
         this.inUse=inUse;
     }
 
@@ -41,7 +41,7 @@ public class CarModel {
         this.passengers = other.passengers;
         this.luggage = other.luggage;
         this.ac = other.ac;
-        this.imgURL=other.imgURL;
+       // this.imgURL=other.imgURL;
         this.inUse=other.inUse;
     }
 
@@ -109,13 +109,13 @@ public class CarModel {
         this.ac = ac;
     }
 
-    public String getImgURL() {
+    /*public String getImgURL() {
         return imgURL;
     }
 
     public void setImgURL(String imgURL) {
         this.imgURL = imgURL;
-    }
+    }*/
 
     public boolean isInUse() {
         return inUse;
