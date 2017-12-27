@@ -17,19 +17,31 @@
         android:padding="0dp"
         android:background="?android:attr/selectableItemBackground">
 
-        <ImageView
+        <RelativeLayout
             android:id="@+id/carModelCardImage"
-            android:layout_width="360dp"
-            android:layout_height="180dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:padding="10dp"
-            android:src="@drawable/ferrari_812"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carModelCardCompany"
-            app:layout_constraintVertical_bias="0.0"
-            android:clickable="false"/>
+            app:layout_constraintVertical_bias="0.0">
+            <ImageView
+                android:id="@+id/carModelCardImage2"
+                android:layout_width="360dp"
+                 android:layout_height="180dp"
+                android:src="@drawable/default_car_image"
+                android:clickable="false"/>
+            <ProgressBar
+                android:id="@+id/carModelImageProgressbar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+
 
 
         <TextView

@@ -360,11 +360,18 @@ public class CarModelEditActivity extends AppCompatActivity {
             if (update)
             {
                 backEndFunc.updateCarModel(carModel);
+                if(imageSelected)
+                {
+                    carModelImage.set_carModelID(carModel.getCarModelCode());
+                    backEndFunc.updateCarModelImage(carModelImage);
+                }
                 MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
             }
             else
             {
+                carModelImage.set_carModelID(carModel.getCarModelCode());
                 backEndFunc.addCarModel(carModel);
+                backEndFunc.addCarModelImage(carModelImage);
                 MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
             }
             return null;

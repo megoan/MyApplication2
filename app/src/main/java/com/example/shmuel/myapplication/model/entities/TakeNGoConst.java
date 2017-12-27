@@ -128,7 +128,7 @@ public class TakeNGoConst {
         contentValues.put(CarModelConst.PASSENGERS, carModel.getPassengers());
         contentValues.put(CarModelConst.LUGGAGE, carModel.getLuggage());
         contentValues.put(CarModelConst.AC, carModel.isAc());
-        contentValues.put(CarModelConst.IMAGEURL, carModel.getImgURL());
+        //contentValues.put(CarModelConst.IMAGEURL, carModel.getImgURL());
         contentValues.put(CarModelConst.INUSE, carModel.isInUse());
 
         return contentValues;
@@ -144,7 +144,7 @@ public class TakeNGoConst {
         carModel.setPassengers(contentValues.getAsInteger(CarModelConst.PASSENGERS));
         carModel.setLuggage((contentValues.getAsInteger(CarModelConst.LUGGAGE)));
         carModel.setAc(contentValues.getAsBoolean(CarModelConst.AC));
-        carModel.setImgURL(contentValues.getAsString(CarModelConst.IMAGEURL));
+        //carModel.setImgURL(contentValues.getAsString(CarModelConst.IMAGEURL));
         carModel.setInUse(contentValues.getAsBoolean(CarModelConst.INUSE));
         return carModel;
     }

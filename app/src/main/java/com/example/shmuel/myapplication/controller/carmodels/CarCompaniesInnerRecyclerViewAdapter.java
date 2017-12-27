@@ -26,6 +26,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -228,18 +229,19 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         ImageButton ac;
         ImageButton auto;
         ImageButton inUse;
-
+        ProgressBar progressBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
             companyName = (TextView) itemView.findViewById(R.id.carModelCardCompany);
             carModel = (TextView) itemView.findViewById(R.id.carModelCardModelName);
-            imageView = (ImageView) itemView.findViewById(R.id.carModelCardImage);
+            imageView = (ImageView) itemView.findViewById(R.id.carModelCardImage2);
             passengers = (TextView) itemView.findViewById(R.id.badge_notification_1);
             luggage = (TextView) itemView.findViewById(R.id.badge_notification_2);
             ac = (ImageButton) itemView.findViewById(R.id.carModelCardAc);
             auto = (ImageButton) itemView.findViewById(R.id.carModelCardAuto);
             inUse = (ImageButton) itemView.findViewById(R.id.carModelCardInUseButton);
+            progressBar=itemView.findViewById(R.id.carModelImageProgressbar);
         }
     }
 
@@ -387,6 +389,11 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     }
     public class DownloadImage extends AsyncTask<Void,Void,Void>
     {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            viewHolder2.progressBar.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -406,6 +413,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                viewHolder2.imageView.setImageBitmap(bitmap);
             }
+            viewHolder2.progressBar.setVisibility(View.INVISIBLE);
         }
     }
 }
