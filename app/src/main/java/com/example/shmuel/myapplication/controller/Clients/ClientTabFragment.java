@@ -17,11 +17,14 @@ import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.Client;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import javax.sql.DataSource;
 
 /**
  * Created by shmuel on 23/10/2017.
@@ -33,7 +36,7 @@ public class ClientTabFragment extends Fragment {
     private BackEndFunc backEndFunc;
     public static ClientRecyclerViewAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
-    ArrayList<Client> clients;
+    public static ArrayList<Client> clients;
     View view;
 
     @Override
@@ -61,6 +64,7 @@ public class ClientTabFragment extends Fragment {
     }
     public void SortCliantByFirstName()
     {
+        //clients= new ArrayList<>(MySqlDataSource.clientList);
         //clients=new ArrayList<>(backEndFunc.getAllClients());
         Collections.sort(clients, new Comparator<Client>(){
             public int compare(Client o1, Client o2){
@@ -71,6 +75,7 @@ public class ClientTabFragment extends Fragment {
     }
     public void SortCliantByLastName()
     {
+        //clients= new ArrayList<>(MySqlDataSource.clientList);
         //clients=new ArrayList<>(backEndFunc.getAllClients());
         Collections.sort(clients, new Comparator<Client>(){
             public int compare(Client o1, Client o2){
@@ -81,6 +86,7 @@ public class ClientTabFragment extends Fragment {
     }
     public void SortCliantById()
     {
+        //clients= new ArrayList<>(MySqlDataSource.clientList);
         //clients=new ArrayList<>(backEndFunc.getAllClients());
         Collections.sort(clients, new Comparator<Client>(){
             public int compare(Client o1, Client o2){
@@ -123,8 +129,8 @@ public class ClientTabFragment extends Fragment {
     public void updateView()
     {
 
-        mAdapter=new ClientRecyclerViewAdapter(clients,getActivity());
-        recyclerView.setAdapter(mAdapter);
+        mAdapter.objects=clients;
+        mAdapter.notifyDataSetChanged();
     }
 
     public String ClientSearchString(Client client)
@@ -133,7 +139,7 @@ public class ClientTabFragment extends Fragment {
     }
     public void filterCardsSearch(String string)
     {
-        clients=new ArrayList<>(backEndFunc.getAllClients());
+        //clients=new ArrayList<>(backEndFunc.getAllClients());
         ArrayList<Client> tmp=new ArrayList<>();
         for (int j = 0; j < clients.size(); j++) {
             for (Client client:clients) {

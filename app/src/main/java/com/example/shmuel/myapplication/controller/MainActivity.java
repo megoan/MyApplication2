@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     TabFragments tabFragments;
     //private ViewPager mViewPager;
     private TabsType tabsType=TabsType.CARS;
+    private TabsType tabsTypeBeforeChange=TabsType.CARS;
     //private PageAdapter pageAdapter;
     int updatedTab=0;
 
@@ -137,9 +138,6 @@ public class MainActivity extends AppCompatActivity {
 
         backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
         setContentView(R.layout.activity_main);
-
-
-
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(searchClicked && check) {
+                if(searchClicked && check && tabsType==tabsTypeBeforeChange) {
                     switch (tabsType) {
                         case CARS: {
                             CarsTabFragment.mAdapter.getFilter().filter(newText);
@@ -252,6 +250,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
+                else {
+                    CarsTabFragment.mAdapter.getFilter().filter(newText);
+                    CarModelsFragment.mAdapter.getFilter().filter(newText);
+                    BranchesFragment.mAdapter.getFilter().filter(newText);
+                    ClientTabFragment.mAdapter.getFilter().filter(newText);
+                }
                 return false;
             }
         });
@@ -260,7 +264,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 closeAction();
-                searchView.setQuery(null, false);
+                tabsTypeBeforeChange=TabsType.ALL;
+                searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setIconified(true);
 
@@ -273,22 +278,22 @@ public class MainActivity extends AppCompatActivity {
                 switch (position)
                 {
                     case 0:{
-                        tabsType=TabsType.CARS;
+                        tabsType=tabsTypeBeforeChange=TabsType.CARS;
                         searchView.setQueryHint("cars");
                         break;
                     }
                     case 1:{
-                        tabsType=TabsType.CAR_MODELS;
+                        tabsType=tabsTypeBeforeChange=TabsType.CAR_MODELS;
                         searchView.setQueryHint("car models");
                         break;
                     }
                     case 2:{
-                        tabsType=TabsType.BRANCHES;
+                        tabsType=tabsTypeBeforeChange=TabsType.BRANCHES;
                         searchView.setQueryHint("branches");
                         break;
                     }
                     case 3:{
-                        tabsType=TabsType.CLIENTS;
+                        tabsType=tabsTypeBeforeChange=TabsType.CLIENTS;
                         searchView.setQueryHint("clients");
                         break;
                     }

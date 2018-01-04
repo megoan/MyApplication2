@@ -198,6 +198,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
 
     @Override
     public int getItemCount() {
+        if(objects==null)return 0;
         return objects.size();
     }
 

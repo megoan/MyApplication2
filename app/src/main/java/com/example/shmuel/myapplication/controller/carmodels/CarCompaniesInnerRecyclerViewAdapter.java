@@ -30,6 +30,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
@@ -38,11 +43,16 @@ import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
-import com.example.shmuel.myapplication.model.entities.CarModelImage;
 import com.example.shmuel.myapplication.model.entities.Transmission;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+
+import javax.sql.DataSource;
 
 /**
  * Created by shmuel on 23/10/2017.
@@ -58,12 +68,14 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     private MyFilter myFilter;
     private ProgressDialog progDailog;
     CarModel carModel;
-    CarModelImage carModelImage=new CarModelImage();
     ViewHolder viewHolder2;
+
+
 
     public CarCompaniesInnerRecyclerViewAdapter(ArrayList<CarModel> objects, Context context) {
         this.objects = objects;
         this.mContext = context;
+
     }
 
     public void removeitem(int position) {
@@ -78,7 +90,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     }
 
     @Override
-    public void onBindViewHolder(CarCompaniesInnerRecyclerViewAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final CarCompaniesInnerRecyclerViewAdapter.ViewHolder holder, final int position) {
         carModel = objects.get(position);
         viewHolder2=holder;
 
@@ -133,7 +145,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                 notifyItemChanged(selectedPosition);
                 if (((MainActivity) mContext).car_model_is_in_action_mode == false) {
                     Intent intent = new Intent(mContext, CarModelActivity.class);
-                    //CarModel carModel = objects.get(position);
+                    CarModel carModel = objects.get(position);
                     intent.putExtra("companyName", carModel.getCompanyName());
                     intent.putExtra("modelName", carModel.getCarModelName());
                     intent.putExtra("id", carModel.getCarModelCode());
@@ -142,7 +154,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                     intent.putExtra("passengers", carModel.getPassengers());
                     intent.putExtra("luggage", carModel.getLuggage());
                     intent.putExtra("ac", carModel.isAc());
-                    //intent.putExtra("imgUrl", carModel.getImgURL());
+                    intent.putExtra("imgUrl", carModel.getImgURL());
                     intent.putExtra("inUse", carModel.isInUse());
                     intent.putExtra("position", position);
 
@@ -156,9 +168,26 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             }
         });
 
+        holder.progressBar.setVisibility(View.VISIBLE);
+        Glide.with(mContext)
+                .load(carModel.getImgURL())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .listener(new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                holder.progressBar.setVisibility(View.GONE);
+                return false; // important to return false so the error placeholder can be placed
+            }
 
-
-       new DownloadImage().execute();
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                holder.progressBar.setVisibility(View.GONE);
+                return false;
+            }
+        })
+                .into(holder.imageView);
+       //new DownloadImage(holder.imageView,holder.progressBar).execute();
 
 
         holder.carModel.setText(carModel.getCarModelName());
@@ -360,8 +389,16 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         @Override
         protected Void doInBackground(Void... voids) {
 
+            FirebaseStorage mFirebaseStorage=FirebaseStorage.getInstance();
+
             CarModel carModel = objects.get(selectedPosition);
-            backEndFunc.deleteCarModel(carModel.getCarModelCode());
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("carModel"+"/"+carModel.getCarModelCode()+".jpg");
+            backEndForSql.deleteCarModel(carModel.getCarModelCode());
+            imageRef.delete();
+            MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
             int objectsLengh = objects.size();
             if (objectsLengh == objects.size()) {
                 objects.remove(selectedPosition);
@@ -369,7 +406,6 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
 
             return null;
         }
-
 
         @Override
         protected void onPostExecute(Void aVoid) {
@@ -384,36 +420,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                     "car model deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();
             progDailog.dismiss();
-
         }
     }
-    public class DownloadImage extends AsyncTask<Void,Void,Void>
-    {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            viewHolder2.progressBar.setVisibility(View.VISIBLE);
-        }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            carModelImage=backEndForSql.getCarModelImage(carModel.getCarModelCode());
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (carModelImage.getImgURL()==null|| carModelImage.getImgURL().equals("@drawable/rental")) {
-                int defaultImage = mContext.getResources().getIdentifier("@drawable/rental", null, mContext.getPackageName());
-                Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
-                viewHolder2.imageView.setImageDrawable(drawable);
-            } else {
-                byte[] imageBytes= Base64.decode(carModelImage.getImgURL(),Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-               viewHolder2.imageView.setImageBitmap(bitmap);
-            }
-            viewHolder2.progressBar.setVisibility(View.INVISIBLE);
-        }
-    }
 }

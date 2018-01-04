@@ -10,7 +10,7 @@ public class Branch {
     private MyAddress myAddress;
     private int parkingSpotsNum;
     private int branchNum;
-    //private String imgURL;
+    private String imgURL;
     private double branchRevenue;
     private MyDate establishedDate;
     private boolean inUse;
@@ -23,7 +23,7 @@ public class Branch {
         this.myAddress = myAddress;
         this.parkingSpotsNum = parkingSpotsNum;
         this.branchNum = branchNum;
-        //this.imgURL=imgURL;
+        this.imgURL=imgURL;
         this.branchRevenue=branchRevenue;
         this.establishedDate=new MyDate(establishedDate);
         this.inUse=inUse;
@@ -34,7 +34,7 @@ public class Branch {
         this.myAddress = new MyAddress(other.myAddress);
         this.parkingSpotsNum = other.parkingSpotsNum;
         this.branchNum = other.branchNum;
-        //this.imgURL=other.imgURL;
+        this.imgURL=other.imgURL;
         this.branchRevenue=other.branchRevenue;
         this.establishedDate=new MyDate(other.establishedDate);
         this.inUse=other.inUse;
@@ -65,13 +65,12 @@ public class Branch {
         this.branchNum = branchNum;
     }
 
-   /* public String getImgURL() {
+    public String getImgURL() {
         return imgURL;
     }
-*/
-    /*public void setImgURL(String imgURL) {
+    public void setImgURL(String imgURL) {
         this.imgURL = imgURL;
-    }*/
+    }
 
     public double getBranchRevenue() {
         return branchRevenue;

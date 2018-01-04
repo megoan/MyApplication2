@@ -28,6 +28,7 @@ import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.Client;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 
 public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecyclerViewAdapter.ViewHolder> implements Filterable{
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFuncForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ArrayList<Client> objects;
     private Context mContext;
     public ActionMode actionMode;
@@ -227,7 +229,7 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
                         filteredClients.add(c);
                     }
                 }
-                results.values =filteredClients;
+                results.values = filteredClients;
                 results.count = filteredClients.size();
             }
             return results;
@@ -236,7 +238,6 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             objects=new ArrayList<Client>((ArrayList<Client>)results.values);
-
             notifyDataSetChanged();
         }
     }
@@ -255,13 +256,9 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            backEndFunc.deleteClient(objects.get(selectedPosition).getId());
-
+            backEndFuncForSql.deleteClient(objects.get(selectedPosition).getId());
+            MySqlDataSource.clientList=backEndFuncForSql.getAllClients();
+            ClientTabFragment.clients=MySqlDataSource.clientList;
             return null;
         }
 
@@ -269,7 +266,6 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            int i=1;
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();

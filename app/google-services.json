@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "207647626693",
+    "firebase_url": "https://take-and-go-d89dc.firebaseio.com",
+    "project_id": "take-and-go-d89dc",
+    "storage_bucket": "take-and-go-d89dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207647626693:android:9fb1dd8490513c33",
+        "android_client_info": {
+          "package_name": "com.example.shmuel.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207647626693-t1lm0jvv39v98e8vl2jko3bu0e36vj7v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQAFA-65FuZHTtIq0NXZtq5mIv0FeTy58"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

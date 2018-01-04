@@ -5,5 +5,5 @@ package com.example.shmuel.myapplication.controller;
  */
 
 public enum TabsType {
-    CARS,CAR_MODELS,BRANCHES,CLIENTS,
+    CARS,CAR_MODELS,BRANCHES,CLIENTS,ALL
 }

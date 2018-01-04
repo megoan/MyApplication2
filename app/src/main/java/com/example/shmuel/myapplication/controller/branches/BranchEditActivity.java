@@ -31,6 +31,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +44,6 @@ import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
-import com.example.shmuel.myapplication.model.entities.BranchImage;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.MyDate;
@@ -52,6 +52,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -65,7 +66,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
     DatePickerDialog datePickerDialog;
     Branch branch=new Branch();
-    BranchImage branchImage=new BranchImage();
+
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
 
@@ -88,18 +89,15 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
     Intent CropIntent;
     boolean imageSelected=false;
     Bitmap mBitmap;
-
-
-
     ScrollView scrollView;
     TextView numOfCarsText;
-
     EditText numOfSpotsText;
     TextView addressText;
     EditText branchRevenueText;
     TextView establishedDateText;
     ImageView imageView;
     EditText branchIDText;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +108,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
         scrollView=findViewById(R.id.branch_scroll_view);
         numOfCarsText=(TextView) findViewById(R.id.numOfCars);
-
+        progressBar=findViewById(R.id.downloadProgressBar);
         numOfSpotsText=(EditText)findViewById(R.id.numOfSpots);
         addressText=(TextView)findViewById(R.id.address);
         branchRevenueText=(EditText)findViewById(R.id.revenue);
@@ -124,7 +122,13 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectImage();
+
+                if (progressBar.getVisibility()==View.INVISIBLE) {
+                    selectImage();
+                }
+                else {
+                    Toast.makeText(BranchEditActivity.this,"wait till image is finished loading",Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -149,8 +153,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             //id
             branchID=(intent.getIntExtra("branchID",0));
             branchIDText.setText("#"+String.valueOf(branchID));
-            branchImage.setBranchID(branchID);
-            new DownloadImage().execute();
+
 
 
             //number of parking spots
@@ -284,7 +287,10 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
                     String addressString=addressText.getText().toString();
                     String establishedString= establishedDateText.getText().toString();
-                    parkingSpotsNum= Integer.parseInt(numOfSpotsText.getText().toString());
+                    String parkingNumString=numOfSpotsText.getText().toString();
+                    if (parkingNumString.length()>0) {
+                        parkingSpotsNum= Integer.parseInt(parkingNumString);
+                    }
 
                     if(!imageSelected && update==false){
                         inputWarningDialog("don't be shy and upload a picture!");return false;}
@@ -294,7 +300,6 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                         //carModel.setByteArray(stream.toByteArray());
                         byte[] byteArray=stream.toByteArray();
                         //branch.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
-                        branchImage.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
                     }
 
                     if(id1.equals("")||parkingSpotsNum==0|| addressString==null || establishedString==null ||myDate==null)
@@ -309,13 +314,10 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
                     if (update) {
                         branch.setBranchNum(Integer.valueOf(id1.substring(1)));
-                        branchImage.setBranchID(branch.getBranchNum());
                     }
                     else
                     {
                         branch.setBranchNum(Integer.valueOf(id1));
-                        branchImage.setBranchID(branch.getBranchNum());
-
                     }
                     branch.setInUse(inUse);
                     //TODO fix myAddress
@@ -471,14 +473,14 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                 MySqlDataSource.branchList=backEndFunc.getAllBranches();
                 if(update==true && imageSelected==true)
                 {
-                    backEndFunc.updateBranchImage(branchImage);
+
                 }
             }
             else
             {
                 try {
                     backEndFunc.addBranch(branch);
-                    backEndFunc.addBranchImage(branchImage);
+
                 } catch (Exception e) {
                    //inputWarningDialog("try uploading again soon!");
                 }
@@ -568,21 +570,32 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                 if(data!=null)
                 {
                     uri=data.getData();
-                    CropImage();
+                    CropImage.activity(uri).setAspectRatio(1,1)
+                            .start(this);
+                    //CropImage();
                 }
                 //onSelectFromGalleryResult(data);
             }
             else if (requestCode == REQUEST_CAMERA){
-                CropImage();
+                CropImage.activity(uri).setAspectRatio(1,1)
+                        .start(this);
+                //CropImage();
             }
-            else {
-                Bundle bundle=data.getExtras();
-                Bitmap bitmap=bundle.getParcelable("data");
-                imageView.setImageBitmap(bitmap);
-                imageSelected=true;
-                mBitmap=bitmap;
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+                    Uri resultUri = result.getUri();
+                    try {
+                        mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                        imageView.setImageBitmap(mBitmap);
+                        imageSelected=true;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
+                    Exception error = result.getError();
+                }
             }
-            // onCaptureImageResult(data);
         }
     }
 
@@ -638,26 +651,5 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         }
     }
 
-    public class DownloadImage extends AsyncTask<Void,Void,Void>
-    {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            branchImage=backEndFunc.getBranchImage(branchImage.getBranchID());
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (branchImage.getImgURL()==null|| branchImage.getImgURL().equals("@drawable/rental")) {
-                int defaultImage = BranchEditActivity.this.getResources().getIdentifier("@drawable/rental", null, BranchEditActivity.this.getPackageName());
-                Drawable drawable = ContextCompat.getDrawable(BranchEditActivity.this, defaultImage);
-                imageView.setImageDrawable(drawable);
-            } else {
-                byte[] imageBytes= Base64.decode(branchImage.getImgURL(),Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                imageView.setImageBitmap(bitmap);
-            }
-        }
-    }
 }

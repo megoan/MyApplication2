@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -84,6 +85,8 @@ public class CarActivity extends AppCompatActivity {
         TextView inUse1=(TextView)findViewById(R.id.inUse_car);
         ImageView imageView1=(ImageView)findViewById(R.id.mainImage);
         RatingBar ratingBar1=(RatingBar)findViewById(R.id.rating_car);
+
+
 
         branch1.setText(branchName);
         carModel1.setText(carModel);

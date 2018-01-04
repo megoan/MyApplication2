@@ -256,7 +256,7 @@ public class ClientEditActivity extends AppCompatActivity {
             {
                 backEndFunc.addClient(client);
                 MySqlDataSource.clientList = backEndFunc.getAllClients();
-
+                ClientTabFragment.clients=MySqlDataSource.clientList;
 
             }
             return null;

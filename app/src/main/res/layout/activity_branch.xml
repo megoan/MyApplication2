@@ -30,6 +30,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 >
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+
                 <ImageView
                     android:id="@+id/mainImage"
                     android:layout_width="360dp"
@@ -39,6 +44,14 @@
                     android:layout_gravity="center"
                     android:scaleType="centerCrop"
                     />
+                    <ProgressBar
+                        android:id="@+id/downloadProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
