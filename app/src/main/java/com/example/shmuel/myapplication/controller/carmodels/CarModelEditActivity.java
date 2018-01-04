@@ -272,19 +272,14 @@ public class CarModelEditActivity extends AppCompatActivity {
 
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(CarModelEditActivity.this);
-                    if(update){
-                        builder.setTitle("Update car model");}
-                    else{
-                        builder.setTitle("Add car model");
-                    }
 
                     builder.setMessage("are you sure?");
 
                     if(update) {
+                        builder.setTitle("Update car model");
                         builder.setPositiveButton("update", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO check that all sadot are filled
 
                                 try {
                                     if (imageSelected) {
@@ -293,7 +288,6 @@ public class CarModelEditActivity extends AppCompatActivity {
                                     else {
                                         new BackGroundUpdateCar().execute();
                                     }
-
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -302,19 +296,16 @@ public class CarModelEditActivity extends AppCompatActivity {
                         });
                     }
                     else {
+                        builder.setTitle("Add car model");
                         builder.setPositiveButton("add", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-
                                 try {
                                    new BackGroundAddCar().execute();
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
                                 }
-
-
                             }
                         });
                     }
@@ -343,8 +334,6 @@ public class CarModelEditActivity extends AppCompatActivity {
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(CarModelEditActivity.this);
         builder.setTitle("Invalid input!");
-        //builder.setIcon(getResources().getDrawable(android.R.drawable.stat_notify_error));
-        //builder.setIcon(android.R.drawable.stat_notify_error);
         builder.setMessage(message);
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
@@ -385,34 +374,7 @@ public class CarModelEditActivity extends AppCompatActivity {
             return 0;
         }
     }
-    public class BackGroundUpdateCar extends AsyncTask<Void,Void,Void> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progDailog = new ProgressDialog(CarModelEditActivity.this);
-            progDailog.setMessage("Updating...");
-            progDailog.setIndeterminate(false);
-            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progDailog.setCancelable(false);
-            progDailog.show();
-        }
-        @Override
-        protected Void doInBackground(Void... voids) {
-                    backEndFunc.updateCarModel(carModel);
-                    MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
-                    return null;
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Toast.makeText(CarModelEditActivity.this,
-                            "car model updated", Toast.LENGTH_SHORT).show();
-            CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
-            CarModelsFragment.mAdapter.notifyDataSetChanged();
-            finish();
-            }
-    }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -556,49 +518,6 @@ public class CarModelEditActivity extends AppCompatActivity {
         imageView.setImageBitmap(bm);
     }
 
-    public boolean uploadImageToFireBaseStorage(final Bitmap bitmap, String folder, String imageName) throws Exception{
-        originalID=true;
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
-        final StorageReference imageRef;
-        imageRef = storageRef.child(folder+"/"+imageName+".jpg");
-        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                originalID=false;
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] data = baos.toByteArray();
-                UploadTask uploadTask = imageRef.putBytes(data);
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        String url=downloadUrl.toString();
-                        carModel.setImgURL(url);
-                        new  BackGroundUpdateCar().execute();
-                    }
-                });
-            }
-        });
-        return originalID;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public class BackGroundAddCar extends AsyncTask<Void,Void,Void> {
@@ -674,7 +593,9 @@ public class CarModelEditActivity extends AppCompatActivity {
                 Toast.makeText(CarModelEditActivity.this,
                         "new car model updated", Toast.LENGTH_SHORT).show();
             }
-            finish();
+            if (update) {
+                finish();
+            }
         }
     }
     public class BackGroundOnlyUpdateCarModel extends AsyncTask<Void,Void,Void> {
@@ -710,6 +631,34 @@ public class CarModelEditActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+        }
+    }
+    public class BackGroundUpdateCar extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(CarModelEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            backEndFunc.updateCarModel(carModel);
+            MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(CarModelEditActivity.this,
+                    "car model updated", Toast.LENGTH_SHORT).show();
+            CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
+            CarModelsFragment.mAdapter.notifyDataSetChanged();
+            finish();
         }
     }
 }

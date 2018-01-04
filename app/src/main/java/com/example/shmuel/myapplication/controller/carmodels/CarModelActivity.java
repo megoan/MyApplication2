@@ -40,8 +40,8 @@ import com.google.firebase.storage.StorageReference;
 public class CarModelActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
-    public ActionMode actionMode;
 
+    public ActionMode actionMode;
     private int position;
     private ProgressDialog progDailog;
     private String companyName;

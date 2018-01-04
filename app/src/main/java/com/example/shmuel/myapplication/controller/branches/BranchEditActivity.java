@@ -36,14 +36,22 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
 
 
 import com.example.shmuel.myapplication.controller.Utility;
+import com.example.shmuel.myapplication.controller.carmodels.CarModelEditActivity;
+import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
+import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.MyDate;
@@ -52,6 +60,10 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
@@ -63,13 +75,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class BranchEditActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
-
-    DatePickerDialog datePickerDialog;
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     Branch branch=new Branch();
 
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
+    DatePickerDialog datePickerDialog;
     public ActionMode actionMode;
-
     boolean update=false;
     private int branchID;
     private int parkingSpotsNum;
@@ -116,19 +126,13 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         imageView=(ImageView)findViewById(R.id.mainImage);
         branchIDText=(EditText)findViewById(R.id.branch_id);
 
-        MyActionModeCallbackCar callback=new MyActionModeCallbackCar();
+        MyActionModeCallbackBranch callback=new MyActionModeCallbackBranch();
         actionMode=startActionMode(callback);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (progressBar.getVisibility()==View.INVISIBLE) {
                     selectImage();
-                }
-                else {
-                    Toast.makeText(BranchEditActivity.this,"wait till image is finished loading",Toast.LENGTH_LONG).show();
-                }
             }
         });
 
@@ -145,7 +149,25 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         String update1=intent.getStringExtra("update");
         if(update1.equals("true"))
         {
+            imgUrl=intent.getStringExtra("imgUrl");
+            Glide.with(this)
+                    .load(intent.getStringExtra("imgUrl"))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false; // important to return false so the error placeholder can be placed
+                        }
 
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .into(imageView);
             update=true;
             branchIDText.setEnabled(false);
             actionMode.setTitle("Update branch");
@@ -192,7 +214,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     BranchEditActivity.this, BranchEditActivity.this, myDate.getYear(), myDate.getMonth(0), myDate.getDay());
 
 
-            imgUrl=intent.getStringExtra("imgUrl");
+
             inUse=intent.getBooleanExtra("inUse",false);
             numOfCars=intent.getIntExtra("numOfCars",0);
 
@@ -208,6 +230,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             int mDay = c.get(Calendar.DAY_OF_MONTH);
             datePickerDialog = new DatePickerDialog(
                     BranchEditActivity.this, BranchEditActivity.this, mYear, mMonth, mDay);
+            progressBar.setVisibility(View.INVISIBLE);
         }
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -260,7 +283,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
     }
 
 
-    public class MyActionModeCallbackCar implements android.view.ActionMode.Callback{
+    public class MyActionModeCallbackBranch implements android.view.ActionMode.Callback{
 
         @Override
         public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
@@ -294,13 +317,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
 
                     if(!imageSelected && update==false){
                         inputWarningDialog("don't be shy and upload a picture!");return false;}
-                    else {
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        //carModel.setByteArray(stream.toByteArray());
-                        byte[] byteArray=stream.toByteArray();
-                        //branch.setImgURL(Base64.encodeToString(byteArray,Base64.DEFAULT));
-                    }
+
 
                     if(id1.equals("")||parkingSpotsNum==0|| addressString==null || establishedString==null ||myDate==null)
                     {
@@ -320,44 +337,32 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                         branch.setBranchNum(Integer.valueOf(id1));
                     }
                     branch.setInUse(inUse);
-                    //TODO fix myAddress
-                    //branch.setMyAddress(new MyAddress());
                     branch.setBranchRevenue(branchRevenueString);
-                    //TODO fix myDate
                     branch.setEstablishedDate(myDate);
                     branch.setParkingSpotsNum(parkingSpotsNum);
                     branch.setMyAddress(myAddress);
                     branch.setCarIds(carList);
 
-
-
-
-                    /*if (imgUrl!=null) {
-                        branch.setImgURL(imgUrl);
-                    }
-                    else
-                    {
-                        branch.setImgURL("@drawable/rental");
-                    }*/
-
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(BranchEditActivity.this);
-                    if(update){
-                        builder.setTitle("Update branch");}
-                    else{
-                        builder.setTitle("Add branch");
-                    }
-
                     builder.setMessage("are you sure?");
 
+
                     if(update) {
+                        branch.setImgURL(imgUrl);
+                        builder.setTitle("Update branch");
                         builder.setPositiveButton("update", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO check that all sadot are filled
 
                                 try {
-                                    new BackGroundDeleteBranch().execute();
+                                    if (imageSelected) {
+
+                                        new  BackGroundOnlyUpdateBranch().execute();
+                                    }
+                                    else {
+
+                                        new BackGroundUpdateBranch().execute();
+                                    }
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -366,22 +371,16 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                         });
                     }
                     else {
+                        builder.setTitle("Add branch");
                         builder.setPositiveButton("add", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-
                                 try {
-
-                                    new BackGroundDeleteBranch().execute();
-
-
+                                    new BackGroundAddBranch().execute();
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
                                 }
-
-
                             }
                         });
                     }
@@ -650,6 +649,146 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             progDailog.dismiss();
         }
     }
+    public class BackGroundAddBranch extends AsyncTask<Void,Void,Void> {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(BranchEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            backEndFunc.addBranch(branch);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("branch"+"/"+branch.getBranchNum()+".jpg");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            UploadTask uploadTask = imageRef.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    String url=downloadUrl.toString();
+                    branch.setImgURL(url);
+                    new BackGroundupdateBranchAfterAdd().execute();
+                }
+            });
+
+        }
+    }
+    public class BackGroundupdateBranchAfterAdd extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            backEndFunc.updateBranch(branch);
+            MySqlDataSource.branchList=backEndFunc.getAllBranches();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
+            BranchesFragment.mAdapter.notifyDataSetChanged();
+            progDailog.dismiss();
+            if (!update) {
+                Toast.makeText(BranchEditActivity.this,
+                        "new branch added", Toast.LENGTH_SHORT).show();
+                resetView();
+                branch=new Branch();
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
+            }
+            else {
+                Toast.makeText(BranchEditActivity.this,
+                        "new branch updated", Toast.LENGTH_SHORT).show();
+            }
+            if (update) {
+                finish();
+            }
+        }
+    }
+    public class BackGroundOnlyUpdateBranch extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(BranchEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("branch"+"/"+branch.getBranchNum()+".jpg");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            UploadTask uploadTask = imageRef.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    new BackGroundupdateBranchAfterAdd().execute();
+                }
+            });
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
+    }
+    public class BackGroundUpdateBranch extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(BranchEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            backEndFunc.updateBranch(branch);
+            MySqlDataSource.branchList=backEndFunc.getAllBranches();
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(BranchEditActivity.this,
+                    "branch updated", Toast.LENGTH_SHORT).show();
+            BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
+            BranchesFragment.mAdapter.notifyDataSetChanged();
+            finish();
+        }
+    }
 
 }

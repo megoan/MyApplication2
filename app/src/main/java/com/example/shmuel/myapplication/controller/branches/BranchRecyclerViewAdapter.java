@@ -29,6 +29,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
@@ -37,7 +42,11 @@ import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
+import com.example.shmuel.myapplication.model.entities.CarModel;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.lang.ref.WeakReference;
 import java.text.NumberFormat;
@@ -49,20 +58,26 @@ import java.util.Locale;
  */
 
 public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecyclerViewAdapter.ViewHolder> implements Filterable{
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
+
     public ArrayList<Branch> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition=-1;
     MyFilter myFilter;
-    Branch branch;
     ViewHolder viewHolder2;
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
-    BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     private ProgressDialog progDailog;
+
+    Branch branch;
 
     public BranchRecyclerViewAdapter(ArrayList<Branch> objects, Context context) {
         this.objects=objects;
         this.mContext=context;
+    }
+
+    public void removeitem(int position) {
+        objects.remove(position);
     }
 
     @Override
@@ -75,7 +90,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         branch=objects.get(position);
         viewHolder2=holder;
 
@@ -145,7 +160,6 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                     intent.putExtra("latitude",branch1.getMyAddress().getLatitude());
                     intent.putExtra("longitude",branch1.getMyAddress().getLongitude());
                     intent.putExtra("id",branch1.getBranchNum());
-                    //intent.putExtra("address",branch1.getMyAddress().getCity()+" "+branch1.getMyAddress().getStreet()+" "+branch1.getMyAddress().getNumber());
                     intent.putExtra("established",branch1.getEstablishedDate().toString());
                     intent.putExtra("parkingSpotsNum",branch1.getParkingSpotsNum());
                     intent.putExtra("numOfCars",branch1.getCarIds().size());
@@ -154,14 +168,11 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                     intent.putExtra("inUse",branch1.isInUse());
                     intent.putExtra("revenue",branch1.getBranchRevenue());
                     intent.putExtra("country",branch1.getMyAddress().getCountry());
-                    /*intent.putExtra("city",branch1.getMyAddress().getCity());
-                    intent.putExtra("street",branch1.getMyAddress().getStreet());
-                    intent.putExtra("number",branch1.getMyAddress().getNumber());*/
                     intent.putExtra("year",branch1.getEstablishedDate().getYear());
                     intent.putExtra("month",branch1.getEstablishedDate().getMonth());
                     intent.putExtra("day",branch1.getEstablishedDate().getDay());
                     intent.putExtra("carList",branch1.getCarIds());
-                    ((Activity)mContext).startActivity(intent);
+                    mContext.startActivity(intent);
                 }
                 if (actionMode!=null) {
                     actionMode.finish();
@@ -169,29 +180,33 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 selectedPosition=-1;
             }
         });
-        
-        /*int defaultImage = mContext.getResources().getIdentifier(branch.getImgURL(),null,mContext.getPackageName());
 
-        Drawable drawable=ContextCompat.getDrawable(mContext, defaultImage);*/
+        holder.progressBar.setVisibility(View.VISIBLE);
+        Glide.with(mContext)
+                .load(branch.getImgURL())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false; // important to return false so the error placeholder can be placed
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(holder.imageView);
 
         holder.branchCity.setText(branch.getMyAddress().getAddressName());
-       // holder.branchStreet.setText(branch.getMyAddress().getStreet());
-       // holder.branchAddressNumber.setText(branch.getMyAddress().getNumber());
         holder.revenue.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(branch.getBranchRevenue())));
         holder.numberOfCars.setText(String.valueOf(branch.getCarIds().size()));
         holder.branchNumber.setText("#"+String.valueOf(branch.getBranchNum()));
-        if (objects.size()>0) {
 
-        }
-       /* if (branch.getImgURL().equals("@drawable/rental")) {
-            int defaultImage = mContext.getResources().getIdentifier("@drawable/rental", null, mContext.getPackageName());
-            Drawable drawable = ContextCompat.getDrawable(mContext, defaultImage);
-            holder.imageView.setImageDrawable(drawable);
-        } else {
-            byte[] imageBytes= Base64.decode(branch.getImgURL(),Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            holder.imageView.setImageBitmap(bitmap);
-        }*/
+
 
 
         if(!branch.isInUse())
@@ -218,8 +233,6 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView branchCity;
-       // TextView branchStreet;
-        TextView branchAddressNumber;
         ImageView imageView;
         TextView revenue;
         TextView numberOfCars;
@@ -232,9 +245,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             branchCity=(TextView)itemView.findViewById(R.id.cardBranchCity);
             revenue=(TextView)itemView.findViewById(R.id.cardBranchRevenue);
             numberOfCars=(TextView)itemView.findViewById(R.id.cardBranchCarNum);
-           // branchStreet=(TextView)itemView.findViewById(R.id.cardBranchStreet);
             branchNumber=(TextView)itemView.findViewById(R.id.cardBranchNumber);
-            //branchAddressNumber=(TextView)itemView.findViewById(R.id.cardBranchAddressNumber);
             imageView=(ImageView)itemView.findViewById(R.id.imageView2);
             inUse=(ImageButton)itemView.findViewById(R.id.cardBranchInUse);
             progressBar=itemView.findViewById(R.id.downloadProgressBar);
@@ -304,13 +315,10 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            int i=0;
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             ((MainActivity)mContext).branch_is_in_action_mode=false;
             notifyDataSetChanged();
-            i++;
-
         }
 
     }
@@ -364,13 +372,21 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            backEndFunc.deleteBranch(objects.get(selectedPosition).getBranchNum());
 
+            FirebaseStorage mFirebaseStorage=FirebaseStorage.getInstance();
+
+            Branch branch = objects.get(selectedPosition);
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("branch"+"/"+branch.getBranchNum()+".jpg");
+            backEndForSql.deleteCarModel(branch.getBranchNum());
+            imageRef.delete();
+            MySqlDataSource.branchList=backEndForSql.getAllBranches();
+            int objectsLengh = objects.size();
+            if (objectsLengh == objects.size()) {
+                objects.remove(selectedPosition);
+            }
             return null;
         }
 
@@ -378,7 +394,6 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            int i=1;
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();

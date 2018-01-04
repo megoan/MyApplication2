@@ -61,14 +61,16 @@ import javax.sql.DataSource;
 public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<CarCompaniesInnerRecyclerViewAdapter.ViewHolder> implements Filterable {
     BackEndFunc backEndFunc = FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
     BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
+
     public ArrayList<CarModel> objects;
     private Context mContext;
     public ActionMode actionMode;
     private int selectedPosition = -1;
     private MyFilter myFilter;
     private ProgressDialog progDailog;
-    CarModel carModel;
     ViewHolder viewHolder2;
+
+    CarModel carModel;
 
 
 
@@ -86,7 +88,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
     public CarCompaniesInnerRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.car_model_card_layout, parent, false);
-        return new CarCompaniesInnerRecyclerViewAdapter.ViewHolder(itemView);
+        return new ViewHolder(itemView);
     }
 
     @Override
@@ -157,9 +159,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                     intent.putExtra("imgUrl", carModel.getImgURL());
                     intent.putExtra("inUse", carModel.isInUse());
                     intent.putExtra("position", position);
-
-
-                    ((Activity) mContext).startActivity(intent);
+                    mContext.startActivity(intent);
                 }
                 if (actionMode != null) {
                     actionMode.finish();
@@ -270,7 +270,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             ac = (ImageButton) itemView.findViewById(R.id.carModelCardAc);
             auto = (ImageButton) itemView.findViewById(R.id.carModelCardAuto);
             inUse = (ImageButton) itemView.findViewById(R.id.carModelCardInUseButton);
-            progressBar=itemView.findViewById(R.id.carModelImageProgressbar);
+            progressBar=(ProgressBar) itemView.findViewById(R.id.carModelImageProgressbar);
         }
     }
 
@@ -410,11 +410,9 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            int i = 1;
             selectedPosition = -1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
-
             TabFragments.carModelsTab.updateView();
             Toast.makeText(mContext,
                     "car model deleted from source", Toast.LENGTH_SHORT).show();

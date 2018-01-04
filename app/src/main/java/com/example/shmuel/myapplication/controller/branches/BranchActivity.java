@@ -21,6 +21,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
@@ -28,14 +33,14 @@ import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.MyDate;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
 public class BranchActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
-
-    //private String myAddress=new MyAddress();
     private MyAddress myAddress =new MyAddress();
     private MyDate myDate=new MyDate();
     private int parkingSpotsNum;
@@ -57,20 +62,36 @@ public class BranchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_branch);
         BranchActivity.MyActionModeCallbackClient callback=new BranchActivity.MyActionModeCallbackClient();
         actionMode=startActionMode(callback);
-
-
-        Intent intent =getIntent();
-        branchNum=intent.getIntExtra("id",0);
-
         imageView=(ImageView)findViewById(R.id.mainImage);
         progressBar=findViewById(R.id.downloadProgressBar);
+        Intent intent =getIntent();
+        imgUrl=intent.getStringExtra("imgUrl");
+        progressBar.setVisibility(View.VISIBLE);
+        Glide.with(this)
+                .load(imgUrl)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false; // important to return false so the error placeholder can be placed
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(imageView);
+
+        branchNum=intent.getIntExtra("id",0);
+
         myAddress.setCountry(intent.getStringExtra("country"));
         myAddress.setAddressName(intent.getStringExtra("addressName"));
         myAddress.setLatitude(intent.getDoubleExtra("latitude",0));
         myAddress.setLongitude(intent.getDoubleExtra("longitude",0));
-        //myAddress.setCity(intent.getStringExtra("city"));
-        //myAddress.setStreet(intent.getStringExtra("street"));
-        //myAddress.setNumber(intent.getStringExtra("number"));
         myDate.setYear(intent.getIntExtra("year",0));
         myDate.setMonth(intent.getStringExtra("month"));
         myDate.setDay(intent.getIntExtra("day",0));
@@ -78,7 +99,6 @@ public class BranchActivity extends AppCompatActivity {
         parkingSpotsNum=intent.getIntExtra("parkingSpotsNum",0);
         avaibaleSpots=intent.getIntExtra("available",0);
         inUse=intent.getBooleanExtra("inUse",false);
-        imgUrl=intent.getStringExtra("imgUrl");
         branchRevenue=intent.getDoubleExtra("revenue",0);
         numOfCars=intent.getIntExtra("numOfCars",0);
         carList=intent.getIntegerArrayListExtra("carList");
@@ -88,7 +108,6 @@ public class BranchActivity extends AppCompatActivity {
         TextView numOfCarsText =(TextView)findViewById(R.id.numOfCars);
         TextView numOfSpotsText =(TextView)findViewById(R.id.numOfSpots);
         TextView revenueText =(TextView)findViewById(R.id.revenue);
-
         TextView inUseText=(TextView)findViewById(R.id.inUse_branch);
         TextView establish=(TextView)findViewById(R.id.established);
 
@@ -99,9 +118,6 @@ public class BranchActivity extends AppCompatActivity {
         revenueText.setText(String.valueOf(branchRevenue));
         inUseText.setText(String.valueOf(inUse));
         establish.setText(establishedDate);
-
-
-
 
         actionMode.setTitle(myAddress.getAddressName());
     }
@@ -216,9 +232,14 @@ public class BranchActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("branch"+"/"+branchNum+".jpg");
+            backEndFunc.deleteCarModel(branchNum);
+            imageRef.delete();
+            MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
 
-            backEndFunc.deleteBranch(branchNum);
-            MySqlDataSource.branchList=backEndFunc.getAllBranches();
 
             return null;
         }
@@ -227,6 +248,8 @@ public class BranchActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
+
             Toast.makeText(BranchActivity.this,
                     "branch deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();
