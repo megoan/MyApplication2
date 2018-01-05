@@ -147,6 +147,8 @@ public class CarModelEditActivity extends AppCompatActivity {
                     .load(intent.getStringExtra("imgUrl"))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
+                    .error(R.drawable.default_car_image)
+                    .placeholder(R.drawable.default_car_image)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -333,7 +335,7 @@ public class CarModelEditActivity extends AppCompatActivity {
     public void inputWarningDialog(String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(CarModelEditActivity.this);
-        builder.setTitle("Invalid input!");
+        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);
         builder.setMessage(message);
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
@@ -579,6 +581,7 @@ public class CarModelEditActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
+            CarModelsFragment.carModels= MySqlDataSource.carModelList;
             CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
             CarModelsFragment.mAdapter.notifyDataSetChanged();
             progDailog.dismiss();

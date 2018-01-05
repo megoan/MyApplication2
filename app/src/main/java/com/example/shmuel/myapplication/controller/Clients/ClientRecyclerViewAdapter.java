@@ -259,6 +259,7 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
             backEndFuncForSql.deleteClient(objects.get(selectedPosition).getId());
             MySqlDataSource.clientList=backEndFuncForSql.getAllClients();
             ClientTabFragment.clients=MySqlDataSource.clientList;
+            ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
             return null;
         }
 
@@ -269,7 +270,8 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
-            TabFragments.clientsTab.updateView();
+            ClientTabFragment.mAdapter.notifyDataSetChanged();
+           // TabFragments.clientsTab.updateView();
             Toast.makeText(mContext,
                     "client deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();

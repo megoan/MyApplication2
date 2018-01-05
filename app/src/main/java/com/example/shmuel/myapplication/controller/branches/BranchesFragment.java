@@ -24,7 +24,7 @@ public class BranchesFragment extends Fragment {
     private RecyclerView recyclerView;
     public static BranchRecyclerViewAdapter mAdapter;
     BackEndFunc backEndFunc;
-    ArrayList<Branch>branches;
+    public static ArrayList <Branch>branches;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class BranchesFragment extends Fragment {
         Collections.sort(branches, new Comparator<Branch>(){
             public int compare(Branch o1, Branch o2){
 
-                return String.valueOf(o1.getBranchRevenue()).compareTo(String.valueOf(o2.getBranchRevenue()));
+                return Double.compare(o1.getBranchRevenue(),o2.getBranchRevenue());
             }
         });
         updateView();
@@ -95,8 +95,9 @@ public class BranchesFragment extends Fragment {
     {
         Collections.sort(branches, new Comparator<Branch>(){
             public int compare(Branch o1, Branch o2){
-
-                return String.valueOf(o1.getParkingSpotsNum()).compareTo(String.valueOf(o2.getParkingSpotsNum()));
+                Integer integer1=new Integer(o1.getParkingSpotsNum());
+                Integer integer2=new Integer(o2.getParkingSpotsNum());
+                return integer1.compareTo(integer2);
             }
         });
         updateView();
@@ -105,24 +106,22 @@ public class BranchesFragment extends Fragment {
     {
         Collections.sort(branches, new Comparator<Branch>(){
             public int compare(Branch o1, Branch o2){
-
-                return String.valueOf(o1.getBranchNum()).compareTo(String.valueOf(o2.getBranchNum()));
+                Integer integer1=new Integer(o1.getBranchNum());
+                Integer integer2=new Integer(o2.getBranchNum());
+                return integer1.compareTo(integer2);
             }
         });
         updateView();
     }
     public void updateView()
     {
-        branches=backEndFunc.getAllBranches();
-        mAdapter=new BranchRecyclerViewAdapter(branches,getActivity());
-        recyclerView.setAdapter(mAdapter);
+        mAdapter.objects=branches;
+        mAdapter.notifyDataSetChanged();
     }
-    public void updateView2()
+    public void updateView2(int position)
     {
-
-        branches=backEndFunc.getAllBranches();
-        mAdapter=new BranchRecyclerViewAdapter(branches,getActivity());
-        recyclerView.setAdapter(mAdapter);
+        mAdapter.removeitem(position);
+        mAdapter.notifyDataSetChanged();
     }
 
     public String BranchSearchString(Branch branch)

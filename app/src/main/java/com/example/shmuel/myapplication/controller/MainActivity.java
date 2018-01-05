@@ -430,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.setTitle("Sort by:");
 
                 // add a radio button list
-                String[] options = {"address", "established date", "revenue","number of cars","branch number"};
+                String[] options = {"address", "revenue","number of cars","branch number"};
                 int checkedItem = 0; // cow
                 builder.setSingleChoiceItems(options, checkedItem, new DialogInterface.OnClickListener() {
                     @Override
@@ -447,10 +447,6 @@ public class MainActivity extends AppCompatActivity {
                         if (checkedItem=="address")
                         {
                             branchesFragment.sortBranchByAddress();
-                        }
-                        else if(checkedItem=="established date")
-                        {
-                            branchesFragment.sortBranchByEstablished();
                         }
 
                         else if(checkedItem=="revenue")
@@ -771,7 +767,7 @@ public class MainActivity extends AppCompatActivity {
         //activate branch filter
         for (Branch branch:ListDataSource.branchList
                 ) {
-            branchesCitiesSet.add(branch.getMyAddress().getCountry());
+            branchesCitiesSet.add(branch.getMyAddress().getLocality());
         }
 
         b = new LinkedHashSet<>(branchesCitiesSet);
@@ -814,7 +810,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 for (Branch branch:ListDataSource.branchList
                         ) {
-                    branchesCitiesSet.add(branch.getMyAddress().getCountry());
+                    branchesCitiesSet.add(branch.getMyAddress().getLocality());
                 }
                 break;
             }

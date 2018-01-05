@@ -26,7 +26,7 @@ public class CarsTabFragment extends Fragment {
 
     private RecyclerView recyclerView;
     public static CarRecyclerViewAdapter mAdapter;
-    ArrayList<Car>cars;
+    public static ArrayList<Car>cars;
     BackEndFunc backEndFunc;
     View view1;
     LayoutInflater inflater1;

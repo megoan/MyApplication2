@@ -160,7 +160,9 @@ public class ClientActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
             ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
+            ClientTabFragment.clients=MySqlDataSource.clientList;
             ClientTabFragment.mAdapter.notifyDataSetChanged();
             TabFragments.clientsTab.updateView2();
             Toast.makeText(ClientActivity.this,

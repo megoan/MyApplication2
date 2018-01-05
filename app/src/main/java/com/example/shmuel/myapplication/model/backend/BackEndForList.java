@@ -28,21 +28,14 @@ public class BackEndForList implements BackEndFunc {
 
 
     @Override
-    public boolean addCar(Car car) {
-      return   ListDataSource.carList.add(car);
+    public Updates addCar(Car car) {
+         if(ListDataSource.carList.add(car)){
+            return Updates.NOTHING;
+         }
+        return Updates.ERROR;
     }
     
-    @Override
-    public boolean addCar(Car car, int branchID)
-    {
-        if (addCar(car)) {
-            addCarToBranch(car.getCarNum(),car.getBranchNum());
-            CarModel carModel=getCarModel(car.getCarModel());
-            carModel.setInUse(true);
-            updateCarModel(carModel);
-        }
-        return false;
-    }
+
 
     @Override
     public boolean addBranch(Branch branch) {
@@ -80,7 +73,7 @@ public class BackEndForList implements BackEndFunc {
     }
 
     @Override
-    public void updateCar(Car car,int originalCarModel)
+    public Updates updateCar(Car car,int originalCarModel,int originalbranch)
     {
         updateCar(car);
 
@@ -97,14 +90,16 @@ public class BackEndForList implements BackEndFunc {
         for(Car car1:ListDataSource.carList)
         {
             if(car1.getCarModel()==carModel.getCarModelCode()){
-                return;
+                return Updates.NOTHING;
             }
         }
         carModel.setInUse(false);
         updateCarModel(originalCarModelTmp);
+       return Updates.CARMODEL;
     }
     @Override
     public boolean updateCar(Car car) {
+        Updates updates=Updates.NOTHING;
         boolean sameBranch=false;
         for(Branch branch:ListDataSource.branchList)
         {
@@ -121,6 +116,7 @@ public class BackEndForList implements BackEndFunc {
                 if(sameBranch==true)break;
                 else
                 {
+                    updates=Updates.BRANCH;
                     removeCarFromBranch(car.getCarNum());
                     addCarToBranch(car.getCarNum(),branch.getBranchNum());
                 }
@@ -209,9 +205,11 @@ return false;
     }
 
     @Override
-    public boolean deleteCar(int carID) {
+    public Updates deleteCar(int carID, int branchID) {
+        Updates updates=Updates.NOTHING;
         int carModelCode=0;
         Car carTmp=null;
+        boolean dontneedToUpdateModel=false;
         for (Car car: ListDataSource.carList
                 ) {
             if(car.getCarNum()==carID){
@@ -226,13 +224,16 @@ return false;
         {
             if(car.getCarModel()==carModelCode)
             {
-                return true;
+                 dontneedToUpdateModel=true;
             }
         }
-        CarModel carModel=getCarModel(carModelCode);
-        carModel.setInUse(false);
-        updateCarModel(carModel);
-        return true;
+        if (!dontneedToUpdateModel) {
+            CarModel carModel=getCarModel(carModelCode);
+            carModel.setInUse(false);
+            updateCarModel(carModel);
+            updates=Updates.CARMODEL;
+        }
+        return updates;
     }
 
     @Override

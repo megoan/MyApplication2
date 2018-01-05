@@ -27,10 +27,12 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
+import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.MyDate;
 import com.google.firebase.storage.FirebaseStorage;
@@ -55,6 +57,7 @@ public class BranchActivity extends AppCompatActivity {
     private ProgressDialog progDailog;
     ImageView imageView;
     ProgressBar progressBar;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,8 @@ public class BranchActivity extends AppCompatActivity {
                 .load(imgUrl)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
+                .error(R.drawable.rental)
+                .placeholder(R.drawable.rental)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -89,6 +94,7 @@ public class BranchActivity extends AppCompatActivity {
         branchNum=intent.getIntExtra("id",0);
 
         myAddress.setCountry(intent.getStringExtra("country"));
+        myAddress.setLocality(intent.getStringExtra("locality"));
         myAddress.setAddressName(intent.getStringExtra("addressName"));
         myAddress.setLatitude(intent.getDoubleExtra("latitude",0));
         myAddress.setLongitude(intent.getDoubleExtra("longitude",0));
@@ -102,7 +108,7 @@ public class BranchActivity extends AppCompatActivity {
         branchRevenue=intent.getDoubleExtra("revenue",0);
         numOfCars=intent.getIntExtra("numOfCars",0);
         carList=intent.getIntegerArrayListExtra("carList");
-
+        position=intent.getIntExtra("position",0);
         TextView branchIDText=(TextView)findViewById(R.id.branchid);
         TextView addressText =(TextView)findViewById(R.id.address);
         TextView numOfCarsText =(TextView)findViewById(R.id.numOfCars);
@@ -189,8 +195,7 @@ public class BranchActivity extends AppCompatActivity {
                     intent.putExtra("latitude", myAddress.getLatitude());
                     intent.putExtra("longitude", myAddress.getLongitude());
                     intent.putExtra("country", myAddress.getCountry());
-                    // intent.putExtra("street",myAddress.getStreet());
-                   // intent.putExtra("number",myAddress.getNumber());
+                    intent.putExtra("locality",myAddress.getLocality());
                     intent.putExtra("branchID",branchNum);
                     intent.putExtra("imgUrl",imgUrl);
                     intent.putExtra("inUse",inUse);
@@ -236,11 +241,9 @@ public class BranchActivity extends AppCompatActivity {
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
             imageRef = storageRef.child("branch"+"/"+branchNum+".jpg");
-            backEndFunc.deleteCarModel(branchNum);
+            backEndFunc.deleteBranch(branchNum);
             imageRef.delete();
-            MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
-
-
+            MySqlDataSource.branchList=backEndFunc.getAllBranches();
             return null;
         }
 
@@ -248,8 +251,10 @@ public class BranchActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
-
+            BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
+            BranchesFragment.branches= (ArrayList<Branch>) MySqlDataSource.branchList;
+            BranchesFragment.mAdapter.notifyDataSetChanged();
+            //TabFragments.branchesTab.updateView2(position);
             Toast.makeText(BranchActivity.this,
                     "branch deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();

@@ -237,8 +237,9 @@ public class TakeNGoConst {
         String[] list=address.split("~~");
         myAddress.setAddressName(list[0]);
         myAddress.setCountry(list[1]);
-        myAddress.setLatitude(Double.parseDouble(list[2]));
-        myAddress.setLongitude(Double.parseDouble(list[3]));
+        myAddress.setLocality(list[2]);
+        myAddress.setLatitude(Double.parseDouble(list[3]));
+        myAddress.setLongitude(Double.parseDouble(list[4]));
         return myAddress;
     }
     public static MyDate getDateFromString(String date)

@@ -155,6 +155,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 if(((MainActivity)mContext).branch_is_in_action_mode==false){
                     Intent intent=new Intent(mContext,BranchActivity.class);
                     Branch branch1=objects.get(position);
+                    intent.putExtra("locality",branch1.getMyAddress().getLocality());
                     intent.putExtra("country",branch1.getMyAddress().getCountry());
                     intent.putExtra("addressName",branch1.getMyAddress().getAddressName());
                     intent.putExtra("latitude",branch1.getMyAddress().getLatitude());
@@ -172,6 +173,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                     intent.putExtra("month",branch1.getEstablishedDate().getMonth());
                     intent.putExtra("day",branch1.getEstablishedDate().getDay());
                     intent.putExtra("carList",branch1.getCarIds());
+                    intent.putExtra("position", position);
                     mContext.startActivity(intent);
                 }
                 if (actionMode!=null) {
@@ -186,6 +188,8 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 .load(branch.getImgURL())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
+                .error(R.drawable.rental)
+                .placeholder(R.drawable.rental)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -337,8 +341,8 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 ArrayList<Branch> filteredBranches = new ArrayList<Branch>();
                 for (Branch branch : backEndFunc.getAllBranches()) {
 
-                    String s=(branch.getMyAddress().getCountry());
-                    if (s.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().toLowerCase().contains((branch.getMyAddress().getCountry().toLowerCase()))) {
+                    String fullAddress=(branch.getMyAddress().getAddressName().toLowerCase());
+                    if (fullAddress.contains( charSequence.toString().toLowerCase() )|| charSequence.toString().contains(branch.getMyAddress().getLocality())) {
                         // if `contains` == true then add it
                         // to our filtered list
                         filteredBranches.add(branch);
@@ -347,13 +351,14 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
                 results.values = filteredBranches;
                 results.count = filteredBranches.size();
             }
+
             return results;
         }
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             objects=new ArrayList<Branch>((ArrayList<Branch>)results.values);
-
+            BranchesFragment.branches= (ArrayList<Branch>) results.values;
             notifyDataSetChanged();
         }
     }
@@ -380,7 +385,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
             imageRef = storageRef.child("branch"+"/"+branch.getBranchNum()+".jpg");
-            backEndForSql.deleteCarModel(branch.getBranchNum());
+            backEndForSql.deleteBranch(branch.getBranchNum());
             imageRef.delete();
             MySqlDataSource.branchList=backEndForSql.getAllBranches();
             int objectsLengh = objects.size();
@@ -397,7 +402,10 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
-            TabFragments.branchesTab.updateView();
+            BranchesFragment.branches=(ArrayList<Branch>) MySqlDataSource.branchList;
+            BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
+            BranchesFragment.mAdapter.notifyDataSetChanged();
+            //TabFragments.branchesTab.updateView();
             Toast.makeText(mContext,
                     "branch deleted from source", Toast.LENGTH_SHORT).show();
             actionMode.finish();

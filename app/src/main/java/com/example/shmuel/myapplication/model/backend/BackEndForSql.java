@@ -2,6 +2,7 @@ package com.example.shmuel.myapplication.model.backend;
 
 import android.content.ContentValues;
 
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.datasource.PHPtools;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
@@ -56,38 +57,42 @@ public class BackEndForSql implements BackEndFunc {
     }
 
     @Override
-    public boolean addCar(Car car) {
+    public Updates addCar(Car car) {
+        Updates updates=Updates.BRANCH;
         ContentValues contentValues = TakeNGoConst.CarToContentValues(car);
         try {
             String result = PHPtools.POST(WEB_URL + "/addnewcar.php", contentValues);
             long id = Long.parseLong(result);
-            if (id > 0)
-                return true;
+            if (id > 0) {
+                CarModel carModel = getCarModel(car.getCarModel());
+                if (carModel.isInUse() == false) {
+                    carModel.setInUse(true);
+                    updateCarModel(carModel);
+                    return Updates.CARMODEL_AND_BRANCH;
+                }
+            }
         } catch (IOException e) {
             //TODO implement the exception!!!
             //printLog("addStudent Exception:\n" + e);
-            return false;
+            return Updates.ERROR;
         }
-        return false;
+        return updates;
     }
 
-    @Override//todo check why this method returns falls and/or the value of updatecarmodel.
-    public boolean addCar(Car car, int branchID) {
-        if (addCar(car)) {
-            addCarToBranch(car.getCarNum(), car.getBranchNum());
-            CarModel carModel = getCarModel(car.getCarModel());
-            carModel.setInUse(true);
-            updateCarModel(carModel);
-        }
-        return false;
-    }
+
 
     @Override
     public boolean addBranch(Branch branch) {
         ContentValues contentValues = TakeNGoConst.BranchToContentValues(branch);
         try {
             String result = PHPtools.POST(WEB_URL + "/addnewbranch.php", contentValues);
-            long id = Long.parseLong(result);
+            if(result.contains("Duplicate entry"))return false;
+            long id = 0;
+            try {
+                id = Long.parseLong(result);
+            } catch (NumberFormatException e) {
+                return false;
+            }
             if (id > 0)
                 return true;
         } catch (IOException e) {
@@ -133,44 +138,48 @@ public class BackEndForSql implements BackEndFunc {
     }
 
     @Override
-    public void updateCar(Car car, int originalCarModel) {
-        updateCar(car);
-        CarModel carModel = getCarModel(car.getCarModel());
-        if (carModel.isInUse() == false) {
-            carModel.setInUse(true);
-            updateCarModel(carModel);
-        }
-        CarModel originalCarModelTmp = getCarModel(originalCarModel);
-        ArrayList<Car> carArrayList = getAllCars();
-        for (Car car1 : carArrayList) {
-            if (car1.getCarModel() == carModel.getCarModelCode()) {
-                return;
-            }
-        }
-        carModel.setInUse(false);
-        updateCarModel(originalCarModelTmp);
+    public Updates updateCar(Car car, int originalCarModel,int originalBranch) {
+       if(!updateCar(car))return Updates.ERROR;
+       Updates updates=Updates.NOTHING;
+       boolean checkIfCarModelInUse=false;
+       if(originalCarModel!=car.getCarModel())
+       {
+           CarModel carModel = getCarModel(car.getCarModel());
+           if (carModel.isInUse() == false) {
+               carModel.setInUse(true);
+               updateCarModel(carModel);
+           }
+
+           CarModel originalCarModelTmp = getCarModel(originalCarModel);
+           ArrayList<Car> carArrayList = MySqlDataSource.carList;
+           for (Car car1 : carArrayList) {
+               if (car1.getCarModel() == carModel.getCarModelCode()) {
+                   checkIfCarModelInUse=true;
+               }
+           }
+           if (checkIfCarModelInUse==false) {
+               carModel.setInUse(false);
+               updateCarModel(originalCarModelTmp);
+               updates=Updates.CARMODEL;
+           }
+       }
+       if(originalBranch!=car.getBranchNum())
+       {
+           removeCarFromBranch(car.getCarNum(),originalBranch);
+           addCarToBranch(car.getCarNum(), car.getBranchNum());
+           if(updates==Updates.CARMODEL){
+               updates=Updates.CARMODEL_AND_BRANCH;
+           }
+           else {
+               updates=Updates.BRANCH;
+           }
+       }
+
+        return updates;
     }
 
     @Override
     public boolean updateCar(Car car) {
-        boolean sameBranch = false;
-        ArrayList<Branch> branchArrayList = getAllBranches();
-        for (Branch branch : branchArrayList) {
-            if (car.getBranchNum() == branch.getBranchNum()) {
-                for (int i = 0; i < branch.getCarIds().size(); i++) {
-                    if (car.getCarNum() == branch.getCarIds().get(i)) {
-                        sameBranch = true;
-                        break;
-                    }
-                }
-                if (sameBranch == true) break;
-                else {
-                    removeCarFromBranch(car.getCarNum());
-                    addCarToBranch(car.getCarNum(), branch.getBranchNum());
-                }
-            }
-        }
-
         ContentValues contentValues = TakeNGoConst.CarToContentValues(car);
         try {
             String result = PHPtools.POST(WEB_URL + "/updatecar.php", contentValues);
@@ -183,30 +192,7 @@ public class BackEndForSql implements BackEndFunc {
         }
         return false;
     }
-//TODO there is no need for this function.
-    private void removeCarFromBranch(int carNum) {
-        boolean remove = false;
-        Branch branch1 = null;
-        ArrayList<Branch> branchArrayList = getAllBranches();
-        for (Branch branch : branchArrayList) {
-            branch1 = branch;
-            for (int i = 0; i < branch.getCarIds().size(); i++) {
-                if (carNum == branch.getCarIds().get(i)) {
-                    remove = true;
-                    break;
-                }
-            }
-            if (remove == true) break;
-        }
-        if (remove == true) {
-            branch1.getCarIds().remove(new Integer(carNum));
-            if (branch1.getCarIds().size() == 0) {
-                branch1.setInUse(false);
-                updateBranch(branch1);
-            }
-        }
 
-    }
 
     @Override
     public boolean updateBranch(Branch branch) {
@@ -258,18 +244,50 @@ public class BackEndForSql implements BackEndFunc {
     }
 
     @Override
-    public boolean deleteCar(int carID) {
+    public Updates deleteCar(int carID, int branchID) {
+        Updates updates=Updates.BRANCH;
+        int carModelCode=0;
+        Car carTmp=null;
+        boolean dontneedToUpdateModel=false;
+        for (Car car: MySqlDataSource.carList
+                ) {
+            if(car.getCarNum()==carID){
+                carTmp=car;
+                carModelCode=(car.getCarModel());
+                break;
+            }
+        }
+        MySqlDataSource.carList.remove(carTmp);
+
+        for (Car car: MySqlDataSource.carList)
+        {
+            if(car.getCarModel()==carModelCode)
+            {
+                dontneedToUpdateModel=true;
+            }
+        }
+
         ContentValues contentValues = TakeNGoConst.CarIdToContentValues(carID);
         try {
             String result = PHPtools.POST(WEB_URL + "/deletecar.php", contentValues);
             if (result.compareTo("DONE") ==0)
-                return true;
+            {
+                if (!dontneedToUpdateModel) {
+                    CarModel carModel=getCarModel(carModelCode);
+                    carModel.setInUse(false);
+                    updateCarModel(carModel);
+                    updates=Updates.CARMODEL_AND_BRANCH;
+                }
+                removeCarFromBranch(carID,branchID);
+                return updates;
+            }
         } catch (IOException e) {
             //TODO implement the exception!!!
             //printLog("addStudent Exception:\n" + e);
-            return false;
+            return Updates.ERROR;
         }
-        return false;
+
+        return updates;
     }
 
     @Override

@@ -69,6 +69,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -154,6 +155,8 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     .load(intent.getStringExtra("imgUrl"))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
+                    .error(R.drawable.rental)
+                    .placeholder(R.drawable.rental)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -192,6 +195,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             myAddress.setLatitude(intent.getDoubleExtra("latitude",0));
             myAddress.setLongitude(intent.getDoubleExtra("longitude",0));
             myAddress.setCountry(intent.getStringExtra("country"));
+            myAddress.setLocality(intent.getStringExtra("locality"));
            // myAddress.setStreet(intent.getStringExtra("street"));
            // myAddress.setNumber(intent.getStringExtra("number"));
             addressText.setText(myAddress.getAddressName());
@@ -255,12 +259,34 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                myAddress.setAddressName(addresses.get(0).getAddressLine(0));
-                String stateName = addresses.get(0).getAddressLine(1);
-                String countryName = addresses.get(0).getCountryName();
-                myAddress.setCountry(countryName);
-                addressText.setText(myAddress.getAddressName());
 
+
+
+                String addressNameString=addresses.get(0).getAddressLine(0);
+                if (addressNameString!=null) {
+                    addressNameString = Normalizer.normalize(addressNameString, Normalizer.Form.NFD);
+                    addressNameString= addressNameString.replaceAll("[^\\x00-\\x7F]", "");
+                    addressNameString= addressNameString.replaceAll("[^a-zA-Z0-9\\s]", "");
+                }
+
+                String localityName = addresses.get(0).getLocality();
+                if (localityName!=null) {
+                    localityName= Normalizer.normalize(localityName, Normalizer.Form.NFD);
+                    localityName = localityName.replaceAll("[^\\x00-\\x7F]", "");
+                    localityName= localityName.replaceAll("[^a-zA-Z0-9\\s]", "");
+                }
+
+                String countryName = addresses.get(0).getCountryName();
+                if (countryName!=null) {
+                    countryName= Normalizer.normalize(countryName, Normalizer.Form.NFD);
+                    countryName = countryName.replaceAll("[^\\x00-\\x7F]", "");
+                    countryName= countryName.replaceAll("[^a-zA-Z0-9\\s]", "");
+                }
+
+                myAddress.setCountry(countryName);
+                myAddress.setLocality(localityName);
+                myAddress.setAddressName(addressNameString+", "+localityName+", "+countryName);
+                addressText.setText(myAddress.getAddressName());
 
             }
 
@@ -409,7 +435,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
     public void inputWarningDialog(String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(BranchEditActivity.this);
-        builder.setTitle("Invalid input!");
+        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);
         builder.setMessage(message);
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
@@ -496,6 +522,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             {
                 Toast.makeText(BranchEditActivity.this,
                         "branch updated", Toast.LENGTH_SHORT).show();
+                BranchesFragment.branches=(ArrayList<Branch>) MySqlDataSource.branchList;
                 BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
                 BranchesFragment.mAdapter.notifyDataSetChanged();
                 finish();
@@ -503,6 +530,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             else
             {
                 Toast.makeText(BranchEditActivity.this,"new bramch added", Toast.LENGTH_SHORT).show();
+                BranchesFragment.branches=(ArrayList<Branch>) MySqlDataSource.branchList;
                 BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
                 BranchesFragment.mAdapter.notifyDataSetChanged();
                 resetView();
@@ -603,10 +631,6 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         CropImage();
-
-
-
-
         imageView.setImageBitmap(thumbnail);
     }
 
@@ -649,7 +673,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             progDailog.dismiss();
         }
     }
-    public class BackGroundAddBranch extends AsyncTask<Void,Void,Void> {
+    public class BackGroundAddBranch extends AsyncTask<Void,Void,String> {
 
         @Override
         protected void onPreExecute() {
@@ -662,14 +686,26 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             progDailog.show();
         }
         @Override
-        protected Void doInBackground(Void... voids) {
-            backEndFunc.addBranch(branch);
-            return null;
+        protected String doInBackground(Void... voids) {
+            try {
+                if(backEndFunc.addBranch(branch))
+                    return "added";
+
+                return "not added";
+            } catch (Exception e) {
+                return "not added";
+            }
+
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(String string) {
+            super.onPostExecute(string);
+            if(string.equals("not added")){
+                progDailog.dismiss();
+                inputWarningDialog("branch wasn't added! try changing ID");
+                return;
+            }
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
@@ -707,7 +743,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
+            BranchesFragment.branches=MySqlDataSource.branchList;
             BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
             BranchesFragment.mAdapter.notifyDataSetChanged();
             progDailog.dismiss();
@@ -785,6 +821,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             super.onPostExecute(aVoid);
             Toast.makeText(BranchEditActivity.this,
                     "branch updated", Toast.LENGTH_SHORT).show();
+            BranchesFragment.branches=(ArrayList<Branch>) MySqlDataSource.branchList;
             BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
             BranchesFragment.mAdapter.notifyDataSetChanged();
             finish();

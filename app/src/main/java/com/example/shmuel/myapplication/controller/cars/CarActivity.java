@@ -14,24 +14,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
+import com.example.shmuel.myapplication.controller.branches.BranchEditActivity;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.backend.Updates;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.Car;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class CarActivity extends AppCompatActivity {
 
-    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ActionMode actionMode;
     private String branchName;
     private String carModel;
@@ -48,6 +59,7 @@ public class CarActivity extends AppCompatActivity {
     int branchid;
     int carModelid;
     private ProgressDialog progDailog;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +67,30 @@ public class CarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_car);
         MyActionModeCallbackClient callback=new MyActionModeCallbackClient();
         actionMode=startActionMode(callback);
-
+        progressBar=findViewById(R.id.downloadProgressBar);
         Intent intent =getIntent();
+        imgUrl=intent.getStringExtra("imgUrl");
+        ImageView imageView1=(ImageView)findViewById(R.id.mainImage);
+        Glide.with(this)
+                .load(imgUrl)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .error(R.drawable.default_car_image)
+                .placeholder(R.drawable.default_car_image)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false; // important to return false so the error placeholder can be placed
+                    }
 
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(imageView1);
         branchName=intent.getStringExtra("branch");
         carModel=intent.getStringExtra("carModel");
         mileage=intent.getDoubleExtra("mileage",0);
@@ -68,7 +101,7 @@ public class CarActivity extends AppCompatActivity {
         oneKilometerCost=intent.getDoubleExtra("oneMileCost",0);
         year=intent.getIntExtra("year",0);
         inUse=intent.getBooleanExtra("inUse",false);
-        imgUrl=intent.getStringExtra("imgUrl");
+
         position=intent.getIntExtra("position",0);
         branchid=intent.getIntExtra("branchID",0);
         carModelid=intent.getIntExtra("carmodelID",0);
@@ -83,7 +116,7 @@ public class CarActivity extends AppCompatActivity {
         TextView oneDayCost1 =(TextView)findViewById(R.id.established);
         TextView oneKilometerCost1 =(TextView)findViewById(R.id.mileage_cost_car);
         TextView inUse1=(TextView)findViewById(R.id.inUse_car);
-        ImageView imageView1=(ImageView)findViewById(R.id.mainImage);
+
         RatingBar ratingBar1=(RatingBar)findViewById(R.id.rating_car);
 
 
@@ -98,12 +131,7 @@ public class CarActivity extends AppCompatActivity {
         oneKilometerCost1.setText(String.valueOf(oneKilometerCost));
         inUse1.setText(String.valueOf(inUse));
         ratingBar1.setRating((float) rating);
-        int defaultImage = getResources().getIdentifier(imgUrl,null,getApplicationContext().getPackageName());
-        Drawable drawable= ContextCompat.getDrawable(this, defaultImage);
-        //imageView1.setBackgroundDrawable(drawable);
-        imageView1.setImageDrawable(drawable);
 
-        actionMode.setTitle(carModel);
     }
 
     public class MyActionModeCallbackClient implements ActionMode.Callback{
@@ -142,14 +170,6 @@ public class CarActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // TODO Auto-generated method stub
                             new BackGroundDeleteCar().execute();
-                               /* backEndFunc.deleteCar(carNum);
-                                backEndFunc.removeCarFromBranch(carNum,branchid);
-                                BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
-                                BranchesFragment.mAdapter.notifyDataSetChanged();
-                                TabFragments.carsTab.updateView2(position);
-                                Toast.makeText(CarActivity.this,
-                                        "car deleted", Toast.LENGTH_SHORT).show();
-                                actionMode.finish();*/
                         }
                     });
 
@@ -201,7 +221,7 @@ public class CarActivity extends AppCompatActivity {
         }
 
     }
-    public class BackGroundDeleteCar extends AsyncTask<Void,Void,Void> {
+    public class BackGroundDeleteCar extends AsyncTask<Void,Void,Updates> {
 
         @Override
         protected void onPreExecute() {
@@ -215,31 +235,71 @@ public class CarActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        protected Updates doInBackground(Void... voids) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("car"+"/"+carNum+".jpg");
+            Updates updates=backEndFunc.deleteCar(carNum,branchid);
+            switch (updates){
+                case ERROR:{
+                    return Updates.ERROR;
+                }
+                case CARMODEL_AND_BRANCH:
+                {
+                    MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
+                    break;
+                }
             }
-            backEndFunc.deleteCar(carNum);
-            backEndFunc.removeCarFromBranch(carNum,branchid);
 
-            return null;
+            imageRef.delete();
+            MySqlDataSource.carList=backEndFunc.getAllCars();
+            MySqlDataSource.branchList=backEndFunc.getAllBranches();
+            //backEndFunc.removeCarFromBranch(carNum,branchid);
+            return updates;
         }
 
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
+        protected void onPostExecute(Updates updates) {
+            super.onPostExecute(updates);
+            if(updates==Updates.ERROR)
+            {
+                inputWarningDialog("cannot delete car");
+                CarsTabFragment.mAdapter.objects=MySqlDataSource.carList;
+                CarsTabFragment.cars=MySqlDataSource.carList;
+                CarsTabFragment.mAdapter.notifyDataSetChanged();
+                return;
+            }
+            if(updates==Updates.CARMODEL_AND_BRANCH)
+            {
+                CarModelsFragment.mAdapter.objects=MySqlDataSource.carModelList;
+                CarModelsFragment.carModels=MySqlDataSource.carModelList;
+                CarModelsFragment.mAdapter.notifyDataSetChanged();
+
+            }
+            BranchesFragment.mAdapter.objects=MySqlDataSource.branchList;
+            BranchesFragment.branches=MySqlDataSource.branchList;
             BranchesFragment.mAdapter.notifyDataSetChanged();
-            CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
-            CarModelsFragment.mAdapter.notifyDataSetChanged();
-            TabFragments.carsTab.updateView2(position);
+            //TabFragments.carsTab.updateView2(position);
             Toast.makeText(CarActivity.this,
                     "car deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();
             progDailog.dismiss();
         }
+    }
+    public void inputWarningDialog(String message)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CarActivity.this);
+        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);
+        builder.setMessage(message);
+        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

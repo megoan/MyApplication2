@@ -207,9 +207,8 @@ public class ClientEditActivity extends AppCompatActivity {
     public void inputWarningDialog(String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(ClientEditActivity.this);
-        builder.setTitle("Invalid input!");
-        //builder.setIcon(getResources().getDrawable(android.R.drawable.stat_notify_error));
-        //builder.setIcon(android.R.drawable.stat_notify_error);
+        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);;
+
         builder.setMessage(message);
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
@@ -250,14 +249,11 @@ public class ClientEditActivity extends AppCompatActivity {
             {
                 backEndFunc.updateClient(client);
                 MySqlDataSource.clientList = backEndFunc.getAllClients();
-
             }
             else
             {
                 backEndFunc.addClient(client);
                 MySqlDataSource.clientList = backEndFunc.getAllClients();
-                ClientTabFragment.clients=MySqlDataSource.clientList;
-
             }
             return null;
         }
@@ -265,15 +261,11 @@ public class ClientEditActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
-
+            ClientTabFragment.clients=MySqlDataSource.clientList;
+            ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
+            ClientTabFragment.mAdapter.notifyDataSetChanged();
             if(update)
             {
-
-                Toast.makeText(ClientEditActivity.this,
-                        "client updated", Toast.LENGTH_SHORT).show();
-                ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
-                ClientTabFragment.mAdapter.notifyDataSetChanged();
                 finish();
             }
             else
@@ -281,9 +273,6 @@ public class ClientEditActivity extends AppCompatActivity {
                 Toast.makeText(ClientEditActivity.this,
                         "new client added", Toast.LENGTH_SHORT).show();
                 //actionMode.finish();
-
-                ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
-                ClientTabFragment.mAdapter.notifyDataSetChanged();
                 resetView();
                 client=new Client();
                 progDailog.dismiss();

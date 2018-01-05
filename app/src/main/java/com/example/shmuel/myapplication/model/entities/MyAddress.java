@@ -9,6 +9,7 @@ public class MyAddress {
    // private String street;
    // private String number;
     String country;
+    String locality;
     private String addressName;
     private double latitude;
     private double longitude;
@@ -16,52 +17,24 @@ public class MyAddress {
     public MyAddress() {
     }
 
-    public MyAddress(String addressName, String country, double latitude, double longitude) {
+    public MyAddress(String addressName,String locality, String country, double latitude, double longitude) {
         this.addressName = addressName;
+        this.country=country;
+        this.locality=locality;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.country=country;
+
     }
 
-
-    /*public MyAddress(String city, String street, String number) {
-        this.city = city;
-        this.street = street;
-        this.number = number;
-    }*/
-
-
     public MyAddress(MyAddress other) {
-        this.country = other.country;
-
         this.addressName = other.addressName;
+        this.country = other.country;
+        this.locality=other.locality;
         this.latitude = other.latitude;
         this.longitude = other.longitude;
     }
 
-   /* public void setCity(String city) {
-        this.city = city;
-    }
-    public String getCity() {
-        return city;
-    }*/
 
-
-    /* public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }*/
     public String compare()
     {
         return getAddressName();
@@ -69,7 +42,7 @@ public class MyAddress {
 
     @Override
     public String toString() {
-        return addressName+"~~"+country+"~~"+latitude+"~~"+longitude;
+        return addressName+"~~"+country+"~~"+locality+"~~"+latitude+"~~"+longitude;
     }
 
     public String getAddressName() {
@@ -102,5 +75,13 @@ public class MyAddress {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 }

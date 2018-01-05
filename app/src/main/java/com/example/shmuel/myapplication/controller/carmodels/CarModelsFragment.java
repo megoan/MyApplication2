@@ -27,7 +27,7 @@ public class CarModelsFragment extends Fragment {
     private RecyclerView recyclerView;
     public static CarCompaniesInnerRecyclerViewAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManager;
-    ArrayList<CarModel> carModels;
+    public static ArrayList<CarModel> carModels;
     private BackEndFunc backEndFunc;
 
     @Override

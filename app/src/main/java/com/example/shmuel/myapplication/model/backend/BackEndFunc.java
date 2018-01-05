@@ -16,8 +16,7 @@ public interface BackEndFunc {
 
     public boolean addClient(Client client);
     public boolean addCarModel(CarModel carModel);
-    public boolean addCar(Car car);
-    public boolean addCar(Car car, int branchID);
+    public Updates addCar(Car car);
     public boolean addBranch(Branch branch);
 
 
@@ -25,14 +24,14 @@ public interface BackEndFunc {
     public boolean updateClient(Client client);
     public boolean updateCarModel(CarModel carModel);
     public boolean updateCar(Car car);
-    public void updateCar(Car car,int originalCarModel);
+    public Updates updateCar(Car car,int originalCarModel, int originalBranch);
     public boolean updateBranch(Branch branch);
 
 
 
     public boolean deleteClient(int clientID);
     public boolean deleteCarModel(int carModelID);
-    public boolean deleteCar(int carID);
+    public Updates deleteCar(int carID, int branchID);
     public boolean deleteBranch(int branchID);
 
     public Client getClient(int id);

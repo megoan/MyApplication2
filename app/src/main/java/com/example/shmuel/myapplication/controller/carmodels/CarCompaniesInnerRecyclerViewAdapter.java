@@ -173,6 +173,8 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                 .load(carModel.getImgURL())
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
+                .error(R.drawable.default_car_image)
+                .placeholder(R.drawable.default_car_image)
                 .listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -413,6 +415,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             selectedPosition = -1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
+            CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
             TabFragments.carModelsTab.updateView();
             Toast.makeText(mContext,
                     "car model deleted from source", Toast.LENGTH_SHORT).show();

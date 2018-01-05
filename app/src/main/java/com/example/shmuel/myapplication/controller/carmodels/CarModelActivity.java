@@ -37,6 +37,8 @@ import com.example.shmuel.myapplication.model.entities.Transmission;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+
 public class CarModelActivity extends AppCompatActivity {
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
@@ -75,6 +77,8 @@ public class CarModelActivity extends AppCompatActivity {
                 .load(imgUrl)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
+                .error(R.drawable.default_car_image)
+                .placeholder(R.drawable.default_car_image)
                 .listener(new RequestListener<String, GlideDrawable>() {
                     @Override
                     public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -249,12 +253,15 @@ public class CarModelActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
-            TabFragments.carModelsTab.updateView2(position);
+            CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
+            CarModelsFragment.mAdapter.notifyDataSetChanged();
+            //TabFragments.carModelsTab.updateView2(position);
             Toast.makeText(CarModelActivity.this,
                     "car model deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();
             progDailog.dismiss();
+
+
         }
     }
 

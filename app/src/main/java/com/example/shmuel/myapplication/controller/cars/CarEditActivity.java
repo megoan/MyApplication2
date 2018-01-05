@@ -339,7 +339,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     public void inputWarningDialog(String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(CarEditActivity.this);
-        builder.setTitle("Invalid input!");
+        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);;
         builder.setMessage(message);
         builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
@@ -402,13 +402,13 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             {
                 if(originalCarModel!=carmodelID)
                 {
-                    backEndFunc.updateCar(car,originalCarModel);
+                   // backEndFunc.updateCar(car,originalCarModel);
                 }
                 backEndFunc.updateCar(car);
             }
             else
             {
-                backEndFunc.addCar(car,car.getBranchNum());
+                //backEndFunc.addCar(car,car.getBranchNum());
                 BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
             }
             return null;
