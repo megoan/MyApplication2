@@ -27,6 +27,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
@@ -222,7 +223,7 @@ public class BranchActivity extends AppCompatActivity {
         }
 
     }
-    public class BackGroundDeleteBranch extends AsyncTask<Void,Void,Void> {
+    public class BackGroundDeleteBranch extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -236,30 +237,41 @@ public class BranchActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
+            Boolean b=backEndFunc.deleteBranch(branchNum);
+            if(!b)
+            {
+                return b;
+            }
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
             imageRef = storageRef.child("branch"+"/"+branchNum+".jpg");
-            backEndFunc.deleteBranch(branchNum);
+
             imageRef.delete();
             MySqlDataSource.branchList=backEndFunc.getAllBranches();
-            return null;
+            return b;
         }
 
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                InputWarningDialog.showWarningDialog("Server error","sorry, branch wasn't deleted! \nplease try again soon!",BranchActivity.this);
+                progDailog.dismiss();
+                return;
+            }
             BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
             BranchesFragment.branches= (ArrayList<Branch>) MySqlDataSource.branchList;
             BranchesFragment.mAdapter.notifyDataSetChanged();
-            //TabFragments.branchesTab.updateView2(position);
             Toast.makeText(BranchActivity.this,
                     "branch deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();
             progDailog.dismiss();
         }
     }
+
 
 }

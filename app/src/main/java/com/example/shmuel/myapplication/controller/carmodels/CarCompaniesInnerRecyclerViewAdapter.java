@@ -35,6 +35,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
@@ -375,7 +376,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         }
     }
 
-    public class BackGroundDeleteCarModel extends AsyncTask<Void, Void, Void> {
+    public class BackGroundDeleteCarModel extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -389,16 +390,19 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-
-            FirebaseStorage mFirebaseStorage=FirebaseStorage.getInstance();
+        protected Boolean doInBackground(Void... voids) {
 
             CarModel carModel = objects.get(selectedPosition);
+            Boolean b=backEndForSql.deleteCarModel(carModel.getCarModelCode());
+            if(!b)
+            {
+                return b;
+            }
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
             imageRef = storageRef.child("carModel"+"/"+carModel.getCarModelCode()+".jpg");
-            backEndForSql.deleteCarModel(carModel.getCarModelCode());
+
             imageRef.delete();
             MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
             int objectsLengh = objects.size();
@@ -406,12 +410,18 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
                 objects.remove(selectedPosition);
             }
 
-            return null;
+            return b;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                InputWarningDialog.showWarningDialog("Server error","sorry, car model wasn't deleted! \nplease try again soon!",mContext);
+                progDailog.dismiss();
+                return;
+            }
             selectedPosition = -1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
@@ -423,5 +433,6 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
             progDailog.dismiss();
         }
     }
+
 
 }

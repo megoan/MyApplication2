@@ -224,7 +224,7 @@ public class CarModelActivity extends AppCompatActivity {
         }
 
     }
-    public class BackGroundDeleteCar extends AsyncTask<Void,Void,Void> {
+    public class BackGroundDeleteCar extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -238,22 +238,34 @@ public class CarModelActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
+            Boolean b=backEndForSql.deleteCarModel(id);
+            if(!b)
+            {
+                return b;
+            }
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
             imageRef = storageRef.child("carModel"+"/"+id+".jpg");
-            backEndForSql.deleteCarModel(id);
+
             imageRef.delete();
             MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
-            return null;
+            return b;
         }
 
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                inputWarningDialog("cannot delete car model, server error");
+                progDailog.dismiss();
+                return;
+            }
             CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
+            CarModelsFragment.carModels= (ArrayList<CarModel>) MySqlDataSource.carModelList;
             CarModelsFragment.mAdapter.notifyDataSetChanged();
             //TabFragments.carModelsTab.updateView2(position);
             Toast.makeText(CarModelActivity.this,
@@ -263,6 +275,20 @@ public class CarModelActivity extends AppCompatActivity {
 
 
         }
+    }
+    public void inputWarningDialog(String message)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CarModelActivity.this);
+        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);
+        builder.setMessage(message);
+        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 }

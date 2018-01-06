@@ -1,10 +1,16 @@
 package com.example.shmuel.myapplication.controller.cars;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -20,20 +26,41 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.Utility;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
+import com.example.shmuel.myapplication.controller.carmodels.CarModelEditActivity;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.backend.Updates;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class CarEditActivity extends AppCompatActivity implements RecyclerViewClickListener{
     RecyclerView mRecyclerView;
@@ -43,6 +70,16 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     public ActionMode actionMode;
     Car car=new Car();
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndForSql= FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
+
+    String ret = "";
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private String userChoosenTask;
+    File file;
+    Uri uri;
+    Intent CropIntent;
+    boolean imageSelected=false;
+    Bitmap mBitmap;
 
     boolean update=false;
     int carmodelID=0;
@@ -53,6 +90,8 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     double rating;
     int numOfRating;
     int originalCarModel;
+    int originalBranchID;
+    int branchID=0;
     EditText mileage;
     EditText idcar;
     EditText singleDayCost;
@@ -64,6 +103,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
     ImageView imageView;
     CarModel carModel2;
     ScrollView scrollView;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +127,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         right=(FloatingActionButton)findViewById(R.id.scrollRight);
         left=(FloatingActionButton)findViewById(R.id.scrollLeft);
         check=(FloatingActionButton)findViewById(R.id.carModelSelectedCheck);
+        progressBar=(ProgressBar)findViewById(R.id.downloadProgressBar);
         check.hide();
         imageView=(ImageView)findViewById(R.id.mainImage);
 
@@ -109,11 +150,33 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
 
         MyActionModeCallbackCar callback=new MyActionModeCallbackCar();
         actionMode=startActionMode(callback);
-
+        progressBar.setVisibility(View.INVISIBLE);
         Intent intent =getIntent();
         String update1=intent.getStringExtra("update");
         if(update1.equals("true"))
         {
+            imgUrl=intent.getStringExtra("imgUrl");
+            progressBar.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(imgUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .error(R.drawable.default_car_image)
+                    .placeholder(R.drawable.default_car_image)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false; // important to return false so the error placeholder can be placed
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .into(imageView);
             update=true;
             idcar.setEnabled(false);
             actionMode.setTitle("Update car");
@@ -126,14 +189,11 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             int branchPosition = branchAdapter.getPosition(intent.getStringExtra("branchName"));
             branchSpinner.setSelection( branchPosition);
             inUse=intent.getBooleanExtra("inUse",false);
-            imgUrl=intent.getStringExtra("imgUrl");
-            int defaultImage = CarEditActivity.this.getResources().getIdentifier(imgUrl,null,CarEditActivity.this.getPackageName());
-            Drawable drawable= ContextCompat.getDrawable(CarEditActivity.this, defaultImage);
-            imageView.setImageDrawable(drawable);
             rating=intent.getDoubleExtra("rating",0);
             numOfRating=intent.getIntExtra("numOfRating",0);
             carmodelID=intent.getIntExtra("carmodel",0);
             originalCarModel=carmodelID;
+            branchID=originalBranchID=intent.getIntExtra("branchID",0);
             CarModel carModel=backEndFunc.getCarModel(carmodelID);
             pickedCarModel.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
             int index=backEndFunc.getAllCarModels().indexOf(carModel);
@@ -163,6 +223,14 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             public void onClick(View v) {
                 Toast.makeText(CarEditActivity.this,
                         carModel2.getCompanyName()+" "+carModel2.getCarModelName()+" was selected", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
             }
         });
 
@@ -242,7 +310,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                     double singleMileCost1=tryParseDouble(singleMileCost.getText().toString());
                     int year=tryParseInt(yearSpinner.getSelectedItem().toString());
                     String brasnch1=branchSpinner.getSelectedItem().toString();
-                    int branchID=0;
+
                     for(Branch branch:backEndFunc.getAllBranches()){
                         if(brasnch1.contains(branch.getMyAddress().getAddressName()))
                         {
@@ -293,7 +361,12 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                                 // TODO check that all sadot are filled
 
                                 try {
-                                    new  BackGroundUpdateCar().execute();
+                                    if (imageSelected) {
+                                        new  UpdateCarAndImageAsyncTask().execute();
+                                    }
+                                    else {
+                                        new UpdateCarNoImageAsyncTask().execute();
+                                    }
 
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
@@ -309,7 +382,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                                 // TODO Auto-generated method stub
 
                                 try {
-                                    new  BackGroundUpdateCar().execute();
+                                    new  AddNewCarWithoutImageUrlAsyncTask().execute();
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -378,7 +451,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             return 0;
         }
     }
-    public class BackGroundUpdateCar extends AsyncTask<Void,Void,Void> {
+  /*  public class BackGroundUpdateCar extends AsyncTask<Void,Void,Void> {
 
         @Override
         protected void onPreExecute() {
@@ -393,11 +466,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
             if (update)
             {
                 if(originalCarModel!=carmodelID)
@@ -446,8 +515,324 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                 progDailog.dismiss();
                 scrollView.fullScroll(ScrollView.FOCUS_UP);
             }
+        }
+    }*/
+
+
+    public class AddNewCarWithoutImageUrlAsyncTask extends AsyncTask<Void,Void,Updates>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(CarEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Updates doInBackground(Void... voids) {
+
+            Updates updates= backEndForSql.addCar(car);
+            return updates;
+        }
+
+        @Override
+        protected void onPostExecute(Updates updates) {
+            super.onPostExecute(updates);
+            if(updates==Updates.ERROR)
+            {
+                inputWarningDialog("Unable to add car, Try again, use other id");
+                progDailog.dismiss();
+                return;
+            }
+            else if(updates==Updates.DUPLICATE)
+            {
+                inputWarningDialog("car with this id already exists!");
+                progDailog.dismiss();
+                return;
+            }
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("car"+"/"+car.getCarNum()+".jpg");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            UploadTask uploadTask = imageRef.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    String url=downloadUrl.toString();
+                    car.setImgURL(url);
+                    new UpdateCarNoImageAsyncTask().execute();
+                }
+            });
+        }
+    }
+
+
+    public class UpdateCarAndImageAsyncTask extends AsyncTask<Void,Void,Updates>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(CarEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Updates doInBackground(Void... voids) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("car"+"/"+car.getCarNum()+".jpg");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            UploadTask uploadTask = imageRef.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    new UpdateCarNoImageAsyncTask().execute();
+                }
+            });
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Updates updates) {
+            super.onPostExecute(updates);
+        }
+    }
+
+
+
+    public class UpdateCarNoImageAsyncTask extends AsyncTask<Void,Void,Updates>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (update) {
+                progDailog = new ProgressDialog(CarEditActivity.this);
+                progDailog.setMessage("Updating...");
+                progDailog.setIndeterminate(false);
+                progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progDailog.setCancelable(false);
+                progDailog.show();
+            }
+        }
+
+        @Override
+        protected Updates doInBackground(Void... voids) {
+            Updates updates;
+            if (update) {
+                updates=backEndForSql.updateCar(car);
+            }
+            else {
+                updates=backEndForSql.updateCar(car,originalCarModel,originalBranchID);
+            }
+            if(updates==Updates.CARMODEL)
+            {
+                MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
+            }
+            else if(updates==Updates.CARMODEL_AND_BRANCH)
+            {
+                MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
+                MySqlDataSource.branchList=backEndForSql.getAllBranches();
+            }
+            MySqlDataSource.carList=backEndForSql.getAllCars();
+            return updates;
+        }
+
+        @Override
+        protected void onPostExecute(Updates updates) {
+            super.onPostExecute(updates);
+            if(updates==Updates.ERROR)
+            {
+                if (update) {
+                    inputWarningDialog("unable To update car, try again");
+                    return;
+                }
+                else {
+                    inputWarningDialog("unable To Add car, try again, or change id");
+                    return;
+                }
+            }
+           if(updates==Updates.CARMODEL)
+           {
+               CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
+               CarModelsFragment.carModels=(ArrayList<CarModel>) MySqlDataSource.carModelList;
+               CarModelsFragment.mAdapter.notifyDataSetChanged();
+           }
+           if(updates==Updates.CARMODEL_AND_BRANCH)
+           {
+               CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
+               CarModelsFragment.carModels=(ArrayList<CarModel>) MySqlDataSource.carModelList;
+               CarModelsFragment.mAdapter.notifyDataSetChanged();
+
+               BranchesFragment.branches=(ArrayList<Branch>) MySqlDataSource.branchList;
+               BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
+               BranchesFragment.mAdapter.notifyDataSetChanged();
+           }
+            CarsTabFragment.cars= MySqlDataSource.carList;
+            CarsTabFragment.mAdapter.objects= (ArrayList<Car>) MySqlDataSource.carList;
+            CarsTabFragment.mAdapter.notifyDataSetChanged();
+            progDailog.dismiss();
+            if (!update) {
+                Toast.makeText(CarEditActivity.this,
+                        "new car added", Toast.LENGTH_SHORT).show();
+                resetView();
+                car=new Car();
+                scrollView.fullScroll(ScrollView.FOCUS_UP);
+            }
+            else {
+                Toast.makeText(CarEditActivity.this,
+                        "car updated", Toast.LENGTH_SHORT).show();
+            }
+            if (update) {
+                finish();
+            }
+        }
+    }
+
+
+
+
+    /*
+    * image functions
+    * */
+
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(CarEditActivity.this);
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                boolean result= Utility.checkPermission(CarEditActivity.this);
+
+                if (items[item].equals("Take Photo")) {
+                    userChoosenTask ="Take Photo";
+                    if(result)
+                        cameraIntent();
+
+                } else if (items[item].equals("Choose from Library")) {
+                    userChoosenTask ="Choose from Library";
+                    if(result)
+                        galleryIntent();
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+    private void galleryIntent()
+    {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        //intent.setType("image/*");
+        //intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+    }
+
+    private void cameraIntent()
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        file=new File(Environment.getExternalStorageDirectory(),"file"+String.valueOf(System.currentTimeMillis())+".jpg");
+        uri= Uri.fromFile(file);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
+        intent.putExtra("return-data",true);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE){
+                if(data!=null)
+                {
+                    uri=data.getData();
+                    CropImage.activity(uri).setAspectRatio(2,1)
+                            .start(this);
+                    //CropImage();
+                }
+                //onSelectFromGalleryResult(data);
+            }
+            else if (requestCode == REQUEST_CAMERA){
+                CropImage.activity(uri).setAspectRatio(2,1)
+                        .start(this);
+                //CropImage();
+            }
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+                    Uri resultUri = result.getUri();
+                    try {
+                        mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                        imageView.setImageBitmap(mBitmap);
+                        imageSelected=true;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
+                    Exception error = result.getError();
+                }
+            }
+        }
+    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        imageView.setImageBitmap(thumbnail);
+    }
+
+    private void CropImage() {
+        try {
+            CropIntent =new Intent("com.android.camera.action.CROP");
+            CropIntent.setDataAndType(uri,"image/*");
+            CropIntent.putExtra("crop",true);
+            CropIntent.putExtra("outputX",360);
+            CropIntent.putExtra("outputY",180);
+            CropIntent.putExtra("aspectX",2);
+            CropIntent.putExtra("aspectY",1);
+            CropIntent.putExtra("scaleUpIfNeeded",true);
+            CropIntent.putExtra("return-data",true);
+            startActivityForResult(CropIntent,2);
+
+
+
+        }catch (ActivityNotFoundException e)
+        {
 
         }
     }
+
+    @SuppressWarnings("deprecation")
+    private void onSelectFromGalleryResult(Intent data) {
+
+        Bitmap bm=null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        imageView.setImageBitmap(bm);
+    }
+
 }
 

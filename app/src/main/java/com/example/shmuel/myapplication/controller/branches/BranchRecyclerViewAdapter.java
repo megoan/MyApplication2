@@ -34,6 +34,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
@@ -362,7 +363,7 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
             notifyDataSetChanged();
         }
     }
-    public class BackGroundDeleteBranch extends AsyncTask<Void,Void,Void> {
+    public class BackGroundDeleteBranch extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -376,29 +377,37 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-
-            FirebaseStorage mFirebaseStorage=FirebaseStorage.getInstance();
-
+        protected Boolean doInBackground(Void... voids) {
             Branch branch = objects.get(selectedPosition);
+           Boolean b= backEndForSql.deleteBranch(branch.getBranchNum());
+           if(!b)
+           {
+               return b;
+           }
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
             imageRef = storageRef.child("branch"+"/"+branch.getBranchNum()+".jpg");
-            backEndForSql.deleteBranch(branch.getBranchNum());
+
             imageRef.delete();
             MySqlDataSource.branchList=backEndForSql.getAllBranches();
             int objectsLengh = objects.size();
             if (objectsLengh == objects.size()) {
                 objects.remove(selectedPosition);
             }
-            return null;
+            return b;
         }
 
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                InputWarningDialog.showWarningDialog("Server error","sorry, branch wasn't deleted! \nplease try again soon!",mContext);
+                progDailog.dismiss();
+                return;
+            }
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
@@ -414,5 +423,6 @@ public class BranchRecyclerViewAdapter extends RecyclerView.Adapter<BranchRecycl
 
         }
     }
+
 
 }

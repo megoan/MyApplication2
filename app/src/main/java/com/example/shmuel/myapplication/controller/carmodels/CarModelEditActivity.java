@@ -43,6 +43,7 @@ import com.example.shmuel.myapplication.controller.Utility;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.Updates;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.Transmission;
@@ -285,10 +286,10 @@ public class CarModelEditActivity extends AppCompatActivity {
 
                                 try {
                                     if (imageSelected) {
-                                        new  BackGroundOnlyUpdateCarModel().execute();
+                                        new  BackGroundUpdateCarModelNoImageUrl().execute();
                                     }
                                     else {
-                                        new BackGroundUpdateCar().execute();
+                                        new BackGroundUpdateCarModelWithImage().execute();
                                     }
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
@@ -303,7 +304,7 @@ public class CarModelEditActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                   new BackGroundAddCar().execute();
+                                   new BackGroundAddCarWithoutImageUrl().execute();
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());
                                     return;
@@ -522,7 +523,7 @@ public class CarModelEditActivity extends AppCompatActivity {
 
 
 
-    public class BackGroundAddCar extends AsyncTask<Void,Void,Void> {
+    public class BackGroundAddCarWithoutImageUrl extends AsyncTask<Void,Void,Updates> {
 
         @Override
         protected void onPreExecute() {
@@ -535,14 +536,26 @@ public class CarModelEditActivity extends AppCompatActivity {
             progDailog.show();
         }
         @Override
-        protected Void doInBackground(Void... voids) {
-            backEndFunc.addCarModel(carModel);
-            return null;
+        protected Updates doInBackground(Void... voids) {
+            return backEndFunc.addCarModel(carModel);
+
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Updates updates) {
+            super.onPostExecute(updates);
+            if(updates==Updates.ERROR)
+            {
+                inputWarningDialog("cannot add car model! error with server!");
+                progDailog.dismiss();
+                return;
+            }
+            else if(updates==Updates.DUPLICATE)
+            {
+                inputWarningDialog("a car model with this id already exists!");
+                progDailog.dismiss();
+                return;
+            }
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
@@ -557,30 +570,45 @@ public class CarModelEditActivity extends AppCompatActivity {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     String url=downloadUrl.toString();
                     carModel.setImgURL(url);
-                    new BackGroundupdateCarAfterAdd().execute();
+                    new BackGroundUpdateCarModelNoImageUrl().execute();
                 }
             });
 
         }
     }
-    public class BackGroundupdateCarAfterAdd extends AsyncTask<Void,Void,Void> {
+    public class BackGroundUpdateCarModelNoImageUrl extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(update)
+            {
+                progDailog = new ProgressDialog(CarModelEditActivity.this);
+                progDailog.setMessage("Updating...");
+                progDailog.setIndeterminate(false);
+                progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progDailog.setCancelable(false);
+                progDailog.show();
+            }
 
         }
         @Override
-        protected Void doInBackground(Void... voids) {
-            backEndFunc.updateCarModel(carModel);
+        protected Boolean doInBackground(Void... voids) {
+            Boolean b=backEndFunc.updateCarModel(carModel);
+            if(!b)return b;
             MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
-            return null;
+            return b;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                inputWarningDialog("error with server try again!");
+                progDailog.dismiss();
+                return;
+            }
             CarModelsFragment.carModels= MySqlDataSource.carModelList;
             CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
             CarModelsFragment.mAdapter.notifyDataSetChanged();
@@ -601,7 +629,7 @@ public class CarModelEditActivity extends AppCompatActivity {
             }
         }
     }
-    public class BackGroundOnlyUpdateCarModel extends AsyncTask<Void,Void,Void> {
+    public class BackGroundUpdateCarModelWithImage extends AsyncTask<Void,Void,Void> {
 
         @Override
         protected void onPreExecute() {
@@ -626,7 +654,7 @@ public class CarModelEditActivity extends AppCompatActivity {
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    new BackGroundupdateCarAfterAdd().execute();
+                    new BackGroundUpdateCarModelNoImageUrl().execute();
                 }
             });
             return null;
@@ -636,32 +664,5 @@ public class CarModelEditActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
         }
     }
-    public class BackGroundUpdateCar extends AsyncTask<Void,Void,Void> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progDailog = new ProgressDialog(CarModelEditActivity.this);
-            progDailog.setMessage("Updating...");
-            progDailog.setIndeterminate(false);
-            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progDailog.setCancelable(false);
-            progDailog.show();
-        }
-        @Override
-        protected Void doInBackground(Void... voids) {
-            backEndFunc.updateCarModel(carModel);
-            MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Toast.makeText(CarModelEditActivity.this,
-                    "car model updated", Toast.LENGTH_SHORT).show();
-            CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
-            CarModelsFragment.mAdapter.notifyDataSetChanged();
-            finish();
-        }
-    }
 }

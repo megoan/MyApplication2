@@ -26,6 +26,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.shmuel.myapplication.controller.Clients.ClientEditActivity;
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
@@ -34,11 +36,15 @@ import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.backend.Updates;
 import com.example.shmuel.myapplication.model.datasource.ListDataSource;
+import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
 import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -354,7 +360,10 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             notifyDataSetChanged();
         }
     }
-    public class BackGroundDeleteCar extends AsyncTask<Void,Void,Void> {
+
+
+
+    public class BackGroundDeleteCar extends AsyncTask<Void,Void,Updates> {
 
         @Override
         protected void onPreExecute() {
@@ -368,39 +377,63 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        protected Updates doInBackground(Void... voids) {
             Car car=objects.get(selectedPosition);
-            backEndFunc.deleteCar(car.getCarNum());
-            backEndFunc.removeCarFromBranch(car.getCarNum(),car.getBranchNum());
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference imageRef;
+            imageRef = storageRef.child("car"+"/"+car.getCarNum()+".jpg");
+            Updates updates=backEndFunc.deleteCar(car.getCarNum(),car.getBranchNum());
+            switch (updates){
+                case ERROR:{
+                    MySqlDataSource.carList=backEndFunc.getAllCars();
+                    return Updates.ERROR;
+                }
+                case CARMODEL_AND_BRANCH:
+                {
+                    MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
+                    break;
+                }
+            }
 
-            return null;
+            imageRef.delete();
+            MySqlDataSource.carList=backEndFunc.getAllCars();
+            MySqlDataSource.branchList=backEndFunc.getAllBranches();
+
+            return updates;
         }
 
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            int i=1;
+        protected void onPostExecute(Updates updates) {
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();
-            BranchesFragment.mAdapter.objects=backEndFunc.getAllBranches();
+
+            super.onPostExecute(updates);
+            if(updates==Updates.ERROR)
+            {
+                InputWarningDialog.showWarningDialog("Server error","sorry, car wasn't deleted! \nplease try again soon!",mContext);
+                CarsTabFragment.mAdapter.objects=MySqlDataSource.carList;
+                CarsTabFragment.cars=MySqlDataSource.carList;
+                CarsTabFragment.mAdapter.notifyDataSetChanged();
+                return;
+            }
+            if(updates==Updates.CARMODEL_AND_BRANCH)
+            {
+                CarModelsFragment.mAdapter.objects=MySqlDataSource.carModelList;
+                CarModelsFragment.carModels=MySqlDataSource.carModelList;
+                CarModelsFragment.mAdapter.notifyDataSetChanged();
+
+            }
+            BranchesFragment.mAdapter.objects=MySqlDataSource.branchList;
+            BranchesFragment.branches=MySqlDataSource.branchList;
             BranchesFragment.mAdapter.notifyDataSetChanged();
-            CarModelsFragment.mAdapter.objects=backEndFunc.getAllCarModels();
-            CarModelsFragment.mAdapter.notifyDataSetChanged();
-            TabFragments.carsTab.updateView();
+            //TabFragments.carsTab.updateView2(position);
             Toast.makeText(mContext,
-                    "car deleted from source", Toast.LENGTH_SHORT).show();
+                    "car deleted", Toast.LENGTH_SHORT).show();
             actionMode.finish();
             progDailog.dismiss();
-
-
         }
     }
-
 }

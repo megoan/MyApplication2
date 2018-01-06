@@ -25,6 +25,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchEditActivity;
@@ -71,6 +72,8 @@ public class CarActivity extends AppCompatActivity {
         Intent intent =getIntent();
         imgUrl=intent.getStringExtra("imgUrl");
         ImageView imageView1=(ImageView)findViewById(R.id.mainImage);
+        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         Glide.with(this)
                 .load(imgUrl)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -243,6 +246,7 @@ public class CarActivity extends AppCompatActivity {
             Updates updates=backEndFunc.deleteCar(carNum,branchid);
             switch (updates){
                 case ERROR:{
+                    MySqlDataSource.carList=backEndFunc.getAllCars();
                     return Updates.ERROR;
                 }
                 case CARMODEL_AND_BRANCH:
@@ -251,11 +255,9 @@ public class CarActivity extends AppCompatActivity {
                     break;
                 }
             }
-
             imageRef.delete();
             MySqlDataSource.carList=backEndFunc.getAllCars();
             MySqlDataSource.branchList=backEndFunc.getAllBranches();
-            //backEndFunc.removeCarFromBranch(carNum,branchid);
             return updates;
         }
 
@@ -265,7 +267,7 @@ public class CarActivity extends AppCompatActivity {
             super.onPostExecute(updates);
             if(updates==Updates.ERROR)
             {
-                inputWarningDialog("cannot delete car");
+                InputWarningDialog.showWarningDialog("Server error","sorry, car wasn't deleted! \nplease try again soon!",CarActivity.this);
                 CarsTabFragment.mAdapter.objects=MySqlDataSource.carList;
                 CarsTabFragment.cars=MySqlDataSource.carList;
                 CarsTabFragment.mAdapter.notifyDataSetChanged();
@@ -288,18 +290,5 @@ public class CarActivity extends AppCompatActivity {
             progDailog.dismiss();
         }
     }
-    public void inputWarningDialog(String message)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(CarActivity.this);
-        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);
-        builder.setMessage(message);
-        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
 }

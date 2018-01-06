@@ -25,35 +25,37 @@ public class BackEndForSql implements BackEndFunc {
     private static final String WEB_URL = "http://ymehrzad.vlab.jct.ac.il";
 
     @Override
-    public boolean addClient(Client client) {
+    public Updates addClient(Client client) {
         ContentValues contentValues = TakeNGoConst.ClientToContentValues(client);
         try {
             String result = PHPtools.POST(WEB_URL + "/addnewclient.php", contentValues);
+            if(result.contains("Duplicate entry"))return Updates.DUPLICATE;
             long id = Long.parseLong(result);
             if (id > 0)
-                return true;
+                return Updates.NOTHING;
         } catch (IOException e) {
             //TODO implement the exception!!!
             //printLog("addStudent Exception:\n" + e);
-            return false;
+            return Updates.ERROR;
         }
-        return false;
+        return Updates.ERROR;
     }
 
     @Override
-    public boolean addCarModel(CarModel carModel) {
+    public Updates addCarModel(CarModel carModel) {
         ContentValues contentValues = TakeNGoConst.CarModelToContentValues(carModel);
         try {
             String result = PHPtools.POST(WEB_URL + "/addnewcarmodel.php", contentValues);
+            if(result.contains("Duplicate entry"))return Updates.DUPLICATE;
             long id = Long.parseLong(result);
             if (id > 0)
-                return true;
+                return Updates.NOTHING;
         } catch (IOException e) {
             //TODO implement the exception!!!
             //printLog("addStudent Exception:\n" + e);
-            return false;
+            return Updates.ERROR;
         }
-        return false;
+        return Updates.ERROR;
     }
 
     @Override
@@ -62,6 +64,7 @@ public class BackEndForSql implements BackEndFunc {
         ContentValues contentValues = TakeNGoConst.CarToContentValues(car);
         try {
             String result = PHPtools.POST(WEB_URL + "/addnewcar.php", contentValues);
+            if(result.contains("Duplicate entry"))return Updates.DUPLICATE;
             long id = Long.parseLong(result);
             if (id > 0) {
                 CarModel carModel = getCarModel(car.getCarModel());
@@ -82,25 +85,25 @@ public class BackEndForSql implements BackEndFunc {
 
 
     @Override
-    public boolean addBranch(Branch branch) {
+    public Updates addBranch(Branch branch) {
         ContentValues contentValues = TakeNGoConst.BranchToContentValues(branch);
         try {
             String result = PHPtools.POST(WEB_URL + "/addnewbranch.php", contentValues);
-            if(result.contains("Duplicate entry"))return false;
+            if(result.contains("Duplicate entry"))return Updates.DUPLICATE;
             long id = 0;
             try {
                 id = Long.parseLong(result);
             } catch (NumberFormatException e) {
-                return false;
+                return Updates.ERROR;
             }
             if (id > 0)
-                return true;
+                return Updates.NOTHING;
         } catch (IOException e) {
             //TODO implement the exception!!!
             //printLog("addStudent Exception:\n" + e);
-            return false;
+            return Updates.ERROR;
         }
-        return false;
+        return Updates.ERROR;
     }
 
 
@@ -139,7 +142,7 @@ public class BackEndForSql implements BackEndFunc {
 
     @Override
     public Updates updateCar(Car car, int originalCarModel,int originalBranch) {
-       if(!updateCar(car))return Updates.ERROR;
+       if(updateCar(car)==Updates.ERROR)return Updates.ERROR;
        Updates updates=Updates.NOTHING;
        boolean checkIfCarModelInUse=false;
        if(originalCarModel!=car.getCarModel())
@@ -179,18 +182,18 @@ public class BackEndForSql implements BackEndFunc {
     }
 
     @Override
-    public boolean updateCar(Car car) {
+    public Updates updateCar(Car car) {
         ContentValues contentValues = TakeNGoConst.CarToContentValues(car);
         try {
             String result = PHPtools.POST(WEB_URL + "/updatecar.php", contentValues);
             if (result.compareTo("DONE") ==0)
-                return true;
+                return Updates.NOTHING;
         } catch (IOException e) {
             //TODO implement the exception!!!
             //printLog("addStudent Exception:\n" + e);
-            return false;
+            return Updates.ERROR;
         }
-        return false;
+        return Updates.ERROR;
     }
 
 

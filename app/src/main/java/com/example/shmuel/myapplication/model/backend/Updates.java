@@ -5,5 +5,5 @@ package com.example.shmuel.myapplication.model.backend;
  */
 
 public enum Updates {
-    NOTHING,CARMODEL,BRANCH,CARMODEL_AND_BRANCH,ERROR
+    NOTHING,CARMODEL,BRANCH,CARMODEL_AND_BRANCH,ERROR,DUPLICATE
 }

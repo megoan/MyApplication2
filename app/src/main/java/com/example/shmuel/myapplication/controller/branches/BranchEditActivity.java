@@ -44,12 +44,14 @@ import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
 
 
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.Utility;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelEditActivity;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
+import com.example.shmuel.myapplication.model.backend.Updates;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.MyAddress;
@@ -145,12 +147,13 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     }
                 });
 
-
+        progressBar.setVisibility(View.INVISIBLE);
         Intent intent =getIntent();
         String update1=intent.getStringExtra("update");
         if(update1.equals("true"))
         {
             imgUrl=intent.getStringExtra("imgUrl");
+            progressBar.setVisibility(View.VISIBLE);
             Glide.with(this)
                     .load(intent.getStringExtra("imgUrl"))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -342,17 +345,17 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     }
 
                     if(!imageSelected && update==false){
-                        inputWarningDialog("don't be shy and upload a picture!");return false;}
+                        InputWarningDialog.showWarningDialog("Missing Image","please add an image of the branch! \nand try again!",BranchEditActivity.this);return false;}
 
 
                     if(id1.equals("")||parkingSpotsNum==0|| addressString==null || establishedString==null ||myDate==null)
                     {
-                        inputWarningDialog("Please fill all fields!");
+                        InputWarningDialog.showWarningDialog("Missing information","please enter all fields! \nand try again!",BranchEditActivity.this);
                         return false;
                     }
                     if(parkingSpotsNum<numOfCars)
                     {
-                        inputWarningDialog("cant lower parking spots! too many cars!");
+                        InputWarningDialog.showWarningDialog("Invalid information","there are more cars then parking spots! \nplease change the number of spots and try again!",BranchEditActivity.this);
                     }
 
                     if (update) {
@@ -383,14 +386,14 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                                 try {
                                     if (imageSelected) {
 
-                                        new  BackGroundOnlyUpdateBranch().execute();
+                                        new  BackGroundUpdateBranchWithImage().execute();
                                     }
                                     else {
 
-                                        new BackGroundUpdateBranch().execute();
+                                        new BackGroundUpdateBranchNoImage().execute();
                                     }
                                 } catch (Exception e) {
-                                    inputWarningDialog(e.getMessage());
+                                    InputWarningDialog.showWarningDialog("Server error","sorry, branch wasn't updated! \nplease try again soon!",BranchEditActivity.this);
                                     return;
                                 }
                             }
@@ -402,9 +405,9 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
-                                    new BackGroundAddBranch().execute();
+                                    new BackGroundAddBranchNoImgUrl().execute();
                                 } catch (Exception e) {
-                                    inputWarningDialog(e.getMessage());
+                                    InputWarningDialog.showWarningDialog("Server error","sorry, branch wasn't added! \nplease try again soon!",BranchEditActivity.this);
                                     return;
                                 }
                             }
@@ -432,20 +435,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
         }
 
     }
-    public void inputWarningDialog(String message)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(BranchEditActivity.this);
-        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);
-        builder.setMessage(message);
-        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
 
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
 
     public void resetView()
     {
@@ -673,7 +663,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             progDailog.dismiss();
         }
     }
-    public class BackGroundAddBranch extends AsyncTask<Void,Void,String> {
+    public class BackGroundAddBranchNoImgUrl extends AsyncTask<Void,Void,Updates> {
 
         @Override
         protected void onPreExecute() {
@@ -686,24 +676,22 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             progDailog.show();
         }
         @Override
-        protected String doInBackground(Void... voids) {
-            try {
-                if(backEndFunc.addBranch(branch))
-                    return "added";
-
-                return "not added";
-            } catch (Exception e) {
-                return "not added";
-            }
-
+        protected Updates doInBackground(Void... voids) {
+               return backEndFunc.addBranch(branch);
         }
 
         @Override
-        protected void onPostExecute(String string) {
-            super.onPostExecute(string);
-            if(string.equals("not added")){
+        protected void onPostExecute(Updates updates) {
+            super.onPostExecute(updates);
+            if(updates==Updates.ERROR){
                 progDailog.dismiss();
-                inputWarningDialog("branch wasn't added! try changing ID");
+                InputWarningDialog.showWarningDialog("Server error","sorry, branch wasn't added! \nplease try again soon!",BranchEditActivity.this);
+                return;
+            }
+            else if(updates==Updates.DUPLICATE)
+            {
+                progDailog.dismiss();
+                InputWarningDialog.showWarningDialog("Duplicate ID","A branch with this ID already exists! \nchange client's id and try again",BranchEditActivity.this);
                 return;
             }
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -720,29 +708,45 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     String url=downloadUrl.toString();
                     branch.setImgURL(url);
-                    new BackGroundupdateBranchAfterAdd().execute();
+                    new BackGroundUpdateBranchNoImage().execute();
                 }
             });
 
         }
     }
-    public class BackGroundupdateBranchAfterAdd extends AsyncTask<Void,Void,Void> {
+    public class BackGroundUpdateBranchNoImage extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(update){
+                progDailog = new ProgressDialog(BranchEditActivity.this);
+                progDailog.setMessage("Updating...");
+                progDailog.setIndeterminate(false);
+                progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progDailog.setCancelable(false);
+                progDailog.show();
+            }
 
         }
         @Override
-        protected Void doInBackground(Void... voids) {
-            backEndFunc.updateBranch(branch);
-            MySqlDataSource.branchList=backEndFunc.getAllBranches();
-            return null;
+        protected Boolean doInBackground(Void... voids) {
+            Boolean b=backEndFunc.updateBranch(branch);
+            if (b==true) {
+                MySqlDataSource.branchList=backEndFunc.getAllBranches();
+            }
+            return b;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                InputWarningDialog.showWarningDialog("Server error","sorry, branch wasn't updated! \nplease try again soon!",BranchEditActivity.this);
+                progDailog.dismiss();
+                return;
+            }
             BranchesFragment.branches=MySqlDataSource.branchList;
             BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
             BranchesFragment.mAdapter.notifyDataSetChanged();
@@ -763,7 +767,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             }
         }
     }
-    public class BackGroundOnlyUpdateBranch extends AsyncTask<Void,Void,Void> {
+    public class BackGroundUpdateBranchWithImage extends AsyncTask<Void,Void,Void> {
 
         @Override
         protected void onPreExecute() {
@@ -788,7 +792,7 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    new BackGroundupdateBranchAfterAdd().execute();
+                    new BackGroundUpdateBranchNoImage().execute();
                 }
             });
             return null;
@@ -798,34 +802,4 @@ public class BranchEditActivity extends AppCompatActivity implements DatePickerD
             super.onPostExecute(aVoid);
         }
     }
-    public class BackGroundUpdateBranch extends AsyncTask<Void,Void,Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progDailog = new ProgressDialog(BranchEditActivity.this);
-            progDailog.setMessage("Updating...");
-            progDailog.setIndeterminate(false);
-            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progDailog.setCancelable(false);
-            progDailog.show();
-        }
-        @Override
-        protected Void doInBackground(Void... voids) {
-            backEndFunc.updateBranch(branch);
-            MySqlDataSource.branchList=backEndFunc.getAllBranches();
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Toast.makeText(BranchEditActivity.this,
-                    "branch updated", Toast.LENGTH_SHORT).show();
-            BranchesFragment.branches=(ArrayList<Branch>) MySqlDataSource.branchList;
-            BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
-            BranchesFragment.mAdapter.notifyDataSetChanged();
-            finish();
-        }
-    }
-
 }

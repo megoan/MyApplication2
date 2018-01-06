@@ -20,6 +20,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.controller.TabFragments;
@@ -241,7 +242,7 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
             notifyDataSetChanged();
         }
     }
-    public class BackGroundDeleteClient extends AsyncTask<Void,Void,Void> {
+    public class BackGroundDeleteClient extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -255,18 +256,26 @@ public class ClientRecyclerViewAdapter extends RecyclerView.Adapter<ClientRecycl
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            backEndFuncForSql.deleteClient(objects.get(selectedPosition).getId());
+        protected Boolean doInBackground(Void... voids) {
+           Boolean b= backEndFuncForSql.deleteClient(objects.get(selectedPosition).getId());
+           if(!b)return b;
             MySqlDataSource.clientList=backEndFuncForSql.getAllClients();
             ClientTabFragment.clients=MySqlDataSource.clientList;
             ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
-            return null;
+            return b;
         }
 
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                InputWarningDialog.showWarningDialog("Server Error","sorry could not delete client! \nseams to be a problem with the server",mContext);
+                //inputWarningDialog("didn't delete client! error with server!");
+                progDailog.dismiss();
+                return;
+            }
             selectedPosition=-1;
             notifyItemChanged(selectedPosition);
             notifyDataSetChanged();

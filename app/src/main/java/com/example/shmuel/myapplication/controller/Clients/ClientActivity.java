@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.MainActivity;
 import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
@@ -135,7 +136,7 @@ public class ClientActivity extends AppCompatActivity {
         }
 
     }
-    public class BackGroundDeleteClient extends AsyncTask<Void,Void,Void> {
+    public class BackGroundDeleteClient extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -149,18 +150,27 @@ public class ClientActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
 
-            backEndFunc.deleteClient(id);
+            Boolean b=backEndFunc.deleteClient(id);
+            if(!b)
+            {
+                return b;
+            }
             MySqlDataSource.clientList = backEndFunc.getAllClients();
-            return null;
+            return b;
         }
 
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                InputWarningDialog.showWarningDialog("Server error","sorry, client wasn't deleted! \nplease try again soon!",ClientActivity.this);
+                progDailog.dismiss();
+                return;
+            }
             ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
             ClientTabFragment.clients=MySqlDataSource.clientList;
             ClientTabFragment.mAdapter.notifyDataSetChanged();
@@ -171,4 +181,5 @@ public class ClientActivity extends AppCompatActivity {
             progDailog.dismiss();
         }
     }
+
 }

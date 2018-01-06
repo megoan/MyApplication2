@@ -16,14 +16,16 @@ public class BackEndForList implements BackEndFunc {
 
 
     @Override
-    public boolean addClient(Client client) {
-       return ListDataSource.clientList.add(client);
+    public Updates addClient(Client client) {
+        if(ListDataSource.clientList.add(client))return Updates.NOTHING;
+       return Updates.ERROR;
 
     }
 
     @Override
-    public boolean addCarModel(CarModel carModel) {
-      return   ListDataSource.carModelList.add(carModel);
+    public Updates addCarModel(CarModel carModel) {
+        if(ListDataSource.carModelList.add(carModel))return Updates.NOTHING;
+      return Updates.ERROR;
     }
 
 
@@ -38,8 +40,10 @@ public class BackEndForList implements BackEndFunc {
 
 
     @Override
-    public boolean addBranch(Branch branch) {
-       return ListDataSource.branchList.add(branch);
+    public Updates addBranch(Branch branch)
+    {
+        if(ListDataSource.branchList.add(branch))return Updates.NOTHING;
+       return Updates.ERROR;
     }
 
 
@@ -98,7 +102,7 @@ public class BackEndForList implements BackEndFunc {
        return Updates.CARMODEL;
     }
     @Override
-    public boolean updateCar(Car car) {
+    public Updates updateCar(Car car) {
         Updates updates=Updates.NOTHING;
         boolean sameBranch=false;
         for(Branch branch:ListDataSource.branchList)
@@ -128,10 +132,10 @@ public class BackEndForList implements BackEndFunc {
             if(ListDataSource.carList.get(i).getCarNum()==car.getCarNum())
             {
                 ListDataSource.carList.set(i,car);
-                return true;
+                return Updates.NOTHING;
             }
         }
-        return false;
+        return Updates.ERROR;
     }
 
     private void removeCarFromBranch(int carNum) {

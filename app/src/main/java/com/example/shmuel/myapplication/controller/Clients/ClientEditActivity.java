@@ -14,11 +14,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.shmuel.myapplication.R;
+import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.MainActivity;
+import com.example.shmuel.myapplication.controller.cars.CarEditActivity;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
+import com.example.shmuel.myapplication.model.backend.Updates;
 import com.example.shmuel.myapplication.model.datasource.MySqlDataSource;
 import com.example.shmuel.myapplication.model.entities.Client;
 
@@ -99,13 +102,13 @@ public class ClientEditActivity extends AppCompatActivity {
                     String credit1=credit.getText().toString();
                     if(id.equals("")|| name.equals("")||lastName.equals("")|| phone.equals("")||email.equals("")||credit1.equals(""))
                     {
-                        inputWarningDialog("Please fill all fields!");
+                        InputWarningDialog.showWarningDialog("Missing information","please enter all fields! \nand try again!",ClientEditActivity.this);
                         return false;
                     }
                     //bad email address
                     if(!emailValidator(email))
                     {
-                        inputWarningDialog("Invalid email address!");
+                        InputWarningDialog.showWarningDialog("Invalid Email","please enter the correct email address! \nand try again!",ClientEditActivity.this);
                         return false;
                     }
                     if (update) {
@@ -143,7 +146,7 @@ public class ClientEditActivity extends AppCompatActivity {
                                     actionMode.finish();*/
                                     new BackGroundUpdateClient().execute();
                                 } catch (Exception e) {
-                                    inputWarningDialog(e.getMessage());
+                                    InputWarningDialog.showWarningDialog("Server Error","seams to be a problem with server. \ntry again later!",ClientEditActivity.this);
                                     return;
                                 }
                             }
@@ -162,9 +165,9 @@ public class ClientEditActivity extends AppCompatActivity {
                                     //actionMode.finish();
                                     resetView();
                                     client=new Client();*/
-                                   new BackGroundUpdateClient().execute();
+                                   new AddClientAsyncTask().execute();
                                 } catch (Exception e) {
-                                    inputWarningDialog(e.getMessage());
+                                    InputWarningDialog.showWarningDialog("Server Error","seams to be a problem with server. \ntry again later!",ClientEditActivity.this);
                                     return;
                                 }
 
@@ -204,21 +207,7 @@ public class ClientEditActivity extends AppCompatActivity {
         return matcher.matches();
     }
 
-    public void inputWarningDialog(String message)
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ClientEditActivity.this);
-        builder.setTitle("Invalid input!").setIcon(R.drawable.ic_warning);;
 
-        builder.setMessage(message);
-        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
 
     public void resetView()
     {
@@ -229,7 +218,7 @@ public class ClientEditActivity extends AppCompatActivity {
         emailclient.setText("");
         credit.setText("");
     }
-    public class BackGroundUpdateClient extends AsyncTask<Void,Void,Void> {
+    public class BackGroundUpdateClient extends AsyncTask<Void,Void,Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -244,40 +233,82 @@ public class ClientEditActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            if (update)
-            {
-                backEndFunc.updateClient(client);
+        protected Boolean doInBackground(Void... voids) {
+
+                Boolean b=backEndFunc.updateClient(client);
+                if(!b)
+                {
+                    return b;
+                }
                 MySqlDataSource.clientList = backEndFunc.getAllClients();
-            }
-            else
-            {
-                backEndFunc.addClient(client);
-                MySqlDataSource.clientList = backEndFunc.getAllClients();
-            }
-            return null;
+
+            return b;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean b) {
+            super.onPostExecute(b);
+            if(!b)
+            {
+                InputWarningDialog.showWarningDialog("Server error","sorry, client wasn't updated! \nplease try again soon!",ClientEditActivity.this);
+                progDailog.dismiss();
+                return;
+            }
             ClientTabFragment.clients=MySqlDataSource.clientList;
             ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
             ClientTabFragment.mAdapter.notifyDataSetChanged();
-            if(update)
+            finish();
+        }
+    }
+    public class AddClientAsyncTask extends AsyncTask<Void,Void,Updates>
+    {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            super.onPreExecute();
+            progDailog = new ProgressDialog(ClientEditActivity.this);
+            progDailog.setMessage("Updating...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(false);
+            progDailog.show();
+        }
+
+        @Override
+        protected Updates doInBackground(Void... voids) {
+            Updates updates=backEndFunc.addClient(client);
+            if(updates!=Updates.NOTHING)return updates;
+            MySqlDataSource.clientList = backEndFunc.getAllClients();
+            return updates;
+        }
+
+        @Override
+        protected void onPostExecute(Updates updates) {
+            super.onPostExecute(updates);
+            if(updates==Updates.DUPLICATE)
             {
-                finish();
-            }
-            else
-            {
-                Toast.makeText(ClientEditActivity.this,
-                        "new client added", Toast.LENGTH_SHORT).show();
-                //actionMode.finish();
-                resetView();
-                client=new Client();
+                InputWarningDialog.showWarningDialog("Duplicate ID","A client with this ID already exists! \nchange client's id and try again",ClientEditActivity.this);
                 progDailog.dismiss();
+                return;
             }
+            else if(updates==Updates.ERROR)
+            {
+                InputWarningDialog.showWarningDialog("Server Error","sorry, could not add client! \nseams to be a problem with the server",ClientEditActivity.this);
+                progDailog.dismiss();
+                return;
+            }
+            ClientTabFragment.clients=MySqlDataSource.clientList;
+            ClientTabFragment.mAdapter.objects= (ArrayList<Client>) MySqlDataSource.clientList;
+            ClientTabFragment.mAdapter.notifyDataSetChanged();
+
+            Toast.makeText(ClientEditActivity.this,
+                    "new client added", Toast.LENGTH_SHORT).show();
+            //actionMode.finish();
+            resetView();
+            client=new Client();
+            progDailog.dismiss();
 
         }
     }
+
 }
