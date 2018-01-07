@@ -371,7 +371,7 @@ public class CarCompaniesInnerRecyclerViewAdapter extends RecyclerView.Adapter<C
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             objects = new ArrayList<CarModel>((ArrayList<CarModel>) results.values);
-
+            CarModelsFragment.carModels=(ArrayList<CarModel>) results.values;
             notifyDataSetChanged();
         }
     }

@@ -602,7 +602,7 @@ public class MainActivity extends AppCompatActivity {
 
                         for (int i=0;i<carModelCompanies.length;i++)
                         {
-                            carCom.put(carModelCompanies[i],carModelCompaniesChecked[i]);
+                            carModelCom.put(carModelCompanies[i],carModelCompaniesChecked[i]);
                             if (carModelCompaniesChecked[i]==true) {
                                 filter+=carModelCompanies[i];
                             }

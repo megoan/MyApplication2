@@ -119,7 +119,7 @@ public class Branch {
 
     public String convertCarIDtoString()
     {
-        String carIDs=null;
+        String carIDs="";
         for(Integer id:carIdsList)
         {
             carIDs+=id+"~~";

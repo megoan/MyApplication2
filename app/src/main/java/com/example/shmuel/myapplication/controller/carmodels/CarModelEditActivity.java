@@ -286,10 +286,10 @@ public class CarModelEditActivity extends AppCompatActivity {
 
                                 try {
                                     if (imageSelected) {
-                                        new  BackGroundUpdateCarModelNoImageUrl().execute();
+                                        new  BackGroundUpdateCarModelWithImage().execute();
                                     }
                                     else {
-                                        new BackGroundUpdateCarModelWithImage().execute();
+                                        new BackGroundUpdateCarModelNoImageUrl().execute();
                                     }
                                 } catch (Exception e) {
                                     inputWarningDialog(e.getMessage());

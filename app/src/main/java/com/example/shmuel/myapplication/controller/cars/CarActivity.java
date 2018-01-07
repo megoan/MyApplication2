@@ -209,7 +209,7 @@ public class CarActivity extends AppCompatActivity {
                     intent.putExtra("imgUrl",imgUrl);
                     intent.putExtra("inUse",inUse);
                     intent.putExtra("rating",rating);
-                    intent.putExtra("numOfRatings",numOfRatings);
+                    intent.putExtra("numberOfRatings",numOfRatings);
                     finish();
                     startActivity(intent);
                     break;

@@ -22,10 +22,16 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.controller.Clients.ClientEditActivity;
 import com.example.shmuel.myapplication.controller.InputWarningDialog;
 import com.example.shmuel.myapplication.controller.MainActivity;
@@ -34,6 +40,7 @@ import com.example.shmuel.myapplication.controller.TabFragments;
 import com.example.shmuel.myapplication.controller.branches.BranchesFragment;
 import com.example.shmuel.myapplication.controller.carmodels.CarModelsFragment;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
+import com.example.shmuel.myapplication.model.backend.DataSourceType;
 import com.example.shmuel.myapplication.model.backend.FactoryMethod;
 import com.example.shmuel.myapplication.model.backend.SelectedDataSource;
 import com.example.shmuel.myapplication.model.backend.Updates;
@@ -54,6 +61,7 @@ import java.util.ArrayList;
 
 public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerViewAdapter.ViewHolder> implements Filterable{
     BackEndFunc backEndFunc= FactoryMethod.getBackEndFunc(SelectedDataSource.dataSourceType);
+    BackEndFunc backEndForSql=FactoryMethod.getBackEndFunc(DataSourceType.DATA_INTERNET);
     public ArrayList<Car> objects;
     private Context mContext;
     public ActionMode actionMode;
@@ -79,7 +87,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
     }
 
     @Override
-    public void onBindViewHolder(CarRecyclerViewAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final CarRecyclerViewAdapter.ViewHolder holder, final int position) {
         final Car car = objects.get(position);
         if(selectedPosition==position){
             if(((MainActivity)mContext).is_in_action_mode==true){
@@ -170,9 +178,30 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
 
         MyAddress carMyAddress =backEndFunc.getBranch(car.getBranchNum()).getMyAddress();
         CarModel carModel=backEndFunc.getCarModel(car.getCarModel());
-        int defaultImage = mContext.getResources().getIdentifier(car.getImgURL(),null,mContext.getPackageName());
-        Drawable drawable= ContextCompat.getDrawable(mContext, defaultImage);
-        holder.imageView.setImageDrawable(drawable);
+
+        holder.progressBar.setVisibility(View.VISIBLE);
+        Glide.with(mContext)
+                .load(car.getImgURL())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .error(R.drawable.default_car_image)
+                .placeholder(R.drawable.default_car_image)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false; // important to return false so the error placeholder can be placed
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(holder.imageView);
+
+        holder.companyName.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
         holder.branch.setText("Branch: "+ carMyAddress.getAddressName());
         holder.carYear.setText(String.valueOf(car.getYear()));
 //        holder.companyName.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
@@ -227,10 +256,11 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
         TextView numberOfRatings;
         ImageButton inUse;
         TextView branch;
+        ProgressBar progressBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            imageView=(ImageView)itemView.findViewById(R.id.carModelCardImage);
+            imageView=(ImageView)itemView.findViewById(R.id.carModelCardImage2);
             companyName=(TextView)itemView.findViewById(R.id.carModelCardCompany);
             branch=(TextView)itemView.findViewById(R.id.carCardBranch);
             carYear=(TextView)itemView.findViewById(R.id.carCardYear);
@@ -240,6 +270,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             rating=(TextView)itemView.findViewById(R.id.carCardRating);
             numberOfRatings=(TextView)itemView.findViewById(R.id.carCardNumberOfRatings);
             inUse=(ImageButton)itemView.findViewById(R.id.carCardInUdeButton);
+            progressBar=(ProgressBar)itemView.findViewById(R.id.downloadProgressBar);
         }
     }
     public class MyActionModeCallbackCar implements ActionMode.Callback{
@@ -356,7 +387,7 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             objects=new ArrayList<Car>((ArrayList<Car>)results.values);
-
+            CarsTabFragment.cars=new  ArrayList<Car>((ArrayList<Car>)results.values);
             notifyDataSetChanged();
         }
     }
@@ -383,22 +414,22 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             StorageReference storageRef = storage.getReference();
             final StorageReference imageRef;
             imageRef = storageRef.child("car"+"/"+car.getCarNum()+".jpg");
-            Updates updates=backEndFunc.deleteCar(car.getCarNum(),car.getBranchNum());
+            Updates updates=backEndForSql.deleteCar(car.getCarNum(),car.getBranchNum());
             switch (updates){
                 case ERROR:{
-                    MySqlDataSource.carList=backEndFunc.getAllCars();
+                    MySqlDataSource.carList=backEndForSql.getAllCars();
                     return Updates.ERROR;
                 }
                 case CARMODEL_AND_BRANCH:
                 {
-                    MySqlDataSource.carModelList=backEndFunc.getAllCarModels();
+                    MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
                     break;
                 }
             }
 
             imageRef.delete();
-            MySqlDataSource.carList=backEndFunc.getAllCars();
-            MySqlDataSource.branchList=backEndFunc.getAllBranches();
+            MySqlDataSource.carList=backEndForSql.getAllCars();
+            MySqlDataSource.branchList=backEndForSql.getAllBranches();
 
             return updates;
         }
@@ -429,6 +460,10 @@ public class CarRecyclerViewAdapter extends RecyclerView.Adapter<CarRecyclerView
             BranchesFragment.mAdapter.objects=MySqlDataSource.branchList;
             BranchesFragment.branches=MySqlDataSource.branchList;
             BranchesFragment.mAdapter.notifyDataSetChanged();
+
+            CarsTabFragment.mAdapter.objects=MySqlDataSource.carList;
+            CarsTabFragment.cars=MySqlDataSource.carList;
+            CarsTabFragment.mAdapter.notifyDataSetChanged();
             //TabFragments.carsTab.updateView2(position);
             Toast.makeText(mContext,
                     "car deleted", Toast.LENGTH_SHORT).show();

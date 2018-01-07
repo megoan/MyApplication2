@@ -78,6 +78,8 @@ public class CarsTabFragment extends Fragment {
 
     public void sortCarByCarCompanyName()
     {
+        int i=0;
+        i++;
         Collections.sort(cars, new Comparator<Car>(){
             public int compare(Car o1, Car o2){
                 CarModel cm1=backEndFunc.getCarModel(o1.getCarModel());
@@ -152,16 +154,8 @@ public class CarsTabFragment extends Fragment {
 
     public void updateView()
     {
-
-        cars=backEndFunc.getAllCars();
         mAdapter.objects=cars;
         mAdapter.notifyDataSetChanged();
-        //cars= backEndFunc.getAllCars();
-       // mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
-       //recyclerView.setAdapter(mAdapter);
-        //(recyclerView.getAdapter()).notifyDataSetChanged();
-        // mAdapter=new CarRecyclerViewAdapter(cars,getActivity());
-       // recyclerView.setAdapter(mAdapter);
     }
     public void updateView2(int position)
     {

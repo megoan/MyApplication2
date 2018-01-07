@@ -186,7 +186,7 @@ public class TakeNGoConst {
         branch.setBranchRevenue(contentValues.getAsDouble(BranchConst.BRANCHREVENUE));
         branch.setEstablishedDate(getDateFromString(contentValues.getAsString(BranchConst.ESTABLISHEDDATE)));
         if(contentValues.getAsInteger(BranchConst.INUSE)==1)branch.setInUse(true);
-        branch.setInUse(false);
+        else branch.setInUse(false);
         //branch.setInUse(contentValues.getAsBoolean(BranchConst.INUSE));
         branch.setCarIds(getCarsFromString((contentValues.getAsString(BranchConst.CARIDSLIST))));
         return branch;
@@ -210,6 +210,13 @@ public class TakeNGoConst {
     public static ContentValues CarIdToContentValues(int carID) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(CarConst.CARNUM, carID);
+        return contentValues;
+    }
+    public static ContentValues CarId_ModelId_BranchId_ToContentValues(int carID, int carModelID, int branchID) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CarConst.CARNUM, carID);
+        contentValues.put(CarConst.CARMODEL,carModelID);
+        contentValues.put(CarConst.BRANCHNUM,branchID);
         return contentValues;
     }
 
@@ -254,7 +261,7 @@ public class TakeNGoConst {
     public static ArrayList<Integer> getCarsFromString(String cars)
     {
         ArrayList<Integer>carids=new ArrayList<>();
-        if(cars.equals("null"))return carids;
+        if(cars.equals(""))return carids;
         String[] list=cars.split("~~");
         for (int i=0;i<list.length;i++)
         {

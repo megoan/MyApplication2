@@ -190,7 +190,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             branchSpinner.setSelection( branchPosition);
             inUse=intent.getBooleanExtra("inUse",false);
             rating=intent.getDoubleExtra("rating",0);
-            numOfRating=intent.getIntExtra("numOfRating",0);
+            numOfRating=intent.getIntExtra("numberOfRatings",0);
             carmodelID=intent.getIntExtra("carmodel",0);
             originalCarModel=carmodelID;
             branchID=originalBranchID=intent.getIntExtra("branchID",0);
@@ -539,7 +539,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         }
 
         @Override
-        protected void onPostExecute(Updates updates) {
+        protected void onPostExecute(final Updates updates) {
             super.onPostExecute(updates);
             if(updates==Updates.ERROR)
             {
@@ -567,7 +567,7 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     String url=downloadUrl.toString();
                     car.setImgURL(url);
-                    new UpdateCarNoImageAsyncTask().execute();
+                    new UpdateCarNoImageAsyncTask(updates).execute();
                 }
             });
         }
@@ -614,6 +614,12 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
 
 
     public class UpdateCarNoImageAsyncTask extends AsyncTask<Void,Void,Updates>{
+        Updates addUpdates=Updates.NOTHING;
+        public UpdateCarNoImageAsyncTask(Updates updates) {
+            this.addUpdates=updates;
+        }
+        public UpdateCarNoImageAsyncTask() {
+        }
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -630,8 +636,14 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
         @Override
         protected Updates doInBackground(Void... voids) {
             Updates updates;
-            if (update) {
+            if (!update) {
                 updates=backEndForSql.updateCar(car);
+                if(addUpdates==Updates.BRANCH)MySqlDataSource.branchList=backEndForSql.getAllBranches();
+                else if(addUpdates==Updates.CARMODEL_AND_BRANCH)
+                {
+                    MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
+                    MySqlDataSource.branchList=backEndForSql.getAllBranches();
+                }
             }
             else {
                 updates=backEndForSql.updateCar(car,originalCarModel,originalBranchID);
@@ -640,13 +652,20 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
             {
                 MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
             }
+            else if(updates==Updates.BRANCH)
+            {
+                MySqlDataSource.branchList=backEndForSql.getAllBranches();
+            }
             else if(updates==Updates.CARMODEL_AND_BRANCH)
             {
                 MySqlDataSource.carModelList=backEndForSql.getAllCarModels();
                 MySqlDataSource.branchList=backEndForSql.getAllBranches();
             }
             MySqlDataSource.carList=backEndForSql.getAllCars();
-            return updates;
+            if (update) {
+                return updates;
+            }
+            else return addUpdates;
         }
 
         @Override
@@ -668,6 +687,12 @@ public class CarEditActivity extends AppCompatActivity implements RecyclerViewCl
                CarModelsFragment.mAdapter.objects= (ArrayList<CarModel>) MySqlDataSource.carModelList;
                CarModelsFragment.carModels=(ArrayList<CarModel>) MySqlDataSource.carModelList;
                CarModelsFragment.mAdapter.notifyDataSetChanged();
+           }
+           if(updates==Updates.BRANCH)
+           {
+               BranchesFragment.branches=(ArrayList<Branch>) MySqlDataSource.branchList;
+               BranchesFragment.mAdapter.objects= (ArrayList<Branch>) MySqlDataSource.branchList;
+               BranchesFragment.mAdapter.notifyDataSetChanged();
            }
            if(updates==Updates.CARMODEL_AND_BRANCH)
            {

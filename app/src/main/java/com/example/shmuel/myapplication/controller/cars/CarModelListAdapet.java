@@ -8,8 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.shmuel.myapplication.R;
 import com.example.shmuel.myapplication.model.backend.BackEndFunc;
 import com.example.shmuel.myapplication.model.backend.DataSourceType;
@@ -50,7 +56,7 @@ class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHol
     }
 
     @Override
-    public void onBindViewHolder(CarModelListAdapet.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final CarModelListAdapet.ViewHolder holder, final int position) {
         final CarModel carModel = objects.get(position);
         viewHolder=holder;
         if(selectedPosition==position){
@@ -85,8 +91,29 @@ class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHol
 
 
 
+        holder.progressBar.setVisibility(View.VISIBLE);
+        Glide.with(mContext)
+                .load(carModel.getImgURL())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .error(R.drawable.default_car_image)
+                .placeholder(R.drawable.default_car_image)
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false; // important to return false so the error placeholder can be placed
+                    }
 
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(holder.imageView);
         holder.carModelName.setText(carModel.getCompanyName()+" "+carModel.getCarModelName());
+
     }
 
     @Override
@@ -98,12 +125,13 @@ class CarModelListAdapet extends RecyclerView.Adapter<CarModelListAdapet.ViewHol
         TextView carModelName;
         ImageView imageView;
         CardView cardView;
-
+        ProgressBar progressBar;
         public ViewHolder(View itemView) {
             super(itemView);
             imageView=(ImageView)itemView.findViewById(R.id.carModelCardImage);
             carModelName=(TextView)itemView.findViewById(R.id.carModelCardCompany);
             cardView =(CardView)itemView.findViewById(R.id.card);
+            progressBar=(ProgressBar)itemView.findViewById(R.id.downloadProgressBar);
         }
     }
 

@@ -67,6 +67,7 @@ public class BackEndForSql implements BackEndFunc {
             if(result.contains("Duplicate entry"))return Updates.DUPLICATE;
             long id = Long.parseLong(result);
             if (id > 0) {
+                addCarToBranch(car.getCarNum(),car.getBranchNum());
                 CarModel carModel = getCarModel(car.getCarModel());
                 if (carModel.isInUse() == false) {
                     carModel.setInUse(true);
@@ -156,12 +157,12 @@ public class BackEndForSql implements BackEndFunc {
            CarModel originalCarModelTmp = getCarModel(originalCarModel);
            ArrayList<Car> carArrayList = MySqlDataSource.carList;
            for (Car car1 : carArrayList) {
-               if (car1.getCarModel() == carModel.getCarModelCode()) {
+               if (car1.getCarNum()!=car.getCarNum() && car1.getCarModel() == carModel.getCarModelCode()) {
                    checkIfCarModelInUse=true;
                }
            }
            if (checkIfCarModelInUse==false) {
-               carModel.setInUse(false);
+               originalCarModelTmp.setInUse(false);
                updateCarModel(originalCarModelTmp);
                updates=Updates.CARMODEL;
            }
@@ -270,7 +271,7 @@ public class BackEndForSql implements BackEndFunc {
             }
         }
 
-        ContentValues contentValues = TakeNGoConst.CarIdToContentValues(carID);
+        ContentValues contentValues = TakeNGoConst.CarId_ModelId_BranchId_ToContentValues(carID,carModelCode,branchID);
         try {
             String result = PHPtools.POST(WEB_URL + "/deletecar.php", contentValues);
             if (result.compareTo("DONE") ==0)
@@ -485,15 +486,15 @@ public class BackEndForSql implements BackEndFunc {
         branch1.getCarIds().remove(new Integer(carID));
         if (branch1.getCarIds().size() == 0) {
             branch1.setInUse(false);
-            updateBranch(branch1);
         }
+        updateBranch(branch1);
         return true;
     }
 
     @Override
     public boolean addCarToBranch(int carID, int branch) {
         Branch branch1 = getBranch(branch);
-        if (branch1.getCarIds().size() == 0) {
+        if (branch1.isInUse()==false) {
             branch1.setInUse(true);
         }
         branch1.getCarIds().add(new Integer(carID));
