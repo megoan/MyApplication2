@@ -95,8 +95,8 @@ public class BranchesFragment extends Fragment {
     {
         Collections.sort(branches, new Comparator<Branch>(){
             public int compare(Branch o1, Branch o2){
-                Integer integer1=new Integer(o1.getParkingSpotsNum());
-                Integer integer2=new Integer(o2.getParkingSpotsNum());
+                Integer integer1=new Integer(o1.getCarIds().size());
+                Integer integer2=new Integer(o2.getCarIds().size());
                 return integer1.compareTo(integer2);
             }
         });

@@ -327,7 +327,6 @@ public class MainActivity extends AppCompatActivity {
                 final CarsTabFragment carsTabFragment=(CarsTabFragment) TabFragments.mViewPager.getAdapter().instantiateItem(TabFragments.mViewPager, TabFragments.mViewPager.getCurrentItem());
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Sort by:");
-
                 // add a radio button list
                 String[] options = {"company name", "branch", "year","mileage","daily price","mile price","rating"};
                 int checkedItem = 0; // cow
