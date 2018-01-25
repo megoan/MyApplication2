@@ -48,5 +48,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.5.2'
     compile "com.google.firebase:firebase-auth:11.8.0"
     compile 'com.theartofdev.edmodo:android-image-cropper:2.6.+'
+    compile 'com.jjoe64:graphview:4.2.1'
 }
 apply plugin: 'com.google.gms.google-services'

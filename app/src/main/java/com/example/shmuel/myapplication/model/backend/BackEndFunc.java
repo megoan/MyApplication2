@@ -4,6 +4,7 @@ import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.Client;
+import com.example.shmuel.myapplication.model.entities.Order;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,9 @@ public interface BackEndFunc {
 
     public boolean removeCarFromBranch(int carID, int branch);
     public boolean addCarToBranch(int carID, int branch);
+
+    public ArrayList<Order> getAllOrders();
+    public ArrayList<Order> getAllClosedOrders();
 
 
 

@@ -8,6 +8,7 @@ import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.Client;
+import com.example.shmuel.myapplication.model.entities.Order;
 import com.example.shmuel.myapplication.model.entities.TakeNGoConst;
 
 import org.json.JSONArray;
@@ -500,5 +501,43 @@ public class BackEndForSql implements BackEndFunc {
         branch1.getCarIds().add(new Integer(carID));
         return updateBranch(branch1);
     }
+    @Override
+    public ArrayList<Order> getAllOrders() {
+        List<Order> result = new ArrayList<>();
+        try {
+            String str = PHPtools.GET(WEB_URL + "/findallorders.php");
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
+            JSONArray array = new JSONObject(str).getJSONArray("Orders");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
+                Order order = TakeNGoConst.ContentValuesToOrder(contentValues);
+                result.add(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (ArrayList<Order>) result;
+    }
 
+    @Override
+    public ArrayList<Order> getAllClosedOrders() {
+        List<Order> result = new ArrayList<>();
+        try {
+            String str = PHPtools.GET(WEB_URL + "/findallclosedorders.php");
+            if (str.compareTo("0 results") ==0)
+                throw new Exception("str");
+            JSONArray array = new JSONObject(str).getJSONArray("Orders");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                ContentValues contentValues = PHPtools.JsonToContentValues(jsonObject);
+                Order order = TakeNGoConst.ContentValuesToOrder(contentValues);
+                result.add(order);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return (ArrayList<Order>) result;
+    }
 }

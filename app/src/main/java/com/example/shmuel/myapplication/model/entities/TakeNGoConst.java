@@ -64,6 +64,71 @@ public class TakeNGoConst {
         public static final String INUSE = "inUse";
     }
 
+    public static class OrderConst {
+        public static final String ORDERNUMBER = "_orderNumber";
+        public static final String CLIENTNUM = "clientNum";
+        public static final String ORDEROPEN = "orderOpen";
+        public static final String CARNUM = "carNum";
+        public static final String DATESTART = "dateStart";
+        public static final String DATEEND = "dateEnd";
+        public static final String MILEAGESTART = "mileageStart";
+        public static final String MILEAGEEND = "mileageEnd";
+        public static final String GASREFILL = "gasRefill";
+        public static final String LITERSFILLED = "litersFilled";
+        public static final String PAYMENT = "payment";
+    }
+
+    public static ContentValues OrderToContentValues(Order order, boolean add_or_open) {
+        ContentValues contentValues = new ContentValues();
+        if (add_or_open)
+            contentValues.put(OrderConst.ORDERNUMBER, order.getOrderNumber());
+        contentValues.put(OrderConst.CLIENTNUM, order.getClientNum());
+        int isopenInt;
+        if (order.isOrderOpen()) isopenInt = 1;
+        else
+            isopenInt = 0;
+        contentValues.put(OrderConst.ORDEROPEN, isopenInt);
+        contentValues.put(OrderConst.CARNUM, order.getCarNum());
+        contentValues.put(OrderConst.DATESTART, order.getDateStart());
+        contentValues.put(OrderConst.DATEEND, order.getDateEnd());
+        contentValues.put(OrderConst.MILEAGESTART, order.getMileageStart());
+        contentValues.put(OrderConst.MILEAGEEND, order.getMileageEnd());
+        int isgassInt;
+        if (order.isGasRefill()) isgassInt = 1;
+        else
+            isgassInt = 0;
+        contentValues.put(OrderConst.GASREFILL, isgassInt);
+        contentValues.put(OrderConst.LITERSFILLED, order.getLitersFilled());
+        contentValues.put(OrderConst.PAYMENT, order.getPayment());
+        return contentValues;
+    }
+
+    public static Order ContentValuesToOrder(ContentValues contentValues) {
+        Order order = new Order();
+        boolean open;
+        if (contentValues.getAsInteger(OrderConst.ORDEROPEN) == 1) open = true;
+        else
+            open = false;
+        order.setOrderNumber(contentValues.getAsInteger(OrderConst.ORDERNUMBER));
+        order.setClientNum(contentValues.getAsInteger(OrderConst.CLIENTNUM));
+        order.setOrderOpen(open);
+        order.setCarNum(contentValues.getAsInteger(OrderConst.CARNUM));
+        order.setDateStart(contentValues.getAsString(OrderConst.DATESTART));
+        order.setDateEnd((contentValues.getAsString(OrderConst.DATEEND)));
+        order.setMileageStart((contentValues.getAsDouble(OrderConst.MILEAGESTART)));
+        order.setMileageEnd((contentValues.getAsDouble(OrderConst.MILEAGEEND)));
+        boolean gas;
+        if (contentValues.getAsInteger(OrderConst.GASREFILL) == 1)
+            gas = true;
+        else gas = false;
+        order.setGasRefill((gas));
+        order.setLitersFilled((contentValues.getAsInteger(OrderConst.LITERSFILLED)));
+        order.setPayment((contentValues.getAsInteger(OrderConst.PAYMENT)));
+        return order;
+    }
+
+
+
     public static ContentValues CarToContentValues(Car car) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(CarConst.CARNUM, car.getCarNum());

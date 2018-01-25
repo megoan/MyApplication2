@@ -5,6 +5,7 @@ import com.example.shmuel.myapplication.model.entities.Branch;
 import com.example.shmuel.myapplication.model.entities.Car;
 import com.example.shmuel.myapplication.model.entities.CarModel;
 import com.example.shmuel.myapplication.model.entities.Client;
+import com.example.shmuel.myapplication.model.entities.Order;
 
 import java.util.ArrayList;
 
@@ -335,4 +336,15 @@ return false;
         }
         return getBranch(branch).getCarIds().add(new Integer(carID));
     }
+
+    @Override
+    public ArrayList<Order> getAllOrders() {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Order> getAllClosedOrders() {
+        return null;
+    }
+
 }

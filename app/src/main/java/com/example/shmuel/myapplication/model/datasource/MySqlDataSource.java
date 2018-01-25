@@ -89,7 +89,7 @@ public class MySqlDataSource extends DataSource {
         clientList = backEndFunc.getAllClients();
         carList=backEndFunc.getAllCars();
         carModelList=backEndFunc.getAllCarModels();
-
+        orderList=backEndFunc.getAllClosedOrders();
 
         int i=0;
         i++;
